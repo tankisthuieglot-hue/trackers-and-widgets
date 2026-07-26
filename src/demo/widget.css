@@ -1,0 +1,125 @@
+/* Every selector starts with .vld-demo — inner elements are reached as
+   descendants, never by their own prefixed class. That is what keeps the
+   stylesheet from touching anything outside this widget. */
+
+.vld-demo {
+  --bg: #ffffff;
+  --ink: #16181d;
+  --muted: #6b7280;
+  --line: rgba(16, 18, 24, 0.10);
+  --accent: #3b6ef5;
+
+  width: min(100%, 380px);
+  margin: 14px auto;
+  font: 14px/1.4 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+}
+
+.vld-demo * {
+  box-sizing: border-box;
+}
+
+.vld-demo .card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
+}
+
+.vld-demo .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vld-demo .title {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.vld-demo .badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.vld-demo .value {
+  margin: 10px 0 14px;
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.vld-demo .list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vld-demo .item {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 9px 10px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  cursor: pointer;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.vld-demo .item i {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  border: 2px solid var(--muted);
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  font: 700 11px/1 sans-serif;
+  font-style: normal;
+}
+
+.vld-demo .item.done {
+  opacity: 0.5;
+  transform: translateX(4px);
+}
+
+.vld-demo .item.done i {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.vld-demo .item.done i::before {
+  content: "✓";
+}
+
+.vld-demo .foot {
+  margin-top: 13px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vld-demo {
+    --bg: #16181d;
+    --ink: #eceef2;
+    --muted: #9aa1ad;
+    --line: rgba(255, 255, 255, 0.12);
+    --accent: #7aa2ff;
+  }
+
+  .vld-demo .card {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+}

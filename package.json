@@ -1,0 +1,14 @@
+{
+  "name": "vladislav",
+  "version": "0.1.0",
+  "description": "Visual tracker pack for SillyTavern: compact markers rendered as display-only HTML widgets",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "check": "node tools/check.mjs",
+    "preview": "node tools/serve.mjs",
+    "all": "node tools/check.mjs && node tools/build.mjs"
+  }
+}

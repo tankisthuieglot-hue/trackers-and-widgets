@@ -1,0 +1,17 @@
+{
+ "id": "df0520e4-c82d-5a6d-8cf7-e754a2c07fb0",
+ "scriptName": "🕳️ VLD 04 FORGET",
+ "findRegex": "/\\[\\[VLD_[A-Z0-9_]*[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 5,
+ "maxDepth": null
+}

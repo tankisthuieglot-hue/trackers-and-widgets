@@ -1,0 +1,17 @@
+{
+ "id": "9b848cb0-ff11-5f56-9ecb-e304f2bf7ec1",
+ "scriptName": "🧹 VLD 02 CLEAN STYLE",
+ "findRegex": "/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 0,
+ "maxDepth": null
+}

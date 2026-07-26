@@ -1,0 +1,17 @@
+{
+ "id": "2c9810bd-60d3-5358-9584-80f3f046ab93",
+ "scriptName": "🛟 VLD 99 FALLBACK",
+ "findRegex": "/\\[\\[VLD_[A-Z0-9_]*[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": true,
+ "promptOnly": false,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": null,
+ "maxDepth": null
+}

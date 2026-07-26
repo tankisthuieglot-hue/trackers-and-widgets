@@ -1,0 +1,17 @@
+{
+ "id": "9df4cabe-577e-56fc-8052-25b416d0e67d",
+ "scriptName": "🧹 VLD 03 CLEAN SCRIPT",
+ "findRegex": "/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 0,
+ "maxDepth": null
+}

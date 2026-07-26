@@ -1,0 +1,17 @@
+{
+ "id": "86e2cb07-2690-5e4a-9ca0-260d1a99d476",
+ "scriptName": "⚙️ VLD 00 PERF",
+ "findRegex": "/([\\s\\S])$/",
+ "replaceString": "$1\n<script>\n(function () {\n  if (window.__VLD_PERF__) return;\n  window.__VLD_PERF__ = true;\n\n  var style = document.createElement('style');\n  style.textContent =\n    '.vld-idle *{animation-play-state:paused!important;transition:none!important}' +\n    '@media (prefers-reduced-motion:reduce){.vld-w *{animation:none!important;transition:none!important}}';\n  (document.head || document.documentElement).appendChild(style);\n\n  var io = 'IntersectionObserver' in window\n    ? new IntersectionObserver(function (entries) {\n        entries.forEach(function (e) {\n          e.target.classList.toggle('vld-idle', !e.isIntersecting);\n        });\n      }, { rootMargin: '200px 0px', threshold: 0.01 })\n    : null;\n\n  function watch(el) {\n    if (!io || el.dataset.vldWatched === '1') return;\n    el.dataset.vldWatched = '1';\n    io.observe(el);\n  }\n\n  function scan(node) {\n    if (node.nodeType !== 1) return;\n    if (node.classList.contains('vld-w')) watch(node);\n    node.querySelectorAll('.vld-w').forEach(watch);\n  }\n\n  scan(document.body || document.documentElement);\n\n  if ('MutationObserver' in window) {\n    new MutationObserver(function (records) {\n      records.forEach(function (r) { r.addedNodes.forEach(scan); });\n    }).observe(document.documentElement, { childList: true, subtree: true });\n  }\n})();\n</script>",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": true,
+ "promptOnly": false,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": null,
+ "maxDepth": null
+}

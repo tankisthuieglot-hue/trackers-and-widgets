@@ -1,0 +1,17 @@
+{
+ "id": "8173c517-db0c-5a9f-a363-945ce7807e78",
+ "scriptName": "🧹 VLD 01 CLEAN COMMENTS",
+ "findRegex": "/<!--[\\s\\S]*?-->/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 0,
+ "maxDepth": null
+}

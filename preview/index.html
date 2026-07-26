@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vladislav — превью виджетов</title>
+<style>
+  :root { color-scheme: light dark; }
+
+  body {
+    margin: 0;
+    font: 14px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+    background: #f4f5f7;
+    color: #16181d;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+  }
+  header h1 { margin: 0; font-size: 15px; letter-spacing: -.01em; }
+  header p  { margin: 0; color: #6b7280; font-size: 12px; }
+  header .spacer { flex: 1; }
+
+  label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+  input[type=range] { width: 130px; }
+
+  .tracker { padding: 22px 20px 4px; }
+  .tracker > h2 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .tracker > code { font-size: 11px; color: #9aa1ad; }
+
+  .stages { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+
+  .stage {
+    flex: 1 1 320px;
+    min-width: 0;
+    padding: 10px 12px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+  }
+  .stage > b { display: block; margin-bottom: 6px; font-size: 11px; opacity: .55; }
+  .stage.light { background: #ffffff; color: #16181d; }
+  .stage.dark  { background: #1b1d22; color: #eceef2; border-color: rgba(255, 255, 255, .12); }
+
+  .mount { margin: 0 auto; }
+
+  .empty { padding: 40px 20px; color: #6b7280; }
+  .empty code { background: rgba(0, 0, 0, .06); padding: 2px 6px; border-radius: 5px; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #101215; color: #eceef2; }
+    header { background: #16181d; border-bottom-color: rgba(255, 255, 255, .1); }
+    .empty code { background: rgba(255, 255, 255, .1); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>vladislav — превью</h1>
+  <p id="count"></p>
+  <span class="spacer"></span>
+  <label>ширина <input id="width" type="range" min="260" max="520" step="10" value="380">
+    <span id="widthOut">380px</span></label>
+</header>
+
+<main id="root"></main>
+
+<script src="widgets.js"></script>
+<script>
+(function () {
+  var list = window.VLD_PREVIEW || [];
+  var root = document.getElementById('root');
+
+  document.getElementById('count').textContent =
+    list.length
+      ? list.length + ' виджет(ов) · маркеры забываются глубже ' + window.VLD_FORGET_DEPTH + ' сообщений'
+      : '';
+
+  if (!list.length) {
+    root.innerHTML =
+      '<div class="empty">Пусто. Собери пак: <code>npm run build</code></div>';
+    return;
+  }
+
+  list.forEach(function (item) {
+    var section = document.createElement('section');
+    section.className = 'tracker';
+    section.innerHTML =
+      '<h2>' + item.title + '</h2><code>[[' + item.tag + '|…]]</code>' +
+      '<div class="stages">' +
+        '<div class="stage light"><b>на светлом фоне</b><div class="mount"></div></div>' +
+        '<div class="stage dark"><b>на тёмном фоне</b><div class="mount"></div></div>' +
+      '</div>';
+
+    section.querySelectorAll('.mount').forEach(function (mount) {
+      mount.innerHTML = item.html;
+      // innerHTML never executes scripts. Re-create each one so the widget's
+      // own behaviour runs here exactly as it will inside SillyTavern.
+      mount.querySelectorAll('script').forEach(function (old) {
+        var fresh = document.createElement('script');
+        fresh.textContent = old.textContent;
+        old.replaceWith(fresh);
+      });
+    });
+
+    root.appendChild(section);
+  });
+
+  var width = document.getElementById('width');
+  var out = document.getElementById('widthOut');
+  function applyWidth() {
+    out.textContent = width.value + 'px';
+    document.querySelectorAll('.mount').forEach(function (m) {
+      m.style.maxWidth = width.value + 'px';
+    });
+  }
+  width.addEventListener('input', applyWidth);
+  applyWidth();
+})();
+</script>
+
+</body>
+</html>
