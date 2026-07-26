@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DIST } from './lib.mjs';
 
-const [LANG = 'ru', SKIN = 'steel'] = process.argv.slice(2);
+const [LANG = 'ru', SKIN = ''] = process.argv.slice(2);
 const load = (...path) => JSON.parse(readFileSync(join(DIST, ...path), 'utf8'));
 
 // Widgets in tracker order, then the fallback — the order the install imposes.
@@ -16,7 +16,7 @@ const scripts = [
   load('service', '99-fallback.json'),
 ];
 
-console.log(`— ${LANG} / ${SKIN} —`);
+console.log(`— ${LANG} —`);
 
 const compile = (literal) =>
   new RegExp(literal.slice(1, literal.lastIndexOf('/')), literal.slice(literal.lastIndexOf('/') + 1));
