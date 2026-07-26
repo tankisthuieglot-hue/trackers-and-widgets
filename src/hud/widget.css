@@ -3,8 +3,8 @@
    за пользователя. Цвет называет только состояние — красный на исходе, зелёный
    в порядке. Это читается в любом мире.
 
-   Корпус держится на материале: тёмный анодированный металл, штриховка, блик
-   сверху, тонкая светящаяся кромка на срезе заливки. */
+   Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
+   угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
 
 .vld-hud {
   --panel: #17181c;
@@ -114,53 +114,66 @@
   overflow: hidden;
   height: 26px;
   border-radius: 2px;
-  /* Пустая часть дорожки заштрихована — незаполненное читается как опасное,
-     а не как «здесь ничего нет». */
-  background:
-    repeating-linear-gradient(45deg, rgba(230, 227, 220, .04) 0 2px, transparent 2px 6px),
-    var(--track);
 }
 
-.vld-hud .fill {
+/* Десять делений вместо сплошной полосы: значение считывается по клеткам,
+   цифру можно не искать. */
+.vld-hud .cells {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 0;
-  background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
-  transform-origin: left center;
+  inset: 0;
+  display: flex;
+  gap: 2px;
   animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
 }
 
-/* Световая кромка на срезе: заливка не обрывается, а имеет край. */
-.vld-hud .fill::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: 1.5px;
-  background: rgb(var(--tone));
-  box-shadow: 0 0 10px rgba(var(--tone), .65);
+.vld-hud .cells i {
+  flex: 1;
+  border-radius: 1px;
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
 }
 
+/* Развёртка слева направо одним движением, а не десятью анимациями. */
 @keyframes vld-grow {
-  from { transform: scaleX(0); }
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
 }
 
-.vld-hud .bars .bar:nth-child(2) .fill { animation-delay: .07s; }
-.vld-hud .bars .bar:nth-child(3) .fill { animation-delay: .14s; }
-.vld-hud .bars .bar:nth-child(4) .fill { animation-delay: .21s; }
-.vld-hud .bars .bar:nth-child(5) .fill { animation-delay: .28s; }
+.vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
+.vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
+.vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
+.vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
 
 /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
    Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
-.vld-hud .lv-1  .fill { width: 10%; }
-.vld-hud .lv-2  .fill { width: 20%; }
-.vld-hud .lv-3  .fill { width: 30%; }
-.vld-hud .lv-4  .fill { width: 40%; }
-.vld-hud .lv-5  .fill { width: 50%; }
-.vld-hud .lv-6  .fill { width: 60%; }
-.vld-hud .lv-7  .fill { width: 70%; }
-.vld-hud .lv-8  .fill { width: 80%; }
-.vld-hud .lv-9  .fill { width: 90%; }
-.vld-hud .lv-10 .fill { width: 100%; }
+.vld-hud .lv-1  i:nth-child(-n+1),
+.vld-hud .lv-2  i:nth-child(-n+2),
+.vld-hud .lv-3  i:nth-child(-n+3),
+.vld-hud .lv-4  i:nth-child(-n+4),
+.vld-hud .lv-5  i:nth-child(-n+5),
+.vld-hud .lv-6  i:nth-child(-n+6),
+.vld-hud .lv-7  i:nth-child(-n+7),
+.vld-hud .lv-8  i:nth-child(-n+8),
+.vld-hud .lv-9  i:nth-child(-n+9),
+.vld-hud .lv-10 i:nth-child(-n+10) {
+  background: rgba(var(--tone), .26);
+  box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
+}
+
+/* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
+.vld-hud .lv-1  i:nth-child(1),
+.vld-hud .lv-2  i:nth-child(2),
+.vld-hud .lv-3  i:nth-child(3),
+.vld-hud .lv-4  i:nth-child(4),
+.vld-hud .lv-5  i:nth-child(5),
+.vld-hud .lv-6  i:nth-child(6),
+.vld-hud .lv-7  i:nth-child(7),
+.vld-hud .lv-8  i:nth-child(8),
+.vld-hud .lv-9  i:nth-child(9),
+.vld-hud .lv-10 i:nth-child(10) {
+  background: rgba(var(--tone), .62);
+  box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
+}
 
 .vld-hud .bar          { --tone: var(--crit); }
 .vld-hud .lv-3,
@@ -197,6 +210,10 @@
   to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
 }
 
+@keyframes vld-unease {
+  to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
+}
+
 /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
    секунды: должно цеплять краем глаза, а не мельтешить. */
 .vld-hud .panel:has(.lv-1, .lv-2) .bars {
@@ -208,10 +225,6 @@
   93%       { transform: translateX(-2px) skewX(-.6deg); }
   94%       { transform: translateX(3px); }
   95%, 100% { transform: none; }
-}
-
-@keyframes vld-unease {
-  to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
 }
 
 .vld-hud .row {
@@ -335,7 +348,7 @@
   .vld-hud .panel,
   .vld-hud .panel::after,
   .vld-hud .bars,
-  .vld-hud .fill,
+  .vld-hud .cells,
   .vld-hud .lv-1,
   .vld-hud .lv-2,
   .vld-hud .name {
