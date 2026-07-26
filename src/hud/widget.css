@@ -1,17 +1,17 @@
-/* Приборная табличка, а не карточка приложения: тёплый графит, латунь, кровь.
-   Никакого JavaScript — уровни шкал и сила пятна приходят классом из значения
-   поля, поэтому виджет работает целиком и без расширения.
+/* Виджет обязан работать и в фэнтези, и на космической станции, поэтому в нём
+   нет цвета: красная полоска здоровья и синяя маны выбрали бы сеттинг за
+   пользователя. Монохром, сеттинг приносят подписи.
 
-   Засечный шрифт достаётся человеку, моноширинный — тому, что с ним сделали. */
+   Ни одной строчки JavaScript. Заливка шкалы приходит классом из значения,
+   инвентарь раскрывается нативным <details>. */
 
 .vld-hud {
-  --plate: #1a1815;
-  --inset: #221f1a;
-  --hair: rgba(233, 227, 214, .14);
-  --ink: #e9e3d6;
-  --dim: #8b8377;
-  --brass: #c8a740;
-  --rot: #b03a52;
+  --panel: #191a1e;
+  --track: #26272d;
+  --fill: #dcd8cf;
+  --ink: #dcd8cf;
+  --dim: #7f8189;
+  --hair: rgba(220, 216, 207, .13);
 
   --serif: "Georgia", "Times New Roman", serif;
   --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -25,38 +25,12 @@
   box-sizing: border-box;
 }
 
-.vld-hud .plate {
-  position: relative;
-  overflow: hidden;
-  padding: 15px 16px 14px;
+.vld-hud .panel {
+  padding: 14px 15px 13px;
   border: 1px solid var(--hair);
-  border-radius: 4px;
-  background: var(--plate);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .05);
-}
-
-/* Подпись брифа: порча не показывается цифрой, она пачкает саму табличку. */
-.vld-hud .stain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background:
-    radial-gradient(78% 62% at 6% 104%, var(--rot) 0%, transparent 62%),
-    radial-gradient(46% 38% at 88% -6%, var(--rot) 0%, transparent 70%);
-}
-
-.vld-hud .cr-3 .stain,
-.vld-hud .cr-4 .stain  { opacity: .16; }
-.vld-hud .cr-5 .stain,
-.vld-hud .cr-6 .stain  { opacity: .30; }
-.vld-hud .cr-7 .stain,
-.vld-hud .cr-8 .stain  { opacity: .46; }
-.vld-hud .cr-9 .stain,
-.vld-hud .cr-10 .stain { opacity: .62; }
-
-.vld-hud .plate > *:not(.stain) {
-  position: relative;
+  border-radius: 5px;
+  background: var(--panel);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .45);
 }
 
 .vld-hud .ident {
@@ -64,38 +38,128 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  padding-bottom: 11px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--hair);
 }
 
 .vld-hud .name {
-  font: 400 20px/1.1 var(--serif);
+  font: 400 19px/1.1 var(--serif);
   letter-spacing: -.015em;
 }
 
 .vld-hud .metrics {
   flex: 0 0 auto;
   font: 400 11px/1 var(--mono);
-  color: var(--dim);
   letter-spacing: .04em;
+  color: var(--dim);
 }
 
-.vld-hud .gauges {
+.vld-hud .bars {
   display: grid;
-  gap: 7px;
+  gap: 4px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--hair);
 }
 
-.vld-hud .gauge {
-  display: grid;
-  grid-template-columns: 74px 1fr 18px;
+/* Подпись лежит на шкале, а не рядом с ней, и инвертируется ровно там, где её
+   накрыла заливка. Один элемент вместо двух копий с обрезкой. */
+.vld-hud .bar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 25px;
+  border-radius: 3px;
+  background: var(--track);
+}
+
+.vld-hud .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--fill);
+}
+
+.vld-hud .lbl,
+.vld-hud .num {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  mix-blend-mode: difference;
+  white-space: nowrap;
+}
+
+.vld-hud .lbl {
+  left: 10px;
+  right: 52px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font: 500 12px/1 var(--mono);
+}
+
+.vld-hud .num {
+  right: 10px;
+  font: 500 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.vld-hud .num::after {
+  content: "/10";
+  opacity: .5;
+}
+
+/* Значение поля приезжает классом lv-N, поэтому заливка рисуется без скриптов.
+   Мусор вместо числа не совпадёт ни с одним правилом — шкала останется пустой,
+   а вёрстка целой. */
+.vld-hud .lv-1  .fill { width: 10%; }
+.vld-hud .lv-2  .fill { width: 20%; }
+.vld-hud .lv-3  .fill { width: 30%; }
+.vld-hud .lv-4  .fill { width: 40%; }
+.vld-hud .lv-5  .fill { width: 50%; }
+.vld-hud .lv-6  .fill { width: 60%; }
+.vld-hud .lv-7  .fill { width: 70%; }
+.vld-hud .lv-8  .fill { width: 80%; }
+.vld-hud .lv-9  .fill { width: 90%; }
+.vld-hud .lv-10 .fill { width: 100%; }
+
+.vld-hud .pack {
+  border-top: 1px solid var(--hair);
+  padding-top: 10px;
+}
+
+.vld-hud summary {
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
+  list-style: none;
+  cursor: pointer;
 }
 
-.vld-hud .live { --fill: var(--brass); }
-.vld-hud .rot  { --fill: var(--rot); }
+.vld-hud summary::-webkit-details-marker {
+  display: none;
+}
+
+.vld-hud .hint {
+  width: 0;
+  height: 0;
+  border-left: 4px solid var(--dim);
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+  transition: transform .16s ease;
+}
+
+.vld-hud .pack[open] .hint {
+  transform: rotate(90deg);
+}
+
+.vld-hud .pack .v {
+  padding-top: 5px;
+}
+
+.vld-hud .entry {
+  display: grid;
+  gap: 3px;
+  padding-top: 10px;
+}
 
 .vld-hud .k {
   font: 400 9px/1.2 var(--mono);
@@ -104,70 +168,25 @@
   color: var(--dim);
 }
 
-.vld-hud .strip {
-  display: flex;
-  gap: 3px;
-  height: 9px;
-}
-
-.vld-hud .strip i {
-  flex: 1;
-  border: 1px solid var(--hair);
-  border-radius: 1px;
-  background: var(--inset);
-}
-
-/* Значение поля приезжает классом lv-N, поэтому шкала рисуется без скриптов.
-   Мусор вместо числа просто не совпадёт ни с одним правилом — шкала останется
-   пустой, а вёрстка целой. */
-.vld-hud .lv-1  i:nth-child(-n+1),
-.vld-hud .lv-2  i:nth-child(-n+2),
-.vld-hud .lv-3  i:nth-child(-n+3),
-.vld-hud .lv-4  i:nth-child(-n+4),
-.vld-hud .lv-5  i:nth-child(-n+5),
-.vld-hud .lv-6  i:nth-child(-n+6),
-.vld-hud .lv-7  i:nth-child(-n+7),
-.vld-hud .lv-8  i:nth-child(-n+8),
-.vld-hud .lv-9  i:nth-child(-n+9),
-.vld-hud .lv-10 i:nth-child(-n+10) {
-  border-color: var(--fill);
-  background: var(--fill);
-}
-
-.vld-hud .n {
-  font: 400 11px/1 var(--mono);
-  text-align: right;
-  color: var(--dim);
-  font-variant-numeric: tabular-nums;
-}
-
-.vld-hud .entry {
-  display: grid;
-  gap: 3px;
-  padding: 10px 0 0;
-}
-
 .vld-hud .v {
   font: 400 12.5px/1.45 var(--mono);
   color: var(--ink);
 }
 
-.vld-hud .state {
-  margin-top: 10px;
-  padding-top: 11px;
-  border-top: 1px solid var(--hair);
-}
-
-.vld-hud .state .v {
-  color: #d8b9be;
-}
-
-/* Модель пропустила поле — строка исчезает целиком, а не висит пустым ярлыком. */
-.vld-hud .entry:has(.v:empty) {
+/* Модель не заполнила слот — он исчезает целиком, а не висит пустой полоской.
+   Шкала без названия бессмысленна, шкала без значения — тоже. */
+.vld-hud .bar:has(.lbl:empty),
+.vld-hud .bar:has(.num:empty),
+.vld-hud .entry:has(.v:empty),
+.vld-hud .pack:has(.v:empty) {
   display: none;
 }
 
-/* Без имени сводка ни о ком. Пустой маркер не должен оставлять пустую табличку. */
-.vld-hud .plate:has(.name:empty) {
+/* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
+.vld-hud .panel:has(.name:empty) {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-hud .hint { transition: none; }
 }

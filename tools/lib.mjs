@@ -22,13 +22,24 @@ export const NS = 'VLD';
  *
  * `[^\]]` never crosses `]`, which keeps the scan inside its own marker.
  */
+const CAPTURE = {
+  // Anything printable. Safe in a text node, never in an attribute.
+  text: '([^|\\]]*)',
+  // Digits only, so the value can reach an attribute without ending it.
+  num: '([0-9]{0,3})',
+  // A 0–10 step, and forgiving of a model that decided to count to 100:
+  // the alternation takes 10 from "100" and 8 from "87", which lands close
+  // enough to be right instead of silently blanking every gauge.
+  level: '(10|[0-9])',
+};
+
 export const fieldLookahead = (field) => {
-  // A field bound for an HTML attribute is declared numeric, and then only
-  // digits can reach the attribute. `SV=высокое` captures nothing instead of
-  // spilling arbitrary text into the markup.
-  const capture = field.type === 'num' ? '([0-9]{0,3})' : '([^|\\]]*)';
+  const capture = CAPTURE[field.type] ?? CAPTURE.text;
   return `(?=[^\\]]*\\|\\s*${field.key}\\s*=[ \\t]*${capture}|)`;
 };
+
+/** Types whose capture cannot carry a quote, and so may sit in an attribute. */
+export const ATTRIBUTE_SAFE = new Set(['num', 'level']);
 
 /**
  * Full marker pattern for a tag, as a bare source string (no delimiters).
@@ -46,9 +57,20 @@ export const markerLiteral = (tag, fields) => `/${markerSource(tag, fields)}/g`;
 export const markerRegExp = (tag, fields) =>
   new RegExp(markerSource(tag, fields), 'g');
 
-/** Render a marker the way the model is asked to write it. */
-export const renderMarker = (tag, fields, values) =>
-  `[[${tag}` + fields.map((f) => `|${f.key}=${values[f.key] ?? ''}`).join('') + ']]';
+/**
+ * Render a marker the way the model is asked to write it.
+ *
+ * `trim` drops optional slots that carry no value. The blank template keeps
+ * them, so the model can see every slot it may use; the worked example drops
+ * them, so the model can see that leaving slots out is allowed.
+ */
+export const renderMarker = (tag, fields, values, { trim = false } = {}) =>
+  `[[${tag}` +
+  fields
+    .filter((f) => !(trim && f.optional && !values[f.key]))
+    .map((f) => `|${f.key}=${values[f.key] ?? ''}`)
+    .join('') +
+  ']]';
 
 /**
  * Stable id derived from the tag, so rebuilding does not churn the diff.

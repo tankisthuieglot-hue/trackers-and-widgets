@@ -69,7 +69,10 @@ console.log(
 /** One preset-ready block per tracker, plus the shared output rules. */
 function promptsFile(list) {
   const blocks = list.map((t) => {
-    const legend = t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
+    // A hand-written legend earns its keep once repeated slots would turn the
+    // generated one-liner into a wall. The validator still requires every key
+    // to appear in it, so it cannot drift from the fields.
+    const legend = t.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
     const lines = [
       `<vld:${t.name}>`,
       `FIRE: ${t.when}`,
@@ -77,9 +80,9 @@ function promptsFile(list) {
       '',
       renderMarker(t.tag, t.fields, {}),
       '',
-      legend,
+      legend.trim(),
       '',
-      `→ ${renderMarker(t.tag, t.fields, t.example)}`,
+      `→ ${renderMarker(t.tag, t.fields, t.example, { trim: true })}`,
       `</vld:${t.name}>`,
     ];
     return `## ${t.title}\n\n\`\`\`\n${lines.join('\n')}\n\`\`\``;

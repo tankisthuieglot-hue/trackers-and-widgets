@@ -1,7 +1,7 @@
 // Catches the failures that actually ship in packs like this: a prompt that
 // advertises a field the regex never captures, a stylesheet that leaks into the
 // chat, an example that cannot survive its own grammar.
-import { loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
+import { ATTRIBUTE_SAFE, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
 
 const SEP = '\u0000';
 const problems = [];
@@ -42,7 +42,16 @@ for (const t of loadTrackers()) {
     if (!/^[A-Z][A-Z0-9]*$/.test(f.key ?? '')) fail(at, `ключ «${f.key}» должен быть вида T, D, I1`);
     if (keys.has(f.key)) fail(at, `ключ ${f.key} объявлен дважды`);
     keys.add(f.key);
-    if (!f.desc) fail(at, `у поля ${f.key} нет описания — оно идёт в промпт`);
+    if (!f.desc && !t.legend) fail(at, `у поля ${f.key} нет описания — оно идёт в промпт`);
+  }
+
+  if (t.legend) {
+    const mentioned = mentionedKeys(t.legend);
+    for (const f of t.fields) {
+      if (!mentioned.has(f.key)) {
+        fail(at, `ключ ${f.key} не упомянут в legend — модель о нём не узнает`);
+      }
+    }
   }
 
   checkPlaceholders(t, at);
@@ -58,6 +67,20 @@ if (unique.length) {
   process.exit(1);
 }
 console.log('✓ все трекеры прошли проверку');
+
+/**
+ * Which keys a hand-written legend actually names. Ranges count: `B1–B5` reads
+ * better to the model than five separate lines, so it has to read as five keys
+ * here too.
+ */
+function mentionedKeys(legend) {
+  const found = new Set(legend.match(/\b[A-Z]+[0-9]*\b/g) ?? []);
+
+  for (const [, prefix, from, to] of legend.matchAll(/\b([A-Z]+)(\d+)\s*[-–—]\s*(?:[A-Z]+)?(\d+)\b/g)) {
+    for (let i = Number(from); i <= Number(to); i += 1) found.add(prefix + i);
+  }
+  return found;
+}
 
 /** Every field must land somewhere in the markup, and nothing may point past the end. */
 function checkPlaceholders(t, at) {
@@ -78,8 +101,8 @@ function checkPlaceholders(t, at) {
   // declared numeric — capped to digits by the grammar — are allowed there.
   for (const m of t.html.matchAll(/=\s*"[^"]*?\$(\d+)/g)) {
     const field = t.fields[Number(m[1]) - 1];
-    if (field && field.type !== 'num') {
-      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num"`);
+    if (field && !ATTRIBUTE_SAFE.has(field.type)) {
+      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num" или "level"`);
     }
   }
 }
@@ -93,7 +116,11 @@ function checkExample(t, at) {
   for (const f of t.fields) {
     const value = t.example?.[f.key];
     if (value === undefined || value === '') {
-      fail(at, `в example нет значения для ${f.key} — превью и промпт покажут пустоту`);
+      // An optional slot with no example is the point: the example shows the
+      // model that leaving slots out is allowed.
+      if (!f.optional) {
+        fail(at, `в example нет значения для ${f.key} — превью и промпт покажут пустоту`);
+      }
       continue;
     }
     if (/[|\]]/.test(String(value))) {
@@ -105,7 +132,7 @@ function checkExample(t, at) {
   }
   if (problems.some((p) => p.startsWith(at + ':'))) return;
 
-  const marker = renderMarker(t.tag, t.fields, t.example);
+  const marker = renderMarker(t.tag, t.fields, t.example, { trim: true });
   const template = t.fields.map((_, i) => `${SEP}$${i + 1}`).join('');
   const parsed = marker.replace(markerRegExp(t.tag, t.fields), template);
 
@@ -116,7 +143,7 @@ function checkExample(t, at) {
 
   const got = parsed.split(SEP).slice(1);
   t.fields.forEach((f, i) => {
-    const want = String(t.example[f.key]).replace(/^[ \t]+/, '');
+    const want = String(t.example[f.key] ?? '').replace(/^[ \t]+/, '');
     if (got[i] !== want) {
       fail(at, `поле ${f.key} разобралось как «${got[i]}», ожидалось «${want}»`);
     }

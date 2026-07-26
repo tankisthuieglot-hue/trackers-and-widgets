@@ -1,55 +1,71 @@
 // Feeds deliberately sloppy markers through the built regex, the way
-// SillyTavern will. Prints what a reader would end up seeing.
-import { readFileSync } from 'node:fs';
+// SillyTavern will, and reports what a reader would end up seeing.
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DIST } from './lib.mjs';
 
-const hud = JSON.parse(readFileSync(join(DIST, 'regex', '11-vld-hud.json'), 'utf8'));
-const fallback = JSON.parse(readFileSync(join(DIST, 'regex', '99-fallback.json'), 'utf8'));
+const scripts = readdirSync(join(DIST, 'regex'))
+  .sort()
+  .map((f) => JSON.parse(readFileSync(join(DIST, 'regex', f), 'utf8')))
+  .filter((s) => s.markdownOnly && s.findRegex.includes('VLD_'));
 
-const compile = (literal) => {
-  const body = literal.slice(1, literal.lastIndexOf('/'));
-  const flags = literal.slice(literal.lastIndexOf('/') + 1);
-  return new RegExp(body, flags);
-};
+const compile = (literal) =>
+  new RegExp(literal.slice(1, literal.lastIndexOf('/')), literal.slice(literal.lastIndexOf('/') + 1));
 
+/** Widgets first, fallback last — exactly the order the filenames impose in ST. */
 const render = (text) =>
-  text.replace(compile(hud.findRegex), hud.replaceString)
-      .replace(compile(fallback.findRegex), fallback.replaceString);
+  scripts.reduce((acc, s) => acc.replace(compile(s.findRegex), s.replaceString), text);
 
 const cases = {
   'всё по образцу':
-    '[[VLD_HUD|N=Влад|A=32|H=178 см|SV=6|CR=4|C=парка|I=нож, фляга|S=знобит]]',
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|B2=Силы|V2=3|C=парка|I=нож, фляга|S=мокрый]]',
   'поля в другом порядке':
-    '[[VLD_HUD|S=знобит|I=нож, фляга|C=парка|CR=4|SV=6|H=178 см|A=32|N=Влад]]',
-  'модель забыла одежду и состояние':
-    '[[VLD_HUD|N=Влад|A=32|H=178 см|SV=6|CR=4|I=нож, фляга]]',
-  'лишнее поле, которого нет в контракте':
-    '[[VLD_HUD|N=Влад|MOOD=злой|A=32|H=178 см|SV=6|CR=4|C=парка|I=нож|S=знобит]]',
-  'вместо цифры текст':
-    '[[VLD_HUD|N=Влад|A=32|H=178 см|SV=высокое|CR=почти нет|C=парка|I=нож|S=знобит]]',
-  'шкала за пределами 0-10':
-    '[[VLD_HUD|N=Влад|A=32|H=178 см|SV=87|CR=-3|C=парка|I=нож|S=знобит]]',
-  'десять предметов в инвентаре':
-    '[[VLD_HUD|N=Влад|A=32|H=178 см|SV=6|CR=4|C=парка|I=нож, верёвка, фляга, спички, паспорт, зажигалка, бинт, компас, фонарь, монета|S=знобит]]',
+    '[[VLD_HUD|S=мокрый|I=нож|C=парка|V1=6|B1=Здоровье|H=178|A=32|N=Влад]]',
+  'все пять шкал':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|B2=Силы|V2=3|B3=Тепло|V3=2|B4=Голод|V4=8|B5=Розыск|V5=1|C=парка|I=нож|S=мокрый]]',
+  'одна шкала':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=9|C=парка|I=нож|S=мокрый]]',
+  'шкала без значения':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|B2=Мана|C=парка|I=нож|S=мокрый]]',
+  'значение без шкалы':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|V2=4|C=парка|I=нож|S=мокрый]]',
+  'нет одежды и вида':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|I=нож]]',
+  'лишнее поле':
+    '[[VLD_HUD|N=Влад|MOOD=злой|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый]]',
+  'текст вместо числа':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=много|C=парка|I=нож|S=мокрый]]',
+  'значение вне 0-10':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=87|B2=Мана|V2=-3|C=парка|I=нож|S=мокрый]]',
+  'кавычка в текстовом поле':
+    '[[VLD_HUD|N=Влад" onclick="alert(1)|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый]]',
   'маркер не закрыт':
-    'проза [[VLD_HUD|N=Влад|A=32|SV=6',
-  'опечатка в имени тега':
-    '[[VLD_HUDD|N=Влад|SV=6]]',
+    'проза [[VLD_HUD|N=Влад|B1=Здоровье|V1=6',
+  'опечатка в теге':
+    '[[VLD_HUDD|N=Влад|B1=Здоровье|V1=6]]',
   'пустой маркер':
     '[[VLD_HUD]]',
 };
 
+const pad = Math.max(...Object.keys(cases).map((k) => k.length));
+
 for (const [label, input] of Object.entries(cases)) {
   const out = render(input);
-  const leaked = /\[\[|\|[A-Z]+=/.test(out);
-  const plate = out.match(/class="plate ([^"]*)"/)?.[1] ?? '—';
-  const empties = [...out.matchAll(/<span class="v">(\s*)<\/span>/g)].length;
-  const lv = [...out.matchAll(/class="strip (lv-[^"]*)"/g)].map((m) => m[1]);
+  const rendered = out.includes('class="panel"');
+  const leaked = /\[\[|\|[A-Z]+\d*=/.test(out);
+  // A bar only paints when its level landed in the range the stylesheet covers.
+  const painted = [...out.matchAll(/class="bar lv-(\d+)"/g)]
+    .map((m) => m[1])
+    .filter((n) => Number(n) >= 1 && Number(n) <= 10);
+  const blanks = [...out.matchAll(/class="bar lv-(?![1-9]0?")[^"]*"/g)].length;
+  // Injection means an event attribute on a real tag, not the text `onclick=`
+  // sitting harmlessly inside a text node.
+  const escaped = /<[^>]*\son\w+\s*=/.test(out);
 
   console.log(
-    `${label.padEnd(38)} сырой текст: ${leaked ? 'ДА ⚠' : 'нет'}` +
-    `  | plate: ${plate.padEnd(7)} | шкалы: ${(lv.join(' ') || '—').padEnd(13)}` +
-    ` | пустых строк: ${empties}`,
+    `${label.padEnd(pad)} | виджет: ${rendered ? 'да ' : 'нет'}` +
+    ` | сырой текст: ${leaked ? 'ДА ⚠' : 'нет '}` +
+    ` | шкал видно: ${String(painted.length).padEnd(2)} ${`[${painted.join(' ')}]`.padEnd(16)}` +
+    ` | пустых: ${blanks}${escaped ? '  ⚠ ВЫРВАЛОСЬ ИЗ АТРИБУТА' : ''}`,
   );
 }
