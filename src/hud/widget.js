@@ -2,11 +2,13 @@
 // может: маркеры вырезаются из контекста на глубине 3, так что и сама модель
 // не помнит прошлых значений. Всё, что здесь происходит, выводится из одного
 // снимка.
-//
-// CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
-// заливкой, а не стояла готовой над растущей полоской.
 
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+var panel = root.querySelector('.panel');
+var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
+// делениями, а не стояла готовой над растущей полосой.
+if (!still) {
   root.querySelectorAll('.bar').forEach(function (bar, index) {
     var num = bar.querySelector('.num');
     var target = parseInt(num.textContent, 10);
@@ -14,6 +16,16 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 
     num.textContent = '0';
     countUp(num, target, index * 70);
+  });
+}
+
+// Пока {{user}} оглушён или отравлен, показания плывут. Нажатие проясняет их
+// и оставляет так — без скрипта то же самое работает удержанием, но одним
+// касанием удобнее.
+if (/\bfx-\w/.test(panel.className)) {
+  panel.addEventListener('click', function (event) {
+    if (event.target.closest('summary')) return;
+    panel.classList.toggle('peeking');
   });
 }
 

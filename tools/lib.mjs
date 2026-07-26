@@ -34,12 +34,19 @@ const CAPTURE = {
 };
 
 export const fieldLookahead = (field) => {
-  const capture = CAPTURE[field.type] ?? CAPTURE.text;
+  // A field with `of` accepts nothing but the words on its list. Anything the
+  // model invents captures empty, so the widget falls back to its plain state
+  // instead of carrying an unknown word into the markup.
+  const capture = field.of
+    ? `(${field.of.join('|')})`
+    : (CAPTURE[field.type] ?? CAPTURE.text);
+
   return `(?=[^\\]]*\\|\\s*${field.key}\\s*=[ \\t]*${capture}|)`;
 };
 
-/** Types whose capture cannot carry a quote, and so may sit in an attribute. */
-export const ATTRIBUTE_SAFE = new Set(['num', 'level']);
+/** Whether a field's capture is narrow enough to sit inside an attribute. */
+export const attributeSafe = (field) =>
+  Boolean(field.of) || field.type === 'num' || field.type === 'level';
 
 /**
  * Full marker pattern for a tag, as a bare source string (no delimiters).

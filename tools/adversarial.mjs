@@ -54,13 +54,21 @@ const cases = {
     '[[VLD_HUDD|N=Влад|B1=Здоровье|V1=6]]',
   'пустой маркер':
     '[[VLD_HUD]]',
+  'эффект из списка':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый|E=Оглушение|EF=blur]]',
+  'выдуманный эффект':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый|E=Паника|EF=panic]]',
+  'эффект по-русски':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый|E=Яд|EF=отравление]]',
+  'название без вида искажения':
+    '[[VLD_HUD|N=Влад|A=32|H=178|B1=Здоровье|V1=6|C=парка|I=нож|S=мокрый|E=Оглушение]]',
 };
 
 const pad = Math.max(...Object.keys(cases).map((k) => k.length));
 
 for (const [label, input] of Object.entries(cases)) {
   const out = render(input);
-  const rendered = out.includes('class="panel"');
+  const rendered = out.includes('class="panel');
   const leaked = /\[\[|\|[A-Z]+\d*=/.test(out);
   // A bar only paints when its level landed in the range the stylesheet covers.
   const painted = [...out.matchAll(/class="bar lv-(\d+)"/g)]
@@ -70,11 +78,12 @@ for (const [label, input] of Object.entries(cases)) {
   // Injection means an event attribute on a real tag, not the text `onclick=`
   // sitting harmlessly inside a text node.
   const escaped = /<[^>]*\son\w+\s*=/.test(out);
+  const fx = out.match(/class="panel fx-([^"]*)"/)?.[1] || '—';
 
   console.log(
     `${label.padEnd(pad)} | виджет: ${rendered ? 'да ' : 'нет'}` +
     ` | сырой текст: ${leaked ? 'ДА ⚠' : 'нет '}` +
-    ` | шкал видно: ${String(painted.length).padEnd(2)} ${`[${painted.join(' ')}]`.padEnd(16)}` +
-    ` | пустых: ${blanks}${escaped ? '  ⚠ ВЫРВАЛОСЬ ИЗ АТРИБУТА' : ''}`,
+    ` | шкал: ${String(painted.length).padEnd(2)} ${`[${painted.join(' ')}]`.padEnd(14)}` +
+    ` | эффект: ${fx.padEnd(7)}${escaped ? ' ⚠ ВЫРВАЛОСЬ ИЗ АТРИБУТА' : ''}`,
   );
 }

@@ -19,14 +19,21 @@
     { "key": "V5", "type": "level", "optional": true, "desc": "fifth gauge value" },
     { "key": "C", "desc": "clothing" },
     { "key": "I", "desc": "carried items" },
-    { "key": "S", "desc": "outward appearance" }
+    { "key": "S", "desc": "outward appearance" },
+    { "key": "E", "optional": true, "desc": "name of the condition" },
+    {
+      "key": "EF",
+      "optional": true,
+      "of": ["blur", "poison", "bleed", "cold", "dark"],
+      "desc": "how the condition distorts the readout"
+    }
   ],
   "lang": {
     "en": {
-      "chrome": { "carrying": "Carrying", "wearing": "Wearing", "look": "Look" },
+      "chrome": { "carrying": "Carrying", "wearing": "Wearing", "look": "Look", "peek": "tap to read" },
       "when": "{{user}}'s condition has visibly moved: a wound, exhaustion, hunger, cold, an item taken or lost, a change of clothes",
       "dont": "every turn. This is a summary, not a signature. Nothing moved — do not emit it",
-      "legend": "N name · A age · H height\nB1–B5 gauge labels, V1–V5 their values as a whole number from 0 to 10\n  B1 is always health, or whatever this world calls it.\n  Take the rest from the setting: no mana where there is no magic, no ammo where there are no guns.\n  Once you pick a set of gauges, keep it. Do not reorder them, do not add new ones without reason, do not drop one you already showed.\n  Leave unused gauges out of the marker entirely.\nC what {{user}} is wearing · I what {{user}} carries, comma separated, any number of items\nS how {{user}} looks from the outside: wounds, dirt, shaking, a voice gone hoarse.\n  Only what is visible and undeniable. Never assign {{user}} feelings, thoughts or mood — the player chooses those.\nLANGUAGE: write every value in the language the roleplay is being played in.",
+      "legend": "N name · A age · H height\nB1–B5 gauge labels, V1–V5 their values as a whole number from 0 to 10\n  B1 is always health, or whatever this world calls it.\n  Take the rest from the setting: no mana where there is no magic, no ammo where there are no guns.\n  Once you pick a set of gauges, keep it. Do not reorder them, do not add new ones without reason, do not drop one you already showed.\n  Leave unused gauges out of the marker entirely.\nC what {{user}} is wearing · I what {{user}} carries, comma separated, any number of items\nS how {{user}} looks from the outside: wounds, dirt, shaking, a voice gone hoarse.\n  Only what is visible and undeniable. Never assign {{user}} feelings, thoughts or mood — the player chooses those.\nE + EF — only while something clouds {{user}}'s own senses. Drop both the moment it passes.\n  E is the name of it: Concussed, Poisoned, Bleeding out, Freezing, Blinded.\n  EF is how that reads on the panel, one word from this list and nothing else:\n    blur — stunned, concussed, drunk, dazed\n    poison — poison, venom, fever, infection\n    bleed — blood loss, a wound going bad\n    cold — freezing, hypothermia\n    dark — blinded, smoke, pitch black\n  Do not use them for a wound that merely hurts. Only when {{user}} cannot read their own state clearly.\nLANGUAGE: write every value in the language the roleplay is being played in.",
       "example": {
         "N": "Vlad Kostsov",
         "A": "32",
@@ -43,10 +50,10 @@
       }
     },
     "ru": {
-      "chrome": { "carrying": "При себе", "wearing": "Одет", "look": "Вид" },
+      "chrome": { "carrying": "При себе", "wearing": "Одет", "look": "Вид", "peek": "нажми, чтобы прочесть" },
       "when": "состояние {{user}} заметно сдвинулось: рана, усталость, голод, холод, взятая или потерянная вещь, смена одежды",
       "dont": "каждый ход. Это сводка, а не подпись. Ничего не изменилось — не выводи",
-      "legend": "N имя · A возраст · H рост\nB1–B5 названия шкал, V1–V5 их значения целым числом от 0 до 10\n  B1 — всегда здоровье или то, чем оно зовётся в этом мире.\n  Остальные шкалы бери из сеттинга: маны нет там, где нет магии, патронов — там, где нет оружия.\n  Выбрал набор шкал — держи его. Не меняй местами, не добавляй новые без причины, не убирай уже показанные.\n  Ненужные шкалы просто не пиши.\nC во что одет {{user}} · I что при себе, через запятую, сколько угодно предметов\nS как {{user}} выглядит со стороны: раны, грязь, дрожь, севший голос.\n  Только то, что видно и неоспоримо. Не приписывай {{user}} чувства, мысли и настроение — их выбирает игрок.\nЯЗЫК: значения пиши на том языке, на котором идёт ролевая.",
+      "legend": "N имя · A возраст · H рост\nB1–B5 названия шкал, V1–V5 их значения целым числом от 0 до 10\n  B1 — всегда здоровье или то, чем оно зовётся в этом мире.\n  Остальные шкалы бери из сеттинга: маны нет там, где нет магии, патронов — там, где нет оружия.\n  Выбрал набор шкал — держи его. Не меняй местами, не добавляй новые без причины, не убирай уже показанные.\n  Ненужные шкалы просто не пиши.\nC во что одет {{user}} · I что при себе, через запятую, сколько угодно предметов\nS как {{user}} выглядит со стороны: раны, грязь, дрожь, севший голос.\n  Только то, что видно и неоспоримо. Не приписывай {{user}} чувства, мысли и настроение — их выбирает игрок.\nE + EF — только пока {{user}} плохо соображает сам. Как отпустило — убирай оба поля.\n  E — название: Оглушение, Отравление, Кровопотеря, Переохлаждение, Ослеплён.\n  EF — как это ложится на панель, одно слово строго из списка:\n    blur — оглушение, контузия, опьянение, дурнота\n    poison — яд, отрава, жар, заражение\n    bleed — кровопотеря, загноившаяся рана\n    cold — холод, переохлаждение\n    dark — ослепление, дым, полная темнота\n  Не ставь их из-за того, что рана просто болит. Только когда {{user}} не может ясно оценить своё состояние.\nЯЗЫК: значения пиши на том языке, на котором идёт ролевая.",
       "example": {
         "N": "Влад Косцов",
         "A": "32",
@@ -88,7 +95,9 @@
       "V2": "1",
       "C": "лётный комбинезон, магнитные боты",
       "I": "резак, аварийный маяк",
-      "S": "ожог на скуле, кашляет"
+      "S": "ожог на скуле, кашляет",
+      "E": "Кислородное голодание",
+      "EF": "blur"
     }
   ]
 }

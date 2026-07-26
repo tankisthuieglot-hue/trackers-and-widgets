@@ -1,7 +1,7 @@
 // Catches the failures that actually ship in packs like this: a prompt that
 // advertises a field the regex never captures, a stylesheet that leaks into the
 // chat, an example that cannot survive its own grammar.
-import { ATTRIBUTE_SAFE, languages, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
+import { attributeSafe, languages, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
 
 const SEP = '\u0000';
 const problems = [];
@@ -41,6 +41,13 @@ for (const t of loadTrackers()) {
     if (!/^[A-Z][A-Z0-9]*$/.test(f.key ?? '')) fail(at, `ключ «${f.key}» должен быть вида T, D, I1`);
     if (keys.has(f.key)) fail(at, `ключ ${f.key} объявлен дважды`);
     keys.add(f.key);
+
+    // Список `of` попадает прямо в регулярку и в класс — только простые слова.
+    for (const word of f.of ?? []) {
+      if (!/^[a-z][a-z0-9-]*$/.test(word)) {
+        fail(at, `в списке ${f.key} значение «${word}» — допустимы только строчные слова`);
+      }
+    }
   }
 
   if (!t.lang || !Object.keys(t.lang).length) {
@@ -113,8 +120,8 @@ function checkPlaceholders(t, at) {
   // declared numeric — capped to digits by the grammar — are allowed there.
   for (const m of t.html.matchAll(/=\s*"[^"]*?\$(\d+)/g)) {
     const field = t.fields[Number(m[1]) - 1];
-    if (field && !ATTRIBUTE_SAFE.has(field.type)) {
-      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num" или "level"`);
+    if (field && !attributeSafe(field)) {
+      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num", "level" или со списком "of"`);
     }
   }
 }
@@ -171,6 +178,9 @@ function checkExample(t, example, at) {
     }
     if (/[\r\n]/.test(String(value))) {
       fail(at, `example.${f.key} содержит перенос строки — маркер должен быть однострочным`);
+    }
+    if (f.of && !f.of.includes(String(value))) {
+      fail(at, `example.${f.key} = «${value}», а список допускает только ${f.of.join(', ')}`);
     }
   }
   if (problems.some((p) => p.startsWith(at + ':'))) return;

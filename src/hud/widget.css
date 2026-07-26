@@ -103,6 +103,162 @@
   color: var(--dim);
 }
 
+/* Панель показывает состояние персонажа — значит состояние вправе мешать её
+   читать. Пока {{user}} оглушён или отравлен, показания плывут; чтобы разобрать
+   их, надо нажать. Вид искажения приезжает словом из закрытого списка, поэтому
+   в класс не попадёт ничего неожиданного. */
+.vld-hud .cond {
+  --fx: 131, 133, 141;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 11px;
+  padding: 5px 9px;
+  border-radius: 3px;
+  background: rgba(var(--fx), .13);
+  box-shadow: inset 0 0 0 1px rgba(var(--fx), .32);
+}
+
+/* Название состояния показывается всегда — даже если модель выдумала свой вид
+   искажения и он не совпал со списком. Искажения тогда не будет, но читатель
+   всё равно узнает, что с персонажем. */
+.vld-hud .cond:has(.ct:empty) {
+  display: none;
+}
+
+/* Подсказка про нажатие нужна только там, где есть что прояснять. Перечислены
+   поимённо: при пустом поле класс становится буквально «fx-», и любая проверка
+   по подстроке приняла бы это за эффект. */
+.vld-hud .peek {
+  display: none;
+  flex: 0 0 auto;
+  font: 400 9px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .11em;
+  color: var(--dim);
+}
+
+.vld-hud .fx-blur .peek,
+.vld-hud .fx-poison .peek,
+.vld-hud .fx-bleed .peek,
+.vld-hud .fx-cold .peek,
+.vld-hud .fx-dark .peek {
+  display: block;
+}
+
+.vld-hud .dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--fx));
+  box-shadow: 0 0 8px rgba(var(--fx), .8);
+  animation: vld-throb 1.5s ease-in-out infinite;
+}
+
+@keyframes vld-throb {
+  50% { opacity: .25; }
+}
+
+.vld-hud .ct {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 500 11.5px/1 var(--mono);
+  color: rgb(var(--fx));
+}
+
+.vld-hud .panel.peeking .peek {
+  opacity: .3;
+}
+
+/* Мутнеют только показания. Название состояния остаётся читаемым — иначе
+   непонятно, почему ничего не разобрать. */
+.vld-hud .fx-blur .bars,
+.vld-hud .fx-blur .pack,
+.vld-hud .fx-blur .entry .v,
+.vld-hud .fx-poison .bars,
+.vld-hud .fx-poison .pack,
+.vld-hud .fx-poison .entry .v,
+.vld-hud .fx-bleed .bars,
+.vld-hud .fx-bleed .pack,
+.vld-hud .fx-bleed .entry .v,
+.vld-hud .fx-cold .bars,
+.vld-hud .fx-cold .pack,
+.vld-hud .fx-cold .entry .v,
+.vld-hud .fx-dark .bars,
+.vld-hud .fx-dark .pack,
+.vld-hud .fx-dark .entry .v {
+  transition: filter .35s ease, transform .35s ease;
+}
+
+.vld-hud .fx-blur   .cond { --fx: 150, 160, 190; }
+.vld-hud .fx-poison .cond { --fx: 126, 176, 96; }
+.vld-hud .fx-bleed  .cond { --fx: var(--crit); }
+.vld-hud .fx-cold   .cond { --fx: 118, 168, 208; }
+.vld-hud .fx-dark   .cond { --fx: 128, 128, 136; }
+
+.vld-hud .fx-blur .bars,
+.vld-hud .fx-blur .pack,
+.vld-hud .fx-blur .entry .v {
+  filter: blur(3.4px);
+}
+
+.vld-hud .fx-poison .bars,
+.vld-hud .fx-poison .pack,
+.vld-hud .fx-poison .entry .v {
+  filter: blur(1.7px) hue-rotate(52deg) saturate(1.7);
+  animation: vld-sway 3.4s ease-in-out infinite;
+}
+
+.vld-hud .fx-bleed .bars,
+.vld-hud .fx-bleed .pack,
+.vld-hud .fx-bleed .entry .v {
+  filter: blur(1.4px) sepia(.55) hue-rotate(-28deg) saturate(2.4) brightness(.82);
+  animation: vld-fade 2.1s ease-in-out infinite;
+}
+
+.vld-hud .fx-cold .bars,
+.vld-hud .fx-cold .pack,
+.vld-hud .fx-cold .entry .v {
+  filter: blur(1.5px) hue-rotate(168deg) saturate(.55);
+  animation: vld-shiver .16s steps(2, end) infinite;
+}
+
+.vld-hud .fx-dark .bars,
+.vld-hud .fx-dark .pack,
+.vld-hud .fx-dark .entry .v {
+  filter: blur(2.2px) brightness(.34);
+}
+
+@keyframes vld-sway   { 50% { transform: skewX(1.1deg) translateX(2px); } }
+@keyframes vld-fade   { 50% { opacity: .55; } }
+@keyframes vld-shiver { 50% { transform: translate(.7px, -.7px); } }
+
+/* Нажали — показания проясняются. Без расширения работает удержание. */
+.vld-hud .panel.peeking .bars,
+.vld-hud .panel.peeking .pack,
+.vld-hud .panel.peeking .entry .v,
+.vld-hud .panel:active .bars,
+.vld-hud .panel:active .pack,
+.vld-hud .panel:active .entry .v {
+  filter: none;
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+.vld-hud .panel.fx-blur,
+.vld-hud .panel.fx-poison,
+.vld-hud .panel.fx-bleed,
+.vld-hud .panel.fx-cold,
+.vld-hud .panel.fx-dark {
+  cursor: pointer;
+}
+
 .vld-hud .bars {
   display: grid;
   gap: 4px;
@@ -357,6 +513,19 @@
 
   .vld-hud .panel::after {
     display: none;
+  }
+
+  .vld-hud .dot,
+  .vld-hud .fx-poison .bars,
+  .vld-hud .fx-poison .pack,
+  .vld-hud .fx-poison .entry .v,
+  .vld-hud .fx-bleed .bars,
+  .vld-hud .fx-bleed .pack,
+  .vld-hud .fx-bleed .entry .v,
+  .vld-hud .fx-cold .bars,
+  .vld-hud .fx-cold .pack,
+  .vld-hud .fx-cold .entry .v {
+    animation: none;
   }
 
   .vld-hud .chev,
