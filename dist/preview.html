@@ -77,6 +77,10 @@
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
     }
 
     .vld-hud * {
@@ -86,20 +90,47 @@
     .vld-hud .panel {
       position: relative;
       overflow: hidden;
-      padding: 14px 15px 13px;
-      border: 1px solid var(--hair);
-      border-radius: 5px;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
       color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .014) 0 1px, transparent 1px 3px),
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
         var(--panel);
-      box-shadow: 0 16px 38px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
       animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
     }
 
     @keyframes vld-rise {
       from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
     }
 
     .vld-hud .ident {
@@ -133,8 +164,12 @@
       position: relative;
       overflow: hidden;
       height: 26px;
-      border-radius: 3px;
-      background: var(--track);
+      border-radius: 2px;
+      /* Пустая часть дорожки заштрихована — незаполненное читается как опасное,
+         а не как «здесь ничего нет». */
+      background:
+        repeating-linear-gradient(45deg, rgba(230, 227, 220, .04) 0 2px, transparent 2px 6px),
+        var(--track);
     }
 
     .vld-hud .fill {
@@ -211,6 +246,19 @@
 
     @keyframes vld-adrenaline {
       to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
     }
 
     @keyframes vld-unease {
@@ -336,11 +384,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       .vld-hud .panel,
+      .vld-hud .panel::after,
+      .vld-hud .bars,
       .vld-hud .fill,
       .vld-hud .lv-1,
       .vld-hud .lv-2,
       .vld-hud .name {
         animation: none;
+      }
+
+      .vld-hud .panel::after {
+        display: none;
       }
 
       .vld-hud .chev,
@@ -450,6 +504,10 @@
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
     }
 
     .vld-hud * {
@@ -459,20 +517,47 @@
     .vld-hud .panel {
       position: relative;
       overflow: hidden;
-      padding: 14px 15px 13px;
-      border: 1px solid var(--hair);
-      border-radius: 5px;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
       color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .014) 0 1px, transparent 1px 3px),
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
         var(--panel);
-      box-shadow: 0 16px 38px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
       animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
     }
 
     @keyframes vld-rise {
       from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
     }
 
     .vld-hud .ident {
@@ -506,8 +591,12 @@
       position: relative;
       overflow: hidden;
       height: 26px;
-      border-radius: 3px;
-      background: var(--track);
+      border-radius: 2px;
+      /* Пустая часть дорожки заштрихована — незаполненное читается как опасное,
+         а не как «здесь ничего нет». */
+      background:
+        repeating-linear-gradient(45deg, rgba(230, 227, 220, .04) 0 2px, transparent 2px 6px),
+        var(--track);
     }
 
     .vld-hud .fill {
@@ -584,6 +673,19 @@
 
     @keyframes vld-adrenaline {
       to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
     }
 
     @keyframes vld-unease {
@@ -709,11 +811,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       .vld-hud .panel,
+      .vld-hud .panel::after,
+      .vld-hud .bars,
       .vld-hud .fill,
       .vld-hud .lv-1,
       .vld-hud .lv-2,
       .vld-hud .name {
         animation: none;
+      }
+
+      .vld-hud .panel::after {
+        display: none;
       }
 
       .vld-hud .chev,
@@ -823,6 +931,10 @@
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
     }
 
     .vld-hud * {
@@ -832,20 +944,47 @@
     .vld-hud .panel {
       position: relative;
       overflow: hidden;
-      padding: 14px 15px 13px;
-      border: 1px solid var(--hair);
-      border-radius: 5px;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
       color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .014) 0 1px, transparent 1px 3px),
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
         var(--panel);
-      box-shadow: 0 16px 38px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
       animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
     }
 
     @keyframes vld-rise {
       from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
     }
 
     .vld-hud .ident {
@@ -879,8 +1018,12 @@
       position: relative;
       overflow: hidden;
       height: 26px;
-      border-radius: 3px;
-      background: var(--track);
+      border-radius: 2px;
+      /* Пустая часть дорожки заштрихована — незаполненное читается как опасное,
+         а не как «здесь ничего нет». */
+      background:
+        repeating-linear-gradient(45deg, rgba(230, 227, 220, .04) 0 2px, transparent 2px 6px),
+        var(--track);
     }
 
     .vld-hud .fill {
@@ -957,6 +1100,19 @@
 
     @keyframes vld-adrenaline {
       to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
     }
 
     @keyframes vld-unease {
@@ -1082,11 +1238,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       .vld-hud .panel,
+      .vld-hud .panel::after,
+      .vld-hud .bars,
       .vld-hud .fill,
       .vld-hud .lv-1,
       .vld-hud .lv-2,
       .vld-hud .name {
         animation: none;
+      }
+
+      .vld-hud .panel::after {
+        display: none;
       }
 
       .vld-hud .chev,
@@ -1196,6 +1358,10 @@
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
     }
 
     .vld-hud * {
@@ -1205,20 +1371,47 @@
     .vld-hud .panel {
       position: relative;
       overflow: hidden;
-      padding: 14px 15px 13px;
-      border: 1px solid var(--hair);
-      border-radius: 5px;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
       color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .014) 0 1px, transparent 1px 3px),
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
         var(--panel);
-      box-shadow: 0 16px 38px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
       animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
     }
 
     @keyframes vld-rise {
       from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
     }
 
     .vld-hud .ident {
@@ -1252,8 +1445,12 @@
       position: relative;
       overflow: hidden;
       height: 26px;
-      border-radius: 3px;
-      background: var(--track);
+      border-radius: 2px;
+      /* Пустая часть дорожки заштрихована — незаполненное читается как опасное,
+         а не как «здесь ничего нет». */
+      background:
+        repeating-linear-gradient(45deg, rgba(230, 227, 220, .04) 0 2px, transparent 2px 6px),
+        var(--track);
     }
 
     .vld-hud .fill {
@@ -1330,6 +1527,19 @@
 
     @keyframes vld-adrenaline {
       to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
     }
 
     @keyframes vld-unease {
@@ -1455,11 +1665,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       .vld-hud .panel,
+      .vld-hud .panel::after,
+      .vld-hud .bars,
       .vld-hud .fill,
       .vld-hud .lv-1,
       .vld-hud .lv-2,
       .vld-hud .name {
         animation: none;
+      }
+
+      .vld-hud .panel::after {
+        display: none;
       }
 
       .vld-hud .chev,
