@@ -1,6 +1,9 @@
-/* Every selector starts with .vld-demo — inner elements are reached as
+/* Every selector contains .vld-demo — inner elements are reached as
    descendants, never by their own prefixed class. That is what keeps the
-   stylesheet from touching anything outside this widget. */
+   stylesheet from touching anything outside this widget.
+
+   Colours are fixed. The widget is an object lying on the page, not chrome
+   that follows a theme, so it carries its own opaque surface. */
 
 .vld-demo {
   --bg: #ffffff;
@@ -108,18 +111,4 @@
   margin-top: 13px;
   color: var(--muted);
   font-size: 12px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .vld-demo {
-    --bg: #16181d;
-    --ink: #eceef2;
-    --muted: #9aa1ad;
-    --line: rgba(255, 255, 255, 0.12);
-    --accent: #7aa2ff;
-  }
-
-  .vld-demo .card {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-  }
 }
