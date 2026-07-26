@@ -1,0 +1,70 @@
+{
+  "tag": "VLD_BOND",
+  "title": "🎯 VLD BOND",
+  "order": 12,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "N1", "desc": "first person" },
+    { "key": "W1", "type": "level", "desc": "warmth" },
+    { "key": "T1", "type": "level", "desc": "trust" },
+    { "key": "D1", "desc": "the tell" },
+    { "key": "N2", "optional": true, "desc": "second person" },
+    { "key": "W2", "type": "level", "optional": true, "desc": "warmth" },
+    { "key": "T2", "type": "level", "optional": true, "desc": "trust" },
+    { "key": "D2", "optional": true, "desc": "the tell" },
+    { "key": "N3", "optional": true, "desc": "third person" },
+    { "key": "W3", "type": "level", "optional": true, "desc": "warmth" },
+    { "key": "T3", "type": "level", "optional": true, "desc": "trust" },
+    { "key": "D3", "optional": true, "desc": "the tell" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "warmth": "cold → warm", "trust": "trust", "title": "read of the room" },
+      "when": "more than one person shares the scene and how they read {{user}} has visibly shifted",
+      "dont": "a scene {{user}} spends alone, or a crowd with nobody in particular in it",
+      "legend": "N1–N3 up to three people in the scene who have a read on {{user}}.\nW1–W3 warmth toward {{user}}: 0 hostile, 5 neutral, 10 devoted.\nT1–T3 trust in {{user}}: 0 none, 10 complete. The two move separately —\n  an old friend can be warm and still not trust {{user}} with this.\nD1–D3 the tell: one thing in their behaviour that shows it. Observable only —\n  a glance held too long, a seat taken further away, a hand near a weapon.\n  Never their private thoughts, never {{user}}'s feelings.\nOne person keeps one slot for as long as the scene runs. Whoever leaves, drop.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "N1": "Marisha",
+        "W1": "8",
+        "T1": "3",
+        "D1": "laughs at everything, answers nothing",
+        "N2": "the quartermaster",
+        "W2": "2",
+        "T2": "6",
+        "D2": "hands over the keys without looking up"
+      }
+    },
+    "ru": {
+      "chrome": { "warmth": "холод → тепло", "trust": "доверие", "title": "расклад по людям" },
+      "when": "в сцене больше одного человека и их отношение к {{user}} заметно сдвинулось",
+      "dont": "сцена, которую {{user}} проводит один, или толпа без конкретных лиц",
+      "legend": "N1–N3 до трёх человек в сцене, у которых есть своё отношение к {{user}}.\nW1–W3 тепло к {{user}}: 0 враждебность, 5 ровно, 10 преданность.\nT1–T3 доверие: 0 никакого, 10 полное. Одно от другого не зависит —\n  старый друг может быть тёплым и всё равно не доверить {{user}} это дело.\nD1–D3 по чему видно: одна деталь поведения. Только наблюдаемое — задержанный\n  взгляд, стул подальше, рука у оружия. Не мысли и не чувства {{user}}.\nОдин человек — один слот, пока идёт сцена. Ушёл — убери.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "N1": "Мариша",
+        "W1": "8",
+        "T1": "3",
+        "D1": "смеётся на всё, не отвечает ни на что",
+        "N2": "каптёр",
+        "W2": "2",
+        "T2": "6",
+        "D2": "отдаёт ключи не поднимая глаз"
+      }
+    }
+  },
+  "preview": [
+    {
+      "N1": "Мариша",
+      "W1": "8",
+      "T1": "3",
+      "D1": "смеётся на всё, не отвечает ни на что",
+      "N2": "каптёр",
+      "W2": "2",
+      "T2": "6",
+      "D2": "отдаёт ключи не поднимая глаз",
+      "N3": "Гриша",
+      "W3": "1",
+      "T3": "0",
+      "D3": "сел так, чтобы между вами был стол"
+    }
+  ]
+}

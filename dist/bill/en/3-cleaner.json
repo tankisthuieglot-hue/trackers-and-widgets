@@ -1,0 +1,17 @@
+{
+ "id": "906696de-11a5-5327-ae79-1185a01c354f",
+ "scriptName": "🧾 VLD BILL · clean",
+ "findRegex": "/\\[\\[VLD_BILL(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

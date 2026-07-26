@@ -1,0 +1,17 @@
+{
+ "id": "1fc3f1a3-55cc-5c7c-944d-8c09d13ae5d4",
+ "scriptName": "🎯 VLD BOND · clean",
+ "findRegex": "/\\[\\[VLD_BOND(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

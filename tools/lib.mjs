@@ -23,8 +23,19 @@ export const NS = 'VLD';
  * `[^\]]` never crosses `]`, which keeps the scan inside its own marker.
  */
 const CAPTURE = {
-  // Anything printable. Safe in a text node, never in an attribute.
-  text: '([^|\\]]*)',
+  // Anything printable except `<`. Safe in a text node, never in an attribute.
+  //
+  // The replacement is plain string substitution — SillyTavern has nowhere to
+  // hang an escaping function — so whatever a text field captures becomes
+  // markup verbatim. A value of `<script>alert(1)</script>` therefore used to
+  // arrive at the reader as a real script tag, and a value of `рост < 180` as
+  // a broken layout. Excluding one character makes both impossible for every
+  // tracker at once, instead of asking eleven stylesheets to cope.
+  //
+  // `>` stays allowed: on its own it is ordinary text, and `a > b` is the kind
+  // of thing people write. Truncating at `<` loses the tail of a value, which
+  // is a poor outcome — but a far better one than executing it.
+  text: '([^|\\]<]*)',
   // Digits only, so the value can reach an attribute without ending it.
   num: '([0-9]{0,3})',
   // A 0–10 step, and forgiving of a model that decided to count to 100:

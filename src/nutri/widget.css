@@ -1,0 +1,169 @@
+/* Шутка держится на том, что вёрстка абсолютно серьёзная. Это настоящая
+   этикетка: Helvetica, чёрное на белом, линейки в 1, 5 и 8 пикселей, мелкий
+   шрифт внизу про суточную норму. Ни одного цвета, ни одной скруглённой
+   рамки, никакой анимации сверх появления.
+
+   Стоит добавить хоть что-то «весёлое» — розовую рамку, дрожащий текст — и
+   станет обычной картинкой с подписью. Смешное здесь целиком в контрасте
+   между формой и содержанием, поэтому форму трогать нельзя. */
+
+.vld-nutri {
+  /* Гельветика и её клоны по порядку доступности. Ни один системный шрифт с
+     засечками сюда не годится: этикетка узнаётся именно гротеском. */
+  --face: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+
+  width: min(100%, 300px);
+  margin: 14px auto;
+  color: #000;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .3));
+}
+
+.vld-nutri * {
+  box-sizing: border-box;
+}
+
+.vld-nutri .label {
+  padding: 7px 9px 8px;
+  border: 1.5px solid #000;
+  background: #fff;
+  font-family: var(--face);
+  animation: vld-nutri-in .26s ease both;
+}
+
+@keyframes vld-nutri-in {
+  from { opacity: 0; }
+}
+
+.vld-nutri .who {
+  font: 400 10px/1.2 var(--face);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.vld-nutri .title {
+  margin-top: 1px;
+  /* Сжатое начертание — на настоящей этикетке заголовок именно такой. */
+  font: 800 27px/.95 var(--face);
+  letter-spacing: -.035em;
+  transform: scaleX(.94);
+  transform-origin: left;
+}
+
+.vld-nutri .serving {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 3px;
+  font: 400 11px/1.25 var(--face);
+}
+
+.vld-nutri .serving b {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Три толщины линеек — единственная иерархия на всей этикетке. */
+.vld-nutri .rule {
+  background: #000;
+}
+
+.vld-nutri .thick {
+  height: 8px;
+  margin: 3px 0;
+}
+
+.vld-nutri .mid {
+  height: 4px;
+  margin: 2px 0;
+}
+
+.vld-nutri .per {
+  font: 700 9.5px/1.2 var(--face);
+}
+
+.vld-nutri .cal {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: -1px;
+}
+
+.vld-nutri .cal span {
+  font: 800 19px/1.1 var(--face);
+  letter-spacing: -.025em;
+}
+
+.vld-nutri .cal b {
+  font: 800 26px/1 var(--face);
+  letter-spacing: -.03em;
+}
+
+.vld-nutri .dv {
+  padding-bottom: 2px;
+  border-bottom: 1px solid #000;
+  text-align: right;
+  font: 700 9.5px/1.2 var(--face);
+}
+
+.vld-nutri .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid #000;
+  font: 400 11.5px/1.25 var(--face);
+}
+
+.vld-nutri .nm {
+  font-weight: 700;
+}
+
+.vld-nutri .pc {
+  flex: 0 0 auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Знак процента дорисован стилями, а не приклеен к значению: иначе строка
+   без числа показала бы одинокое «%». */
+.vld-nutri .pc::after {
+  content: "%";
+}
+
+.vld-nutri .pc:empty {
+  display: none;
+}
+
+.vld-nutri .warn {
+  margin-top: 4px;
+  font: 700 9.5px/1.3 var(--face);
+}
+
+/* Тот самый шрифт, который никто не читает. Он и должен быть нечитаемым —
+   без него этикетка не этикетка. */
+.vld-nutri .fine {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #000;
+  font: 400 7.5px/1.25 var(--face);
+}
+
+/* Незаполненные строки состава исчезают вместе со своей линейкой. Пустой
+   процент — тоже: «%» без числа выдал бы механику наружу. */
+.vld-nutri .row:has(.nm:empty),
+.vld-nutri .serving:has(b:empty),
+.vld-nutri .cal:has(b:empty),
+.vld-nutri .warn:empty {
+  display: none;
+}
+
+.vld-nutri .label:has(.who:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-nutri .label {
+    animation: none;
+  }
+}

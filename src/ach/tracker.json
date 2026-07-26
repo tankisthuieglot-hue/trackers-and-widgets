@@ -1,0 +1,56 @@
+{
+  "tag": "VLD_ACH",
+  "title": "🏆 VLD ACHIEVEMENT",
+  "order": 18,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "T", "desc": "achievement name" },
+    { "key": "D", "desc": "what earned it" },
+    { "key": "P", "type": "num", "desc": "percent of players who have it" },
+    {
+      "key": "G",
+      "of": ["skull", "heart", "fire", "coin", "mask", "boot", "book", "knife", "bottle", "clown"],
+      "desc": "icon"
+    }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "unlocked": "achievement unlocked", "have": "of players have this" },
+      "when": "{{user}} does something stupid, memorable or unrepeatable — and it deserves mocking, not praise",
+      "dont": "anything {{user}} did competently or on purpose. Competence is not an achievement",
+      "legend": "T the achievement name. Dry, official, ridiculous. The joke is that a\n  system somewhere logged this. \"Second Opinion\", \"Structural Damage\".\nD what earned it, one line, past tense and deadpan. Never explain the joke.\nP how many players out of a hundred have this, 0–100. Rare is funnier: 0.4\n  is not a number you can write, so use 1 for the truly unhinged.\nG icon, one word from this list and nothing else:\n  skull · heart · fire · coin · mask · boot · book · knife · bottle · clown\nFire at most once a scene. An achievement every message is not an\n  achievement, it is a status bar.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "T": "Second Opinion",
+        "D": "asked the same guard twice and got a different answer",
+        "P": "12",
+        "G": "mask"
+      }
+    },
+    "ru": {
+      "chrome": { "unlocked": "достижение получено", "have": "игроков получили" },
+      "when": "{{user}} сделал что-то глупое, памятное или неповторимое — и это стоит подколоть, а не похвалить",
+      "dont": "то, что {{user}} сделал умело и намеренно. Компетентность — не достижение",
+      "legend": "T название достижения. Сухое, официальное, нелепое. Шутка в том, что\n  где-то это записала система. «Второе мнение», «Несущая стена».\nD за что дали, одна строка, прошедшим временем и без улыбки.\n  Никогда не объясняй шутку.\nP сколько игроков из ста это получили, 0–100. Чем реже, тем смешнее:\n  0,4 не напишешь, поэтому для совсем дикого ставь 1.\nG иконка, одно слово строго из списка:\n  skull · heart · fire · coin · mask · boot · book · knife · bottle · clown\nНе чаще одного раза за сцену. Достижение каждое сообщение — это уже не\n  достижение, а строка состояния.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "T": "Второе мнение",
+        "D": "спросил одного и того же охранника дважды и получил разные ответы",
+        "P": "12",
+        "G": "mask"
+      }
+    }
+  },
+  "preview": [
+    {
+      "T": "Второе мнение",
+      "D": "спросил одного и того же охранника дважды и получил разные ответы",
+      "P": "12",
+      "G": "mask"
+    },
+    {
+      "T": "Несущая стена",
+      "D": "выяснил, какая именно, изнутри",
+      "P": "1",
+      "G": "skull"
+    }
+  ]
+}

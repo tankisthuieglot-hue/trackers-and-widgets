@@ -1,0 +1,90 @@
+{
+  "tag": "VLD_LOOT",
+  "title": "💰 VLD LOOT",
+  "order": 17,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "S", "desc": "where it came from" },
+    { "key": "I1", "desc": "first item" },
+    {
+      "key": "R1",
+      "of": ["junk", "plain", "good", "rare", "prize", "legend"],
+      "desc": "how good it is"
+    },
+    { "key": "I2", "optional": true, "desc": "second item" },
+    {
+      "key": "R2",
+      "optional": true,
+      "of": ["junk", "plain", "good", "rare", "prize", "legend"],
+      "desc": "how good it is"
+    },
+    { "key": "I3", "optional": true, "desc": "third item" },
+    {
+      "key": "R3",
+      "optional": true,
+      "of": ["junk", "plain", "good", "rare", "prize", "legend"],
+      "desc": "how good it is"
+    },
+    { "key": "I4", "optional": true, "desc": "fourth item" },
+    {
+      "key": "R4",
+      "optional": true,
+      "of": ["junk", "plain", "good", "rare", "prize", "legend"],
+      "desc": "how good it is"
+    },
+    { "key": "M", "optional": true, "desc": "money found" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "from": "taken from" },
+      "when": "{{user}} takes, finds, loots or is handed something worth naming",
+      "dont": "buying bread, or picking up something {{user}} already owned",
+      "legend": "S where it came from: a body, a drawer, a debt paid, a gift.\nI1–I4 what came out of it, up to four. Name the thing, not its stats.\nR1–R4 how good each one is, one word from this list and nothing else:\n  junk (worthless, kept anyway) · plain (ordinary) · good (well made)\n  · rare (hard to come by) · prize (someone will want this back)\n  · legend (one of a kind — use it almost never)\nEvery I needs its R. Be stingy: three plain things and one good one reads\n  richer than four legends.\nM money, if any, with its unit. No money — leave M out.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "S": "the glovebox of a car nobody came back for",
+        "I1": "a folding knife with a taped handle",
+        "R1": "plain",
+        "I2": "somebody's service ID",
+        "R2": "prize",
+        "I3": "half a pack of damp cigarettes",
+        "R3": "junk",
+        "M": "1 400 roubles in fives"
+      }
+    },
+    "ru": {
+      "chrome": { "from": "откуда" },
+      "when": "{{user}} берёт, находит, обирает или получает что-то, что стоит назвать",
+      "dont": "покупка хлеба или подобранное своё же",
+      "legend": "S откуда это: труп, ящик стола, отданный долг, подарок.\nI1–I4 что оттуда вышло, до четырёх. Называй вещь, а не её характеристики.\nR1–R4 насколько она хороша, одно слово строго из списка:\n  junk (хлам, взято на всякий) · plain (обычное) · good (добротное)\n  · rare (редкое) · prize (за этим придут)\n  · legend (единственное в своём роде — почти никогда)\nУ каждого I свой R. Жадничай: три обычных вещи и одна хорошая читаются\n  богаче, чем четыре легендарных.\nM деньги, если были, с единицей. Денег нет — не пиши M.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "S": "бардачок машины, за которой не вернулись",
+        "I1": "складной нож с замотанной рукоятью",
+        "R1": "plain",
+        "I2": "чьё-то служебное удостоверение",
+        "R2": "prize",
+        "I3": "полпачки отсыревших сигарет",
+        "R3": "junk",
+        "M": "1 400 рублей пятёрками"
+      }
+    }
+  },
+  "preview": [
+    {
+      "S": "бардачок машины, за которой не вернулись",
+      "I1": "складной нож с замотанной рукоятью",
+      "R1": "plain",
+      "I2": "чьё-то служебное удостоверение",
+      "R2": "prize",
+      "I3": "полпачки отсыревших сигарет",
+      "R3": "junk",
+      "M": "1 400 рублей пятёрками"
+    },
+    {
+      "S": "то, что осталось от старшины",
+      "I1": "именной кортик",
+      "R1": "legend",
+      "I2": "аптечка, почти полная",
+      "R2": "good"
+    }
+  ]
+}

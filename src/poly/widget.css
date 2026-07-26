@@ -1,0 +1,266 @@
+/* Единственный светлый виджет в паке, и это намеренно: полиграф — прибор из
+   другого мира, чем панель снаряжения, и в ленте сообщений он должен читаться
+   как вещдок, а не как ещё одна панель.
+
+   Линия самописца нарисована четырьмя путями сразу, показывается один. Так
+   форма кривой приезжает не от модели, а из закрытого списка: подсунуть сюда
+   произвольную геометрию невозможно, а перевод вердикта берётся из подписей
+   виджета и потому на языке читателя. */
+
+.vld-poly {
+  --paper: #efece3;
+  --ink: #23211c;
+  --dim: #6f6b60;
+  --rule: rgba(35, 33, 28, .16);
+
+  --truth: 74, 124, 82;
+  --shade: 176, 132, 46;
+  --dodge: 168, 106, 42;
+  --lie: 176, 48, 48;
+
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+  --serif: "Georgia", "Times New Roman", serif;
+
+  width: min(100%, 348px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .35));
+}
+
+.vld-poly * {
+  box-sizing: border-box;
+}
+
+.vld-poly .tape {
+  --tone: var(--dodge);
+
+  position: relative;
+  padding: 13px 15px 12px;
+  background:
+    /* волокно бумаги, чтобы белое не выглядело как пустой div */
+    repeating-linear-gradient(91deg, rgba(35, 33, 28, .014) 0 1px, transparent 1px 4px),
+    var(--paper);
+  animation: vld-poly-in .3s ease both;
+}
+
+@keyframes vld-poly-in {
+  from { opacity: 0; }
+}
+
+/* Перфорация по краям: лента, а не карточка. */
+.vld-poly .tape::before,
+.vld-poly .tape::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  background: radial-gradient(circle 2px at 50% 6px, rgba(0, 0, 0, .3) 98%, transparent) 0 0 / 9px 16px repeat-y;
+  opacity: .32;
+}
+
+.vld-poly .tape::before { left: 0; }
+.vld-poly .tape::after  { right: 0; }
+
+.vld-poly .v-truth { --tone: var(--truth); }
+.vld-poly .v-shade { --tone: var(--shade); }
+.vld-poly .v-dodge { --tone: var(--dodge); }
+.vld-poly .v-lie   { --tone: var(--lie); }
+
+.vld-poly .head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 4px 7px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.vld-poly .k {
+  flex: 0 0 auto;
+  font: 400 8px/1.4 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--dim);
+}
+
+.vld-poly .who {
+  font: 600 11.5px/1 var(--mono);
+}
+
+.vld-poly .said {
+  margin: 9px 4px 0;
+  font: 400 14px/1.4 var(--serif);
+  font-style: italic;
+}
+
+.vld-poly .said::before { content: "«"; }
+.vld-poly .said::after  { content: "»"; }
+
+.vld-poly .chart {
+  position: relative;
+  margin: 10px 4px 0;
+  height: 44px;
+  /* Миллиметровка под пером. */
+  background:
+    repeating-linear-gradient(90deg, rgba(35, 33, 28, .07) 0 1px, transparent 1px 15px),
+    repeating-linear-gradient(0deg, rgba(35, 33, 28, .07) 0 1px, transparent 1px 11px),
+    rgba(255, 255, 255, .5);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.vld-poly .trace {
+  display: block;
+  width: 100%;
+  height: 44px;
+}
+
+.vld-poly .tr {
+  display: none;
+  fill: none;
+  stroke: rgb(var(--tone));
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.vld-poly .v-truth .tr-truth,
+.vld-poly .v-shade .tr-shade,
+.vld-poly .v-dodge .tr-dodge,
+.vld-poly .v-lie   .tr-lie {
+  display: block;
+  /* Перо проходит ленту слева направо: длина обводки заведомо больше любой
+     из четырёх кривых, поэтому одно правило годится для всех. */
+  stroke-dasharray: 700;
+  animation: vld-poly-draw 1.5s cubic-bezier(.4, .1, .5, 1) both;
+}
+
+@keyframes vld-poly-draw {
+  from { stroke-dashoffset: 700; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Перо едет вместе с линией и останавливается у правого края. */
+.vld-poly .needle {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 0;
+  width: 1px;
+  background: rgba(35, 33, 28, .55);
+  animation: vld-poly-pen 1.5s cubic-bezier(.4, .1, .5, 1) both;
+}
+
+.vld-poly .needle::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--tone));
+}
+
+@keyframes vld-poly-pen {
+  to { left: 100%; }
+}
+
+.vld-poly .verdict {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 11px 4px 0;
+}
+
+/* Штамп: рамка под углом, как будто приложили. */
+.vld-poly .stamp {
+  padding: 3px 9px;
+  border: 2px solid rgba(var(--tone), .75);
+  border-radius: 2px;
+  transform: rotate(-2.5deg);
+  font: 700 12px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgb(var(--tone));
+  animation: vld-poly-stamp .22s cubic-bezier(.2, 1.5, .4, 1) 1.45s both;
+}
+
+@keyframes vld-poly-stamp {
+  from { opacity: 0; transform: rotate(-2.5deg) scale(1.5); }
+}
+
+.vld-poly .stamp span {
+  display: none;
+}
+
+.vld-poly .v-truth .s-truth,
+.vld-poly .v-shade .s-shade,
+.vld-poly .v-dodge .s-dodge,
+.vld-poly .v-lie   .s-lie {
+  display: inline;
+}
+
+/* Показание не совпало со списком — штампа нет вовсе. Прибор скорее промолчит,
+   чем поставит печать наугад. */
+.vld-poly .tape:not(.v-truth):not(.v-shade):not(.v-dodge):not(.v-lie) .stamp {
+  display: none;
+}
+
+.vld-poly .conf {
+  font: 400 9px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--dim);
+}
+
+.vld-poly .conf b {
+  font: 600 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.vld-poly .tell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: baseline;
+  margin: 9px 4px 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+
+.vld-poly .tell .v {
+  font: 400 11.5px/1.35 var(--mono);
+}
+
+.vld-poly .conf:has(b:empty),
+.vld-poly .tell:has(.v:empty),
+.vld-poly .head:has(.who:empty) {
+  display: none;
+}
+
+.vld-poly .tape:has(.said:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-poly .tape,
+  .vld-poly .tr,
+  .vld-poly .stamp {
+    animation: none;
+  }
+
+  /* Перо без хода линии выглядит забытым посреди ленты. */
+  .vld-poly .needle {
+    animation: none;
+    left: 100%;
+  }
+
+  .vld-poly .v-truth .tr-truth,
+  .vld-poly .v-shade .tr-shade,
+  .vld-poly .v-dodge .tr-dodge,
+  .vld-poly .v-lie   .tr-lie {
+    stroke-dasharray: none;
+  }
+}

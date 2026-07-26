@@ -1,0 +1,227 @@
+/* Часы из настольных ролевых: угроза, которая не решается одной сценой, а
+   набирается делениями. Круг выбран не для красоты — заполненный сектор
+   виден целиком, и сразу понятно не «сколько прошло», а «сколько осталось».
+   Полоска этого не даёт: у неё нет конца в поле зрения.
+
+   Доля закрашенного зависит сразу от двух чисел, поэтому угол поворота задан
+   парами классов s-N f-M. Явно, зато браузер считает сам и модель не может
+   прислать угол, которого не бывает. */
+
+.vld-clock {
+  --ink: #e9e7e2;
+  --dim: #86847f;
+  --plate: #17181b;
+  --hair: rgba(233, 231, 226, .1);
+
+  --cool: 112, 148, 176;
+  --hot: 206, 148, 72;
+  --crit: 206, 78, 78;
+
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+
+  width: min(100%, 350px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .45));
+}
+
+.vld-clock * {
+  box-sizing: border-box;
+}
+
+.vld-clock .unit {
+  --turn: 0deg;
+  --seg: 60deg;
+  --tone: var(--cool);
+
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 3px;
+  background: var(--plate);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  animation: vld-clock-in .32s ease both;
+}
+
+@keyframes vld-clock-in {
+  from { opacity: 0; }
+}
+
+.vld-clock .dial {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(233, 231, 226, .045);
+  box-shadow: inset 0 0 0 1px rgba(233, 231, 226, .16);
+}
+
+.vld-clock .fill {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: conic-gradient(rgba(var(--tone), .82) var(--turn), transparent 0);
+  animation: vld-clock-sweep .8s cubic-bezier(.3, .8, .3, 1) both;
+}
+
+/* Сектор набирается от нуля до своего угла — видно, что часы именно
+   заполнились, а не были такими всегда. */
+@keyframes vld-clock-sweep {
+  from { background: conic-gradient(rgba(var(--tone), .82) 0deg, transparent 0); }
+}
+
+/* Спицы режут круг на деления. Шаг приезжает переменной, поэтому правило
+   одно на все три размера циферблата. */
+.vld-clock .spokes {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--plate) 0 1.6deg,
+    transparent 1.6deg var(--seg));
+}
+
+.vld-clock .hub {
+  position: absolute;
+  inset: 21px;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  background: var(--plate);
+  box-shadow: 0 0 0 1px rgba(233, 231, 226, .1);
+  font: 500 13px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.vld-clock .hub em {
+  font: 400 9px/1 var(--mono);
+  font-style: normal;
+  color: var(--dim);
+}
+
+/* Шаг деления — по числу сегментов. */
+.vld-clock .s-4 { --seg: 90deg; }
+.vld-clock .s-6 { --seg: 60deg; }
+.vld-clock .s-8 { --seg: 45deg; }
+
+/* Угол и тревожность разом. Тон повышается на двух третях и краснеет на
+   полном круге: цвет должен опережать чтение цифры. */
+.vld-clock .s-4.f-0 { --turn: 0deg; }
+.vld-clock .s-4.f-1 { --turn: 90deg; }
+.vld-clock .s-4.f-2 { --turn: 180deg; }
+.vld-clock .s-4.f-3 { --turn: 270deg; --tone: var(--hot); }
+.vld-clock .s-4.f-4 { --turn: 360deg; --tone: var(--crit); }
+
+.vld-clock .s-6.f-0 { --turn: 0deg; }
+.vld-clock .s-6.f-1 { --turn: 60deg; }
+.vld-clock .s-6.f-2 { --turn: 120deg; }
+.vld-clock .s-6.f-3 { --turn: 180deg; }
+.vld-clock .s-6.f-4 { --turn: 240deg; --tone: var(--hot); }
+.vld-clock .s-6.f-5 { --turn: 300deg; --tone: var(--hot); }
+.vld-clock .s-6.f-6 { --turn: 360deg; --tone: var(--crit); }
+
+.vld-clock .s-8.f-0 { --turn: 0deg; }
+.vld-clock .s-8.f-1 { --turn: 45deg; }
+.vld-clock .s-8.f-2 { --turn: 90deg; }
+.vld-clock .s-8.f-3 { --turn: 135deg; }
+.vld-clock .s-8.f-4 { --turn: 180deg; }
+.vld-clock .s-8.f-5 { --turn: 225deg; --tone: var(--hot); }
+.vld-clock .s-8.f-6 { --turn: 270deg; --tone: var(--hot); }
+.vld-clock .s-8.f-7 { --turn: 315deg; --tone: var(--hot); }
+.vld-clock .s-8.f-8 { --turn: 360deg; --tone: var(--crit); }
+
+/* Круг замкнулся — циферблат дышит красным, и это единственное место в
+   виджете, где движение не декоративное. */
+.vld-clock .s-4.f-4 .dial,
+.vld-clock .s-6.f-6 .dial,
+.vld-clock .s-8.f-8 .dial {
+  animation: vld-clock-alarm 1.4s ease-in-out infinite;
+}
+
+@keyframes vld-clock-alarm {
+  50% { box-shadow: inset 0 0 0 1px rgba(206, 78, 78, .9), 0 0 22px rgba(206, 78, 78, .45); }
+}
+
+.vld-clock .text {
+  min-width: 0;
+}
+
+.vld-clock .threat {
+  font: 600 13.5px/1.3 var(--sans);
+}
+
+.vld-clock .then {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 7px;
+  align-items: baseline;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hair);
+}
+
+.vld-clock .k {
+  font: 400 8.5px/1.5 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  color: var(--dim);
+}
+
+.vld-clock .v {
+  font: 400 12px/1.35 var(--sans);
+  color: rgb(var(--tone));
+}
+
+.vld-clock .last {
+  margin-top: 7px;
+  padding-left: 9px;
+  border-left: 2px solid rgba(233, 231, 226, .14);
+  font: 400 11px/1.35 var(--mono);
+  color: var(--dim);
+}
+
+/* Надпись про вышедшее время появляется ровно на полном круге. */
+.vld-clock .siren {
+  display: none;
+  margin-top: 8px;
+  font: 600 9px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  color: rgb(var(--crit));
+}
+
+.vld-clock .s-4.f-4 .siren,
+.vld-clock .s-6.f-6 .siren,
+.vld-clock .s-8.f-8 .siren {
+  display: block;
+  animation: vld-clock-blink 1.4s steps(1, end) infinite;
+}
+
+@keyframes vld-clock-blink {
+  50% { opacity: .25; }
+}
+
+.vld-clock .last:empty,
+.vld-clock .then:has(.v:empty) {
+  display: none;
+}
+
+/* Без угрозы и без счёта показывать нечего. */
+.vld-clock .unit:has(.threat:empty),
+.vld-clock .unit:has(.hub b:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-clock .unit,
+  .vld-clock .fill,
+  .vld-clock .dial,
+  .vld-clock .siren {
+    animation: none;
+  }
+}

@@ -1,0 +1,18 @@
+<vld:bond>
+FIRE: more than one person shares the scene and how they read {{user}} has visibly shifted
+SKIP: a scene {{user}} spends alone, or a crowd with nobody in particular in it
+
+[[VLD_BOND|N1=|W1=|T1=|D1=|N2=|W2=|T2=|D2=|N3=|W3=|T3=|D3=]]
+
+N1–N3 up to three people in the scene who have a read on {{user}}.
+W1–W3 warmth toward {{user}}: 0 hostile, 5 neutral, 10 devoted.
+T1–T3 trust in {{user}}: 0 none, 10 complete. The two move separately —
+  an old friend can be warm and still not trust {{user}} with this.
+D1–D3 the tell: one thing in their behaviour that shows it. Observable only —
+  a glance held too long, a seat taken further away, a hand near a weapon.
+  Never their private thoughts, never {{user}}'s feelings.
+One person keeps one slot for as long as the scene runs. Whoever leaves, drop.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_BOND|N1=Marisha|W1=8|T1=3|D1=laughs at everything, answers nothing|N2=the quartermaster|W2=2|T2=6|D2=hands over the keys without looking up]]
+</vld:bond>

@@ -1,0 +1,19 @@
+<vld:clock>
+FIRE: something is closing in on {{user}} across several scenes: a search, a deadline, a rumour spreading
+SKIP: anything that resolves inside one scene — that is a roll, not a clock
+
+[[VLD_CLOCK|T=|F=|S=|W=|L=]]
+
+T what is closing in, named from its own side: "the search reaches this
+  district", not "{{user}} gets caught".
+S how many segments it takes, one of 4, 6 or 8. 4 is fast and near,
+  8 is slow and large. Pick once and never change it.
+F how many are filled now, 0 to S.
+  Do not read F off the last message — the marker is gone from your context by
+  then. Count it from the story: how far along is this, really.
+W what happens the moment it fills. Concrete and bad, one line.
+L what just moved it this scene. Nothing moved it? Leave L out.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_CLOCK|T=the search works its way down the block|F=4|S=6|W=they knock, and it is not a question any more|L=the neighbour gave up the floor number]]
+</vld:clock>

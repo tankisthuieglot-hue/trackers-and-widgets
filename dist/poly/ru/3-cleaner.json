@@ -1,0 +1,17 @@
+{
+ "id": "981cd8e8-af69-547d-a595-0e3b57385228",
+ "scriptName": "📉 VLD POLYGRAPH · clean",
+ "findRegex": "/\\[\\[VLD_POLY(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

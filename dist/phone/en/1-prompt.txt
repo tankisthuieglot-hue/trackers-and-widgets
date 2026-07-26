@@ -1,0 +1,17 @@
+<vld:phone>
+FIRE: a message, text or DM reaches {{user}}, or {{user}} sends one
+SKIP: a call, or people talking in the same room
+
+[[VLD_PHONE|F=|M1=|S1=|M2=|S2=|M3=|S3=|M4=|S4=|TY=]]
+
+F whose thread this is — a name, a saved contact, an unknown number.
+M1–M4 the messages, oldest first. Up to four. Write them the way people
+  actually type: no capital, no full stop, a typo left in. One thought each —
+  three short messages beat one paragraph.
+S1–S4 who sent that message, one word: them or me. Every M needs its S.
+TY put TY=yes only if they are still typing and {{user}} is left waiting.
+  Leave it out otherwise.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_PHONE|F=Marisha|M1=you up|S1=them|M2=no|S2=me|M3=good. don't come to the flat tonight|S3=them|TY=yes]]
+</vld:phone>

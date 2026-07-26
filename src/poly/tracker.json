@@ -1,0 +1,77 @@
+{
+  "tag": "VLD_POLY",
+  "title": "📉 VLD POLYGRAPH",
+  "order": 19,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "W", "desc": "who said it" },
+    { "key": "Q", "desc": "the line itself" },
+    {
+      "key": "V",
+      "of": ["truth", "shade", "dodge", "lie"],
+      "desc": "verdict"
+    },
+    { "key": "C", "type": "num", "desc": "confidence percent" },
+    { "key": "N", "desc": "the tell" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": {
+        "subject": "subject",
+        "tell": "indicator",
+        "conf": "confidence",
+        "truth": "truthful",
+        "shade": "partial",
+        "dodge": "evasive",
+        "lie": "deceptive"
+      },
+      "when": "somebody other than {{user}} says one line whose honesty is actually in question",
+      "dont": "small talk, or anything {{user}} says. The machine never reads {{user}}",
+      "legend": "W who said it. Never {{user}} — the player is not on the machine.\nQ the line itself, quoted as spoken. One sentence. Trim it if it ran long.\nV the reading, one word from this list and nothing else:\n  truth (they believe it) · shade (true, with the worst part left out)\n  · dodge (answered a different question) · lie (they know better)\nC how sure the reading is, 0–100. Certainty is rare — 60 to 85 is honest,\n  and a machine that is always 99 is a machine nobody watches.\nN what gave it away: a pause, a swallow, a hand, an answer arriving too fast.\n  Physical and visible. Never their thoughts.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "W": "the night pharmacist",
+        "Q": "Nobody came in tonight.",
+        "V": "shade",
+        "C": "74",
+        "N": "answered before the question was finished"
+      }
+    },
+    "ru": {
+      "chrome": {
+        "subject": "испытуемый",
+        "tell": "показатель",
+        "conf": "уверенность",
+        "truth": "правда",
+        "shade": "полуправда",
+        "dodge": "уход",
+        "lie": "ложь"
+      },
+      "when": "кто-то кроме {{user}} говорит одну фразу, честность которой реально под вопросом",
+      "dont": "болтовня ни о чём и всё, что говорит сам {{user}}. Машина его не читает",
+      "legend": "W кто сказал. Никогда не {{user}} — игрока на прибор не сажают.\nQ сама фраза, как прозвучала. Одно предложение. Длинную — обрежь.\nV показание, одно слово строго из списка:\n  truth (сам в это верит) · shade (правда, но без худшей части)\n  · dodge (ответил не на тот вопрос) · lie (знает, как на самом деле)\nC насколько прибор уверен, 0–100. Уверенность — редкость: 60–85 честно,\n  а прибор, у которого всегда 99, никому не интересен.\nN что выдало: пауза, глоток, руки, слишком быстрый ответ.\n  Физическое и видимое. Не мысли.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "W": "ночной аптекарь",
+        "Q": "Сегодня никто не заходил.",
+        "V": "shade",
+        "C": "74",
+        "N": "ответил, не дослушав вопрос"
+      }
+    }
+  },
+  "preview": [
+    {
+      "W": "ночной аптекарь",
+      "Q": "Сегодня никто не заходил.",
+      "V": "shade",
+      "C": "74",
+      "N": "ответил, не дослушав вопрос"
+    },
+    {
+      "W": "Гриша",
+      "Q": "Я вообще не знаю, о какой машине речь.",
+      "V": "lie",
+      "C": "91",
+      "N": "сказал «машине» раньше, чем прозвучало слово"
+    }
+  ]
+}

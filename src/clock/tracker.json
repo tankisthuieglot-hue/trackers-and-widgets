@@ -1,0 +1,57 @@
+{
+  "tag": "VLD_CLOCK",
+  "title": "🕛 VLD CLOCK",
+  "order": 16,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "T", "desc": "what is closing in" },
+    { "key": "F", "type": "num", "desc": "segments filled" },
+    { "key": "S", "type": "num", "desc": "segments total" },
+    { "key": "W", "desc": "what happens when it fills" },
+    { "key": "L", "optional": true, "desc": "what just moved it" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "then": "then", "full": "out of time" },
+      "when": "something is closing in on {{user}} across several scenes: a search, a deadline, a rumour spreading",
+      "dont": "anything that resolves inside one scene — that is a roll, not a clock",
+      "legend": "T what is closing in, named from its own side: \"the search reaches this\n  district\", not \"{{user}} gets caught\".\nS how many segments it takes, one of 4, 6 or 8. 4 is fast and near,\n  8 is slow and large. Pick once and never change it.\nF how many are filled now, 0 to S.\n  Do not read F off the last message — the marker is gone from your context by\n  then. Count it from the story: how far along is this, really.\nW what happens the moment it fills. Concrete and bad, one line.\nL what just moved it this scene. Nothing moved it? Leave L out.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "T": "the search works its way down the block",
+        "F": "4",
+        "S": "6",
+        "W": "they knock, and it is not a question any more",
+        "L": "the neighbour gave up the floor number"
+      }
+    },
+    "ru": {
+      "chrome": { "then": "тогда", "full": "время вышло" },
+      "when": "к {{user}} что-то подбирается через несколько сцен: облава, срок, расходящийся слух",
+      "dont": "то, что решается внутри одной сцены — это бросок, а не часы",
+      "legend": "T что подбирается, названное со своей стороны: «облава доходит до этого\n  района», а не «{{user}} попадётся».\nS сколько всего делений: 4, 6 или 8. 4 — быстро и рядом, 8 — долго и\n  крупно. Выбрал один раз и больше не меняешь.\nF сколько закрашено сейчас, от 0 до S.\n  Не списывай F с прошлого сообщения — его в твоём контексте уже нет.\n  Считай по истории: насколько это на самом деле продвинулось.\nW что произойдёт, как только заполнится. Конкретно и плохо, одна строка.\nL что сдвинуло часы в этой сцене. Ничего не сдвинуло — не пиши L.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "T": "облава идёт по дому сверху вниз",
+        "F": "4",
+        "S": "6",
+        "W": "стучат, и это уже не вопрос",
+        "L": "соседка назвала этаж"
+      }
+    }
+  },
+  "preview": [
+    {
+      "T": "облава идёт по дому сверху вниз",
+      "F": "4",
+      "S": "6",
+      "W": "стучат, и это уже не вопрос",
+      "L": "соседка назвала этаж"
+    },
+    {
+      "T": "лёд под буером трещит всё чаще",
+      "F": "4",
+      "S": "4",
+      "W": "уходишь под воду вместе с ним",
+      "L": "прошли над промоиной"
+    }
+  ]
+}

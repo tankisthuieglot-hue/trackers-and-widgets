@@ -1,0 +1,180 @@
+/* Плашка достижения — единственный виджет в паке, который ничего не
+   отслеживает. Он просто громко объявляет, и весь юмор держится на том,
+   что оформление совершенно серьёзное: так же выглядит настоящее уведомление
+   в игре, и именно поэтому «Несущая стена — 1% игроков» смешно.
+
+   Значит и делать надо всерьёз: подскок, блик по корпусу, звёздочки на
+   редком. Стоит пошутить оформлением — шутка исчезнет. */
+
+.vld-ach {
+  --ink: #eceae5;
+  --dim: #8a8781;
+  --plate: #191a1e;
+  --edge: 168, 146, 88;
+  --hair: rgba(236, 234, 229, .1);
+
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+  width: min(100%, 356px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, .5));
+}
+
+.vld-ach * {
+  box-sizing: border-box;
+}
+
+.vld-ach .toast {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 12px;
+  padding: 11px 13px 11px 11px;
+  border-radius: 3px;
+  background: linear-gradient(100deg, rgba(var(--edge), .14), transparent 42%), var(--plate);
+  box-shadow: inset 0 0 0 1px rgba(var(--edge), .3);
+  /* Прилетает снизу с перелётом и садится — как всплывающее уведомление,
+     а не как абзац текста. */
+  animation: vld-ach-pop .52s cubic-bezier(.18, 1.3, .4, 1) both;
+}
+
+@keyframes vld-ach-pop {
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+}
+
+/* Один проход блика по корпусу. Ровно один: повторяющийся превратил бы
+   объявление в рекламу. */
+.vld-ach .toast::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(104deg, transparent 42%, rgba(255, 240, 210, .13) 50%, transparent 58%);
+  animation: vld-ach-sweep 1.1s ease-out .28s both;
+}
+
+@keyframes vld-ach-sweep {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(120%); }
+}
+
+.vld-ach .badge {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 3px;
+  background: linear-gradient(155deg, rgba(var(--edge), .26), rgba(var(--edge), .07));
+  box-shadow: inset 0 0 0 1px rgba(var(--edge), .45);
+}
+
+.vld-ach .glyph {
+  font-size: 25px;
+  line-height: 1;
+  filter: saturate(.85);
+}
+
+/* Иконка приезжает словом из закрытого списка, так что подставить сюда
+   произвольную строку модель не может. Не совпало — рамка остаётся пустой,
+   и это выглядит как «иконка не подгрузилась», а не как поломка. */
+.vld-ach .g-skull  .glyph::before { content: "💀"; }
+.vld-ach .g-heart  .glyph::before { content: "🫀"; }
+.vld-ach .g-fire   .glyph::before { content: "🔥"; }
+.vld-ach .g-coin   .glyph::before { content: "🪙"; }
+.vld-ach .g-mask   .glyph::before { content: "🎭"; }
+.vld-ach .g-boot   .glyph::before { content: "🥾"; }
+.vld-ach .g-book   .glyph::before { content: "📕"; }
+.vld-ach .g-knife  .glyph::before { content: "🔪"; }
+.vld-ach .g-bottle .glyph::before { content: "🍾"; }
+.vld-ach .g-clown  .glyph::before { content: "🤡"; }
+
+.vld-ach .body {
+  min-width: 0;
+  align-self: center;
+}
+
+.vld-ach .eyebrow {
+  font: 600 8px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .21em;
+  color: rgb(var(--edge));
+}
+
+.vld-ach .name {
+  margin-top: 5px;
+  font: 700 14.5px/1.2 var(--sans);
+  letter-spacing: -.01em;
+}
+
+.vld-ach .how {
+  margin-top: 3px;
+  font: 400 11.5px/1.35 var(--sans);
+  color: var(--dim);
+}
+
+.vld-ach .rate {
+  margin-top: 6px;
+  font: 400 9.5px/1 var(--mono);
+  letter-spacing: .05em;
+  color: var(--dim);
+}
+
+.vld-ach .rate b {
+  font-weight: 600;
+  color: rgba(236, 234, 229, .78);
+}
+
+/* Меньше шести процентов — редкость, и рамка это признаёт. Порог перечислен
+   поимённо, потому что сравнивать числа CSS не умеет, а из закрытого набора
+   значений это дешевле любого скрипта. */
+.vld-ach .rare-0,
+.vld-ach .rare-1,
+.vld-ach .rare-2,
+.vld-ach .rare-3,
+.vld-ach .rare-4,
+.vld-ach .rare-5 {
+  --edge: 212, 172, 78;
+}
+
+.vld-ach .rare-0 .badge,
+.vld-ach .rare-1 .badge,
+.vld-ach .rare-2 .badge,
+.vld-ach .rare-3 .badge,
+.vld-ach .rare-4 .badge,
+.vld-ach .rare-5 .badge {
+  box-shadow: inset 0 0 0 1px rgba(var(--edge), .75), 0 0 20px rgba(var(--edge), .3);
+  animation: vld-ach-pulse 2.6s ease-in-out 1s infinite;
+}
+
+@keyframes vld-ach-pulse {
+  50% { box-shadow: inset 0 0 0 1px rgba(212, 172, 78, 1), 0 0 30px rgba(212, 172, 78, .5); }
+}
+
+/* Процент не пришёл — строку не показывать, а не писать «%». */
+.vld-ach .rate:has(b:empty) {
+  display: none;
+}
+
+.vld-ach .toast:has(.name:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-ach .toast,
+  .vld-ach .badge,
+  .vld-ach .rare-0 .badge,
+  .vld-ach .rare-1 .badge,
+  .vld-ach .rare-2 .badge,
+  .vld-ach .rare-3 .badge,
+  .vld-ach .rare-4 .badge,
+  .vld-ach .rare-5 .badge {
+    animation: none;
+  }
+
+  .vld-ach .toast::after {
+    display: none;
+  }
+}

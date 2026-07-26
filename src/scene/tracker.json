@@ -1,0 +1,61 @@
+{
+  "tag": "VLD_SCENE",
+  "title": "🌅 VLD SCENE",
+  "order": 13,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "P", "desc": "place" },
+    { "key": "H", "type": "num", "desc": "hour, 0-23" },
+    {
+      "key": "W",
+      "of": ["clear", "cloud", "rain", "storm", "snow", "fog", "heat", "wind"],
+      "desc": "weather"
+    },
+    { "key": "C", "desc": "who else is here" },
+    { "key": "S", "desc": "one sound or smell" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "here": "here", "air": "air" },
+      "when": "the scene moves somewhere new, or hours pass, or the weather turns",
+      "dont": "a conversation continuing in the same room on the same evening",
+      "legend": "P where this is. A place, not an address: the back of the pharmacy, the ice.\nH hour of the day, 0–23, plain number. 0 is midnight, 13 is one in the afternoon.\nW weather, one word from this list and nothing else:\n  clear · cloud · rain · storm · snow · fog · heat · wind\n  Indoors, give the weather outside the window — it is still the same sky.\nC who else is here, comma separated. Nobody? Leave C out.\nS one thing the air is doing: a sound, a smell. One detail, not a paragraph.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "P": "the back of the pharmacy",
+        "H": "23",
+        "W": "rain",
+        "C": "the night pharmacist, someone asleep on the bench",
+        "S": "a fridge humming out of tune"
+      }
+    },
+    "ru": {
+      "chrome": { "here": "здесь", "air": "воздух" },
+      "when": "сцена переехала в новое место, прошли часы или сменилась погода",
+      "dont": "разговор продолжается в той же комнате в тот же вечер",
+      "legend": "P где это. Место, а не адрес: задняя дверь аптеки, лёд у берега.\nH час суток, 0–23, просто число. 0 — полночь, 13 — час дня.\nW погода, одно слово строго из списка:\n  clear · cloud · rain · storm · snow · fog · heat · wind\n  В помещении бери погоду за окном — небо-то то же самое.\nC кто ещё здесь, через запятую. Никого — не пиши C вообще.\nS одна вещь, которую делает воздух: звук, запах. Одна деталь, не абзац.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "P": "задний двор аптеки",
+        "H": "23",
+        "W": "rain",
+        "C": "ночной аптекарь, кто-то спит на лавке",
+        "S": "холодильник гудит не в ноту"
+      }
+    }
+  },
+  "preview": [
+    {
+      "P": "задний двор аптеки",
+      "H": "23",
+      "W": "rain",
+      "C": "ночной аптекарь, кто-то спит на лавке",
+      "S": "холодильник гудит не в ноту"
+    },
+    {
+      "P": "лёд Финского залива",
+      "H": "8",
+      "W": "snow",
+      "C": "двое рыбаков далеко справа",
+      "S": "пахнет соляркой от буера"
+    }
+  ]
+}

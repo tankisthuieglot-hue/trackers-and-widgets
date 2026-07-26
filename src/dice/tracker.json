@@ -1,0 +1,61 @@
+{
+  "tag": "VLD_DICE",
+  "title": "🎲 VLD DICE",
+  "order": 14,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "A", "desc": "what is being attempted" },
+    { "key": "R", "type": "num", "desc": "the roll" },
+    { "key": "D", "type": "num", "desc": "the number to beat" },
+    {
+      "key": "O",
+      "of": ["crit", "pass", "edge", "fail", "fumble"],
+      "desc": "outcome"
+    },
+    { "key": "C", "desc": "what it costs or wins" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "vs": "needs", "crit": "critical", "pass": "success", "edge": "by a hair", "fail": "failure", "fumble": "disaster" },
+      "when": "{{user}} tries something that could plausibly fail and the answer is not obvious",
+      "dont": "anything {{user}} would simply manage: walking, talking, opening an unlocked door",
+      "legend": "A what is being attempted, short: \"pick the padlock\", \"lie to the sergeant\".\nR what came up on a d20, 1–20. Roll it honestly — do not pick the number\n  the story wants. D what it had to beat, 5 easy · 10 fair · 15 hard · 18 brutal.\nO the outcome, one word from this list and nothing else:\n  crit (R is 20) · pass (R ≥ D) · edge (R is 1 or 2 under D — it works, badly)\n  · fail (R < D) · fumble (R is 1)\nC one line: what this wins or what it costs. Consequence, not narration.\n  On edge and fumble the cost is the point — name it.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "A": "get over the fence before the dog rounds the corner",
+        "R": "7",
+        "D": "12",
+        "O": "fail",
+        "C": "one boot stays on the wrong side"
+      }
+    },
+    "ru": {
+      "chrome": { "vs": "нужно", "crit": "критический успех", "pass": "успех", "edge": "на волоске", "fail": "провал", "fumble": "катастрофа" },
+      "when": "{{user}} берётся за то, что реально может не выйти, и исход не очевиден",
+      "dont": "то, что {{user}} сделает и так: пройти, сказать, открыть незапертую дверь",
+      "legend": "A что именно пробует, коротко: «вскрыть замок», «соврать сержанту».\nR что выпало на d20, 1–20. Бросай честно — не подбирай число под сюжет.\n  D сколько надо было: 5 легко · 10 средне · 15 трудно · 18 зверски.\nO исход, одно слово строго из списка:\n  crit (R = 20) · pass (R ≥ D) · edge (R на 1–2 меньше D — вышло, но плохо)\n  · fail (R < D) · fumble (R = 1)\nC одна строка: что это даёт или чего стоит. Последствие, а не пересказ.\n  На edge и fumble цена — самое главное, назови её.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "A": "перелезть забор, пока пёс не вышел из-за угла",
+        "R": "7",
+        "D": "12",
+        "O": "fail",
+        "C": "один ботинок остался по ту сторону"
+      }
+    }
+  },
+  "preview": [
+    {
+      "A": "перелезть забор, пока пёс не вышел из-за угла",
+      "R": "7",
+      "D": "12",
+      "O": "fail",
+      "C": "один ботинок остался по ту сторону"
+    },
+    {
+      "A": "убедить каптёра, что накладная настоящая",
+      "R": "20",
+      "D": "15",
+      "O": "crit",
+      "C": "он отдаёт ящик и ещё один сверху, чтобы не пересчитывать"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+<vld:ach>
+FIRE: {{user}} does something stupid, memorable or unrepeatable — and it deserves mocking, not praise
+SKIP: anything {{user}} did competently or on purpose. Competence is not an achievement
+
+[[VLD_ACH|T=|D=|P=|G=]]
+
+T the achievement name. Dry, official, ridiculous. The joke is that a
+  system somewhere logged this. "Second Opinion", "Structural Damage".
+D what earned it, one line, past tense and deadpan. Never explain the joke.
+P how many players out of a hundred have this, 0–100. Rare is funnier: 0.4
+  is not a number you can write, so use 1 for the truly unhinged.
+G icon, one word from this list and nothing else:
+  skull · heart · fire · coin · mask · boot · book · knife · bottle · clown
+Fire at most once a scene. An achievement every message is not an
+  achievement, it is a status bar.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_ACH|T=Second Opinion|D=asked the same guard twice and got a different answer|P=12|G=mask]]
+</vld:ach>

@@ -1,0 +1,336 @@
+/* Час суток здесь не написан словом, а показан цветом: полоска неба над
+   карточкой красится от полуночной синевы до полуденной белизны, а солнце
+   или луна стоит ровно там, где ему полагается в этот час. Строку «23:00»
+   надо прочесть, небо — нет.
+
+   Погода лежит сверху отдельным слоем, поэтому дождь в полдень и дождь в
+   полночь выглядят по-разному, а правило написано один раз. */
+
+.vld-scene {
+  --ink: #e8e6e1;
+  --dim: #8d8a84;
+  --plate: #16171a;
+  --hair: rgba(232, 230, 225, .1);
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+  width: min(100%, 360px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .45));
+}
+
+.vld-scene * {
+  box-sizing: border-box;
+}
+
+.vld-scene .card {
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--plate);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  animation: vld-scene-in .34s ease both;
+}
+
+@keyframes vld-scene-in {
+  from { opacity: 0; transform: translateY(5px); }
+}
+
+.vld-scene .sky {
+  position: relative;
+  overflow: hidden;
+  height: 86px;
+  /* Не совпал ни один час — остаётся нейтральные сумерки, а не чёрная дыра. */
+  background: linear-gradient(180deg, #2f3947, #4a5361);
+}
+
+/* Ночь · рассвет · утро · день · вечер · закат. Шесть настроений на 24 часа:
+   небо и в жизни меняется не каждый час, а полосами. */
+.vld-scene .h-0 .sky, .vld-scene .h-1 .sky, .vld-scene .h-2 .sky,
+.vld-scene .h-3 .sky, .vld-scene .h-4 .sky, .vld-scene .h-22 .sky,
+.vld-scene .h-23 .sky {
+  background: linear-gradient(180deg, #0a0f1c 0%, #131c30 55%, #1d2740 100%);
+}
+
+.vld-scene .h-5 .sky, .vld-scene .h-6 .sky {
+  background: linear-gradient(180deg, #1b2340 0%, #4a3a52 45%, #9a6a58 78%, #c98d63 100%);
+}
+
+.vld-scene .h-7 .sky, .vld-scene .h-8 .sky, .vld-scene .h-9 .sky {
+  background: linear-gradient(180deg, #4a7aa8 0%, #7ba6c8 60%, #bcd0dc 100%);
+}
+
+.vld-scene .h-10 .sky, .vld-scene .h-11 .sky, .vld-scene .h-12 .sky,
+.vld-scene .h-13 .sky, .vld-scene .h-14 .sky, .vld-scene .h-15 .sky,
+.vld-scene .h-16 .sky {
+  background: linear-gradient(180deg, #4d8ec4 0%, #8fbadb 65%, #d3e2ec 100%);
+}
+
+.vld-scene .h-17 .sky, .vld-scene .h-18 .sky {
+  background: linear-gradient(180deg, #2c4a72 0%, #8a5f62 50%, #d08a52 82%, #e6a95f 100%);
+}
+
+.vld-scene .h-19 .sky, .vld-scene .h-20 .sky, .vld-scene .h-21 .sky {
+  background: linear-gradient(180deg, #101a30 0%, #24304c 55%, #46435c 100%);
+}
+
+/* Солнце днём, луна ночью — один элемент, разный характер свечения. */
+.vld-scene .orb {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffe9b8;
+  box-shadow: 0 0 22px 6px rgba(255, 226, 160, .45);
+  transform: translate(-50%, -50%);
+  animation: vld-scene-rise .7s cubic-bezier(.2, .85, .25, 1) both;
+}
+
+@keyframes vld-scene-rise {
+  from { opacity: 0; transform: translate(-50%, 40%); }
+}
+
+.vld-scene .h-0 .orb, .vld-scene .h-1 .orb, .vld-scene .h-2 .orb,
+.vld-scene .h-3 .orb, .vld-scene .h-4 .orb, .vld-scene .h-5 .orb,
+.vld-scene .h-19 .orb, .vld-scene .h-20 .orb, .vld-scene .h-21 .orb,
+.vld-scene .h-22 .orb, .vld-scene .h-23 .orb {
+  width: 13px;
+  height: 13px;
+  background: #dfe6f2;
+  /* Вырезанный полумесяц: внутренняя тень со сдвигом, а не вторая фигура. */
+  box-shadow: inset -4px 1px 0 -1px rgba(16, 22, 38, .92), 0 0 16px 3px rgba(200, 216, 246, .3);
+}
+
+/* Две дуги, а не одна. Солнце всходит утром и стоит в зените в полдень;
+   у луны свой ход, и её зенит — полночь. Первая версия гоняла оба светила
+   по солнечной дуге, отчего в полночь луна лежала у самого горизонта —
+   ровно там, где её не бывает. */
+.vld-scene .h-6  .orb { left: 6%;  top: 82%; }
+.vld-scene .h-7  .orb { left: 13%; top: 68%; }
+.vld-scene .h-8  .orb { left: 21%; top: 54%; }
+.vld-scene .h-9  .orb { left: 29%; top: 42%; }
+.vld-scene .h-10 .orb { left: 38%; top: 31%; }
+.vld-scene .h-11 .orb { left: 46%; top: 23%; }
+.vld-scene .h-12 .orb { left: 54%; top: 20%; }
+.vld-scene .h-13 .orb { left: 62%; top: 23%; }
+.vld-scene .h-14 .orb { left: 70%; top: 31%; }
+.vld-scene .h-15 .orb { left: 78%; top: 42%; }
+.vld-scene .h-16 .orb { left: 85%; top: 54%; }
+.vld-scene .h-17 .orb { left: 91%; top: 68%; }
+.vld-scene .h-18 .orb { left: 95%; top: 82%; }
+
+.vld-scene .h-19 .orb { left: 8%;  top: 80%; }
+.vld-scene .h-20 .orb { left: 14%; top: 66%; }
+.vld-scene .h-21 .orb { left: 22%; top: 52%; }
+.vld-scene .h-22 .orb { left: 31%; top: 38%; }
+.vld-scene .h-23 .orb { left: 40%; top: 27%; }
+.vld-scene .h-0  .orb { left: 50%; top: 21%; }
+.vld-scene .h-1  .orb { left: 60%; top: 27%; }
+.vld-scene .h-2  .orb { left: 69%; top: 38%; }
+.vld-scene .h-3  .orb { left: 78%; top: 52%; }
+.vld-scene .h-4  .orb { left: 86%; top: 66%; }
+.vld-scene .h-5  .orb { left: 92%; top: 80%; }
+
+/* Осадки: один слой в две полосы, разъезжающиеся с разной скоростью. Дождь
+   наклонён и быстрый, снег вертикальный и медленный. */
+.vld-scene .fall {
+  position: absolute;
+  inset: -30% -10%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Штрихи, а не сплошные линии. Сплошной repeating-gradient во всю высоту
+   читался не дождём, а косой штриховкой обоев: у дождя должны быть промежутки.
+   Плитка 8×14 режет наклонную полосу на отдельные капли, а сдвиг за цикл
+   кратен плитке, поэтому шва на стыке нет. */
+.vld-scene .w-rain .fall,
+.vld-scene .w-storm .fall {
+  opacity: .5;
+  background-image:
+    linear-gradient(76deg, transparent 44%, rgba(226, 238, 250, .85) 44% 50%, transparent 50%),
+    linear-gradient(79deg, transparent 46%, rgba(210, 226, 244, .5) 46% 51%, transparent 51%);
+  /* Второй слой мельче и бледнее — тот же приём, что со снегом: два шага
+     вместо одного, иначе капли выстраиваются в различимые диагональные ряды. */
+  background-size: 8px 14px, 13px 19px;
+  animation: vld-scene-rain .6s linear infinite;
+}
+
+.vld-scene .w-storm .fall {
+  opacity: .72;
+  animation-duration: .38s;
+}
+
+@keyframes vld-scene-rain {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: -8px 28px, -13px 38px; }
+}
+
+/* Две плитки разного шага, наложенные друг на друга. Одна плитка, сколько
+   точек в неё ни насыпь, всё равно повторяется через свою ширину, и глаз
+   ловит решётку — снег так не лежит. Два несовпадающих шага (58×62 и 41×47)
+   совпадут только через несколько экранов, то есть никогда.
+
+   Поэтому едет не transform, а background-position: у каждого слоя свой сдвиг
+   за цикл, и каждый кратен своей же плитке — шва нет ни у одного. */
+.vld-scene .w-snow .fall {
+  opacity: .9;
+  background-image:
+    radial-gradient(circle 1.6px at 14% 12%, rgba(255, 255, 255, .85) 99%, transparent),
+    radial-gradient(circle 1.3px at 63% 41%, rgba(255, 255, 255, .7) 99%, transparent),
+    radial-gradient(circle 1.5px at 34% 78%, rgba(255, 255, 255, .8) 99%, transparent),
+    radial-gradient(circle 1px   at 81% 22%, rgba(255, 255, 255, .5) 99%, transparent),
+    radial-gradient(circle 1.1px at 27% 54%, rgba(255, 255, 255, .55) 99%, transparent),
+    radial-gradient(circle 1px   at 58% 88%, rgba(255, 255, 255, .45) 99%, transparent);
+  background-size: 58px 62px, 58px 62px, 58px 62px, 41px 47px, 41px 47px, 41px 47px;
+  animation: vld-scene-snow 6.5s linear infinite;
+}
+
+@keyframes vld-scene-snow {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to   { background-position: 6px 62px, 6px 62px, 6px 62px, -5px 94px, -5px 94px, -5px 94px; }
+}
+
+/* Туман, жара, ветер и облака — не осадки, а состояние воздуха. Отдельный
+   слой, чтобы не спорить с падающим. */
+.vld-scene .haze {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vld-scene .w-fog .haze {
+  opacity: 1;
+  background: linear-gradient(180deg, transparent, rgba(206, 210, 214, .62) 62%, rgba(214, 218, 222, .8));
+}
+
+.vld-scene .w-cloud .haze,
+.vld-scene .w-storm .haze {
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 62px 20px at 22% 32%, rgba(228, 230, 234, .5), transparent 70%),
+    radial-gradient(ellipse 84px 24px at 71% 22%, rgba(216, 220, 226, .45), transparent 70%);
+}
+
+.vld-scene .w-storm .haze {
+  background:
+    radial-gradient(ellipse 74px 22px at 30% 26%, rgba(74, 78, 88, .75), transparent 70%),
+    radial-gradient(ellipse 92px 26px at 74% 18%, rgba(58, 62, 72, .7), transparent 70%);
+}
+
+/* Марево: воздух над раскалённым асфальтом действительно ведёт вверх. */
+.vld-scene .w-heat .haze {
+  opacity: 1;
+  background: repeating-linear-gradient(0deg,
+    rgba(255, 214, 150, .16) 0 2px, transparent 2px 5px);
+  animation: vld-scene-heat 2.6s ease-in-out infinite;
+}
+
+@keyframes vld-scene-heat {
+  50% { transform: translateY(-3px) scaleY(1.06); }
+}
+
+.vld-scene .w-wind .haze {
+  opacity: 1;
+  background: repeating-linear-gradient(97deg,
+    rgba(255, 255, 255, .2) 0 1px, transparent 1px 26px);
+  animation: vld-scene-wind 1.9s linear infinite;
+}
+
+@keyframes vld-scene-wind {
+  to { transform: translateX(26px); }
+}
+
+/* Гроза бьёт редко и коротко. Раз в семь секунд один кадр — этого хватает,
+   чтобы заметить боковым зрением и не начать раздражаться. */
+.vld-scene .w-storm .sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: vld-scene-bolt 7s steps(1, end) infinite;
+}
+
+@keyframes vld-scene-bolt {
+  0%, 96%   { opacity: 0; }
+  97%       { opacity: .5; }
+  98%       { opacity: 0; }
+  99%       { opacity: .28; }
+  100%      { opacity: 0; }
+}
+
+/* Земля внизу полоски: без неё небо не читается как небо. */
+.vld-scene .ridge {
+  position: absolute;
+  inset: auto 0 0;
+  height: 15px;
+  background: linear-gradient(180deg, rgba(10, 11, 14, .5), var(--plate));
+}
+
+.vld-scene .clock {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(8, 10, 14, .42);
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .06em;
+  color: rgba(255, 255, 255, .88);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+}
+
+/* Час не пришёл — часов не будет, а небо останется нейтральным. */
+.vld-scene .clock:has(b:empty) {
+  display: none;
+}
+
+.vld-scene .info {
+  padding: 11px 13px 12px;
+}
+
+.vld-scene .place {
+  font: 600 15px/1.25 var(--sans);
+  letter-spacing: -.01em;
+}
+
+.vld-scene .line {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 9px;
+  align-items: baseline;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hair);
+}
+
+.vld-scene .k {
+  font: 400 8.5px/1.4 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  color: var(--dim);
+}
+
+.vld-scene .v {
+  font: 400 12px/1.4 var(--sans);
+}
+
+.vld-scene .line:has(.v:empty),
+.vld-scene .card:has(.place:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-scene .card,
+  .vld-scene .orb,
+  .vld-scene .fall,
+  .vld-scene .haze,
+  .vld-scene .sky::after {
+    animation: none;
+  }
+}

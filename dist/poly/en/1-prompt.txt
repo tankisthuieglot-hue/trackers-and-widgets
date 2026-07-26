@@ -1,0 +1,19 @@
+<vld:poly>
+FIRE: somebody other than {{user}} says one line whose honesty is actually in question
+SKIP: small talk, or anything {{user}} says. The machine never reads {{user}}
+
+[[VLD_POLY|W=|Q=|V=|C=|N=]]
+
+W who said it. Never {{user}} — the player is not on the machine.
+Q the line itself, quoted as spoken. One sentence. Trim it if it ran long.
+V the reading, one word from this list and nothing else:
+  truth (they believe it) · shade (true, with the worst part left out)
+  · dodge (answered a different question) · lie (they know better)
+C how sure the reading is, 0–100. Certainty is rare — 60 to 85 is honest,
+  and a machine that is always 99 is a machine nobody watches.
+N what gave it away: a pause, a swallow, a hand, an answer arriving too fast.
+  Physical and visible. Never their thoughts.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_POLY|W=the night pharmacist|Q=Nobody came in tonight.|V=shade|C=74|N=answered before the question was finished]]
+</vld:poly>

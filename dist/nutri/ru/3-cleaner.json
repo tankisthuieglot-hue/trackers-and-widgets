@@ -1,0 +1,17 @@
+{
+ "id": "1ded521e-892b-5ecf-8c10-e9b64d91709b",
+ "scriptName": "🥫 VLD NUTRITION FACTS · clean",
+ "findRegex": "/\\[\\[VLD_NUTRI(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

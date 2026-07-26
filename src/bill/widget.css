@@ -1,0 +1,153 @@
+/* Термочек: узкая полоска, моноширинный шрифт, рваный край сверху и снизу,
+   штрихкод, лёгкий поворот. Вещь, которую сунули в карман, а не карточка в
+   интерфейсе — поэтому и лежит на странице чуть криво.
+
+   Рваный край сделан маской из повторяющихся конусов. Резать сам фон нельзя:
+   тогда обрежется и тень, и полоска перестанет отрываться от подложки. */
+
+.vld-bill {
+  --paper: #f4f1e9;
+  --ink: #2a2722;
+  --fade: #6d675d;
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+  width: min(100%, 268px);
+  margin: 16px auto;
+  color: var(--ink);
+}
+
+.vld-bill * {
+  box-sizing: border-box;
+}
+
+/* Поворот живёт на обёртке: маска на бумаге считается в её собственных осях,
+   и если крутить сам лист, зубцы поедут вместе с ним и перестанут быть
+   горизонтальным отрывом. */
+.vld-bill .slip {
+  transform: rotate(-.8deg);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .32));
+  animation: vld-bill-in .34s cubic-bezier(.2, .85, .3, 1) both;
+}
+
+@keyframes vld-bill-in {
+  from { opacity: 0; transform: rotate(-.8deg) translateY(-8px); }
+}
+
+.vld-bill .paper {
+  padding: 15px 15px 13px;
+  background:
+    /* неровный прокат термобумаги */
+    repeating-linear-gradient(90deg, rgba(42, 39, 34, .022) 0 1px, transparent 1px 3px),
+    var(--paper);
+  /* Зубцы сверху и снизу — по 7px, остальное сплошное. */
+  mask:
+    conic-gradient(from -45deg at 50% 0, #0000 0 90deg, #000 0) 0 0 / 9px 7px repeat-x,
+    conic-gradient(from 135deg at 50% 100%, #0000 0 90deg, #000 0) 0 100% / 9px 7px repeat-x,
+    linear-gradient(#000 0 0) 0 7px / 100% calc(100% - 14px) no-repeat;
+}
+
+.vld-bill .vend {
+  text-align: center;
+  font: 700 13px/1.2 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.vld-bill .when {
+  margin-top: 2px;
+  text-align: center;
+  font: 400 9.5px/1.2 var(--mono);
+  color: var(--fade);
+}
+
+.vld-bill .sep {
+  height: 1px;
+  margin: 9px 0;
+  /* Пунктир нарисован градиентом, а не border-dashed: так шаг одинаковый
+     в любом браузере. */
+  background: repeating-linear-gradient(90deg, rgba(42, 39, 34, .45) 0 4px, transparent 4px 8px);
+}
+
+.vld-bill .row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2.5px 0;
+  font: 400 11px/1.35 var(--mono);
+}
+
+.vld-bill .it {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* Отточие между позицией и ценой — отдельная растяжка, а не ::after у
+   позиции. Псевдоэлемент шириной в 100% переносился на следующую строку и
+   утаскивал точки под текст: inline-block внутри flex-элемента меряет ширину
+   от него, а не от свободного места. */
+.vld-bill .dots {
+  flex: 1 1 auto;
+  min-width: 10px;
+  margin-bottom: 3px;
+  border-bottom: 1px dotted rgba(42, 39, 34, .34);
+}
+
+.vld-bill .pr {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.vld-bill .sum {
+  font: 700 13px/1.3 var(--mono);
+}
+
+.vld-bill .way {
+  font: 400 9.5px/1.3 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--fade);
+}
+
+.vld-bill .sum .dots,
+.vld-bill .way .dots {
+  border-bottom: none;
+}
+
+.vld-bill .note {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(42, 39, 34, .2);
+  text-align: center;
+  font: 400 9px/1.35 var(--mono);
+  color: var(--fade);
+}
+
+/* Штрихкод — просто полосы разной ширины. Читать его нечем, и не надо:
+   он тут ради того, чтобы бумажка была бумажкой. */
+.vld-bill .code {
+  height: 26px;
+  margin-top: 11px;
+  background: repeating-linear-gradient(90deg,
+    var(--ink) 0 1px, transparent 1px 3px,
+    var(--ink) 3px 5px, transparent 5px 6px,
+    var(--ink) 6px 7px, transparent 7px 10px,
+    var(--ink) 10px 13px, transparent 13px 14px);
+  opacity: .78;
+}
+
+.vld-bill .row:has(.it:empty),
+.vld-bill .row:has(.pr:empty),
+.vld-bill .note:empty {
+  display: none;
+}
+
+/* Без продавца и без итога это не чек. */
+.vld-bill .paper:has(.vend:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-bill .slip {
+    animation: none;
+  }
+}

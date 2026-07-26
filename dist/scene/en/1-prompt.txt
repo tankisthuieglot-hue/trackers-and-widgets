@@ -1,0 +1,17 @@
+<vld:scene>
+FIRE: the scene moves somewhere new, or hours pass, or the weather turns
+SKIP: a conversation continuing in the same room on the same evening
+
+[[VLD_SCENE|P=|H=|W=|C=|S=]]
+
+P where this is. A place, not an address: the back of the pharmacy, the ice.
+H hour of the day, 0–23, plain number. 0 is midnight, 13 is one in the afternoon.
+W weather, one word from this list and nothing else:
+  clear · cloud · rain · storm · snow · fog · heat · wind
+  Indoors, give the weather outside the window — it is still the same sky.
+C who else is here, comma separated. Nobody? Leave C out.
+S one thing the air is doing: a sound, a smell. One detail, not a paragraph.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_SCENE|P=the back of the pharmacy|H=23|W=rain|C=the night pharmacist, someone asleep on the bench|S=a fridge humming out of tune]]
+</vld:scene>

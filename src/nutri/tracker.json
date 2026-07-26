@@ -1,0 +1,88 @@
+{
+  "tag": "VLD_NUTRI",
+  "title": "🥫 VLD NUTRITION FACTS",
+  "order": 20,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "N", "desc": "who is on the label" },
+    { "key": "S", "desc": "serving size" },
+    { "key": "CAL", "type": "num", "desc": "calories" },
+    { "key": "L1", "desc": "first trait" },
+    { "key": "P1", "type": "num", "desc": "its percent" },
+    { "key": "L2", "desc": "second trait" },
+    { "key": "P2", "type": "num", "desc": "its percent" },
+    { "key": "L3", "optional": true, "desc": "third trait" },
+    { "key": "P3", "type": "num", "optional": true, "desc": "its percent" },
+    { "key": "L4", "optional": true, "desc": "fourth trait" },
+    { "key": "P4", "type": "num", "optional": true, "desc": "its percent" },
+    { "key": "W", "desc": "allergy warning" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": {
+        "facts": "Nutrition Facts",
+        "serving": "Serving size",
+        "per": "Amount per serving",
+        "cal": "Calories",
+        "dv": "% Daily Value",
+        "note": "Percent Daily Values are based on a 2000 calorie social diet. Your values may be higher or lower depending on your tolerance."
+      },
+      "when": "a character is introduced properly, or {{user}} finally has them figured out",
+      "dont": "more than once per character. The joke does not survive a second serving",
+      "legend": "A food label, for a person. Keep the deadpan — the humour is entirely in\n  treating someone as a packaged good, so never wink at it.\nN whose label this is. S the serving size, in the voice of a package:\n  \"1 man (82 kg)\", \"about 3 conversations\".\nCAL calories per serving, any number. Big numbers are funnier than round ones.\nL1–L4 what is in them: traits, habits, damage. Two to four. Name them like\n  ingredients — \"Saturated Spite\", \"Unresolved Father\", \"Dietary Fibre\".\nP1–P4 percent of a daily value, 0–999. Over 100 is allowed and encouraged.\nW the allergy line: \"Contains: nicotine, unfinished sentences.\"\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "N": "Marisha",
+        "S": "1 evening (unplanned)",
+        "CAL": "840",
+        "L1": "Saturated Charm",
+        "P1": "180",
+        "L2": "Total Honesty",
+        "P2": "4",
+        "L3": "Sodium",
+        "P3": "62",
+        "W": "Contains: cigarettes, other people's secrets. Packaged in a facility that also processes grudges."
+      }
+    },
+    "ru": {
+      "chrome": {
+        "facts": "Пищевая ценность",
+        "serving": "Порция",
+        "per": "В одной порции",
+        "cal": "Калорийность",
+        "dv": "% от нормы",
+        "note": "Проценты рассчитаны исходя из социальной нормы 2000 ккал. Ваши значения могут отличаться в зависимости от переносимости."
+      },
+      "when": "персонажа наконец представили как следует или {{user}} его для себя понял",
+      "dont": "больше одного раза на персонажа. Шутка не переживает вторую порцию",
+      "legend": "Этикетка от продукта, но на человека. Держи серьёзное лицо — юмор целиком\n  в том, что кого-то описывают как фасованный товар. Не подмигивай.\nN чья это этикетка. S размер порции, голосом упаковки:\n  «1 мужчина (82 кг)», «примерно 3 разговора».\nCAL калорий в порции, любое число. Некруглые смешнее круглых.\nL1–L4 что внутри: черты, привычки, повреждения. От двух до четырёх.\n  Называй как состав — «Насыщенная язвительность», «Клетчатка».\nP1–P4 процент от суточной нормы, 0–999. Больше 100 можно и нужно.\nW строка про аллергены: «Содержит: никотин, недоговорённости».\nЗначения пиши на языке ролевой.",
+      "example": {
+        "N": "Мариша",
+        "S": "1 вечер (незапланированный)",
+        "CAL": "840",
+        "L1": "Насыщенное обаяние",
+        "P1": "180",
+        "L2": "Прямые ответы",
+        "P2": "4",
+        "L3": "Натрий",
+        "P3": "62",
+        "W": "Содержит: сигареты, чужие тайны. Изготовлено на производстве, где также обрабатываются обиды."
+      }
+    }
+  },
+  "preview": [
+    {
+      "N": "Мариша",
+      "S": "1 вечер (незапланированный)",
+      "CAL": "840",
+      "L1": "Насыщенное обаяние",
+      "P1": "180",
+      "L2": "Прямые ответы",
+      "P2": "4",
+      "L3": "Натрий",
+      "P3": "62",
+      "L4": "Планы на будущее",
+      "P4": "0",
+      "W": "Содержит: сигареты, чужие тайны. Изготовлено на производстве, где также обрабатываются обиды."
+    }
+  ]
+}

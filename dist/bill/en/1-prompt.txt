@@ -1,0 +1,19 @@
+<vld:bill>
+FIRE: {{user}} is charged for something: a tab, a repair, a bribe, a fine, a favour with a price
+SKIP: haggling in progress. The receipt comes after the money moves
+
+[[VLD_BILL|V=|D=|I1=|C1=|I2=|C2=|I3=|C3=|I4=|C4=|T=|P=|N=]]
+
+V who is charging — a bar, a mechanic, a hospital, a man with a ledger.
+D when, in receipt voice: a date, a time, a shift.
+I1–I4 the line items, up to four. Name them the way the seller would write
+  them, not the way {{user}} would: "door, replacement", not "you broke a door".
+  At least one item should be funnier or worse than {{user}} expected.
+C1–C4 the price of each, with its unit. Every I needs its C.
+T the total. It is allowed not to add up if whoever wrote it is cheating.
+P how it was settled: cash, on credit, in kind, not at all.
+N the line at the bottom of the paper: thanks, a warning, a threat. Skip if flat.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_BILL|V=Sturgeon, bar|D=night shift, 02:40|I1=vodka, 200|C1=620|I2=the same again|C2=620|I3=glass, replacement|C3=300|I4=silence about the glass|C4=1000|T=2540 roubles|P=on credit|N=we open at noon. do not come at noon.]]
+</vld:bill>

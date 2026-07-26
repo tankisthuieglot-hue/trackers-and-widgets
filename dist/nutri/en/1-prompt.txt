@@ -1,0 +1,19 @@
+<vld:nutri>
+FIRE: a character is introduced properly, or {{user}} finally has them figured out
+SKIP: more than once per character. The joke does not survive a second serving
+
+[[VLD_NUTRI|N=|S=|CAL=|L1=|P1=|L2=|P2=|L3=|P3=|L4=|P4=|W=]]
+
+A food label, for a person. Keep the deadpan — the humour is entirely in
+  treating someone as a packaged good, so never wink at it.
+N whose label this is. S the serving size, in the voice of a package:
+  "1 man (82 kg)", "about 3 conversations".
+CAL calories per serving, any number. Big numbers are funnier than round ones.
+L1–L4 what is in them: traits, habits, damage. Two to four. Name them like
+  ingredients — "Saturated Spite", "Unresolved Father", "Dietary Fibre".
+P1–P4 percent of a daily value, 0–999. Over 100 is allowed and encouraged.
+W the allergy line: "Contains: nicotine, unfinished sentences."
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_NUTRI|N=Marisha|S=1 evening (unplanned)|CAL=840|L1=Saturated Charm|P1=180|L2=Total Honesty|P2=4|L3=Sodium|P3=62|W=Contains: cigarettes, other people's secrets. Packaged in a facility that also processes grudges.]]
+</vld:nutri>

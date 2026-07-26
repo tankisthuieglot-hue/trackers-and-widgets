@@ -1,0 +1,19 @@
+<vld:loot>
+FIRE: {{user}} takes, finds, loots or is handed something worth naming
+SKIP: buying bread, or picking up something {{user}} already owned
+
+[[VLD_LOOT|S=|I1=|R1=|I2=|R2=|I3=|R3=|I4=|R4=|M=]]
+
+S where it came from: a body, a drawer, a debt paid, a gift.
+I1–I4 what came out of it, up to four. Name the thing, not its stats.
+R1–R4 how good each one is, one word from this list and nothing else:
+  junk (worthless, kept anyway) · plain (ordinary) · good (well made)
+  · rare (hard to come by) · prize (someone will want this back)
+  · legend (one of a kind — use it almost never)
+Every I needs its R. Be stingy: three plain things and one good one reads
+  richer than four legends.
+M money, if any, with its unit. No money — leave M out.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_LOOT|S=the glovebox of a car nobody came back for|I1=a folding knife with a taped handle|R1=plain|I2=somebody's service ID|R2=prize|I3=half a pack of damp cigarettes|R3=junk|M=1 400 roubles in fives]]
+</vld:loot>

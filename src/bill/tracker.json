@@ -1,0 +1,82 @@
+{
+  "tag": "VLD_BILL",
+  "title": "🧾 VLD BILL",
+  "order": 21,
+  "previewLang": "ru",
+  "fields": [
+    { "key": "V", "desc": "who is charging" },
+    { "key": "D", "desc": "when" },
+    { "key": "I1", "desc": "first line item" },
+    { "key": "C1", "desc": "its price" },
+    { "key": "I2", "optional": true, "desc": "second line item" },
+    { "key": "C2", "optional": true, "desc": "its price" },
+    { "key": "I3", "optional": true, "desc": "third line item" },
+    { "key": "C3", "optional": true, "desc": "its price" },
+    { "key": "I4", "optional": true, "desc": "fourth line item" },
+    { "key": "C4", "optional": true, "desc": "its price" },
+    { "key": "T", "desc": "total" },
+    { "key": "P", "desc": "how it was settled" },
+    { "key": "N", "optional": true, "desc": "the line at the bottom" }
+  ],
+  "lang": {
+    "en": {
+      "chrome": { "total": "TOTAL", "paid": "PAID" },
+      "when": "{{user}} is charged for something: a tab, a repair, a bribe, a fine, a favour with a price",
+      "dont": "haggling in progress. The receipt comes after the money moves",
+      "legend": "V who is charging — a bar, a mechanic, a hospital, a man with a ledger.\nD when, in receipt voice: a date, a time, a shift.\nI1–I4 the line items, up to four. Name them the way the seller would write\n  them, not the way {{user}} would: \"door, replacement\", not \"you broke a door\".\n  At least one item should be funnier or worse than {{user}} expected.\nC1–C4 the price of each, with its unit. Every I needs its C.\nT the total. It is allowed not to add up if whoever wrote it is cheating.\nP how it was settled: cash, on credit, in kind, not at all.\nN the line at the bottom of the paper: thanks, a warning, a threat. Skip if flat.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "V": "Sturgeon, bar",
+        "D": "night shift, 02:40",
+        "I1": "vodka, 200",
+        "C1": "620",
+        "I2": "the same again",
+        "C2": "620",
+        "I3": "glass, replacement",
+        "C3": "300",
+        "I4": "silence about the glass",
+        "C4": "1000",
+        "T": "2540 roubles",
+        "P": "on credit",
+        "N": "we open at noon. do not come at noon."
+      }
+    },
+    "ru": {
+      "chrome": { "total": "ИТОГО", "paid": "ОПЛАТА" },
+      "when": "с {{user}} берут деньги: счёт, ремонт, взятка, штраф, услуга с ценой",
+      "dont": "торг ещё идёт. Чек приходит после того, как деньги ушли",
+      "legend": "V кто выставил счёт — бар, автосервис, больница, человек с тетрадкой.\nD когда, голосом чека: дата, время, смена.\nI1–I4 позиции, до четырёх. Называй так, как записал бы продавец, а не как\n  сказал бы {{user}}: «дверь, замена», а не «ты выбил дверь».\n  Хотя бы одна позиция должна быть смешнее или хуже, чем {{user}} ожидал.\nC1–C4 цена каждой, с единицей. У каждого I свой C.\nT итог. Может и не сходиться, если считавший жульничает.\nP чем закрыли: наличными, в долг, натурой, никак.\nN строка внизу листка: благодарность, предупреждение, угроза. Нечего — пропусти.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "V": "«Осётр», бар",
+        "D": "ночная смена, 02:40",
+        "I1": "водка, 200",
+        "C1": "620",
+        "I2": "она же, ещё раз",
+        "C2": "620",
+        "I3": "стекло, замена",
+        "C3": "300",
+        "I4": "молчание про стекло",
+        "C4": "1000",
+        "T": "2540 рублей",
+        "P": "в долг",
+        "N": "открываемся в полдень. в полдень не приходи."
+      }
+    }
+  },
+  "preview": [
+    {
+      "V": "«Осётр», бар",
+      "D": "ночная смена, 02:40",
+      "I1": "водка, 200",
+      "C1": "620",
+      "I2": "она же, ещё раз",
+      "C2": "620",
+      "I3": "стекло, замена",
+      "C3": "300",
+      "I4": "молчание про стекло",
+      "C4": "1000",
+      "T": "2540 рублей",
+      "P": "в долг",
+      "N": "открываемся в полдень. в полдень не приходи."
+    }
+  ]
+}

@@ -195,6 +195,11 @@ function checkExample(t, example, at) {
     if (/[\r\n]/.test(String(value))) {
       fail(at, `example.${f.key} содержит перенос строки — маркер должен быть однострочным`);
     }
+    // Грамматика обрывает текст на `<`, чтобы значение не стало разметкой.
+    // Пример с ним разобрался бы обрезанным, и модель училась бы по обрубку.
+    if (String(value).includes('<')) {
+      fail(at, `example.${f.key} содержит < — грамматика обрывает текст на нём`);
+    }
     if (f.of && !f.of.includes(String(value))) {
       fail(at, `example.${f.key} = «${value}», а список допускает только ${f.of.join(', ')}`);
     }

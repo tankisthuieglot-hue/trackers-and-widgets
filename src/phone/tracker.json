@@ -1,0 +1,129 @@
+{
+  "tag": "VLD_PHONE",
+  "title": "📱 VLD PHONE",
+  "order": 15,
+  "previewLang": "ru",
+  "fields": [
+    {
+      "key": "F",
+      "desc": "who the thread is with"
+    },
+    {
+      "key": "M1",
+      "desc": "first message"
+    },
+    {
+      "key": "S1",
+      "of": [
+        "them",
+        "me"
+      ],
+      "desc": "who sent it"
+    },
+    {
+      "key": "M2",
+      "optional": true,
+      "desc": "second message"
+    },
+    {
+      "key": "S2",
+      "optional": true,
+      "of": [
+        "them",
+        "me"
+      ],
+      "desc": "who sent it"
+    },
+    {
+      "key": "M3",
+      "optional": true,
+      "desc": "third message"
+    },
+    {
+      "key": "S3",
+      "optional": true,
+      "of": [
+        "them",
+        "me"
+      ],
+      "desc": "who sent it"
+    },
+    {
+      "key": "M4",
+      "optional": true,
+      "desc": "fourth message"
+    },
+    {
+      "key": "S4",
+      "optional": true,
+      "of": [
+        "them",
+        "me"
+      ],
+      "desc": "who sent it"
+    },
+    {
+      "key": "TY",
+      "optional": true,
+      "of": [
+        "yes"
+      ],
+      "desc": "they are still typing"
+    }
+  ],
+  "lang": {
+    "en": {
+      "chrome": {},
+      "when": "a message, text or DM reaches {{user}}, or {{user}} sends one",
+      "dont": "a call, or people talking in the same room",
+      "legend": "F whose thread this is — a name, a saved contact, an unknown number.\nM1–M4 the messages, oldest first. Up to four. Write them the way people\n  actually type: no capital, no full stop, a typo left in. One thought each —\n  three short messages beat one paragraph.\nS1–S4 who sent that message, one word: them or me. Every M needs its S.\nTY put TY=yes only if they are still typing and {{user}} is left waiting.\n  Leave it out otherwise.\nWrite every value in the language the roleplay is played in.",
+      "example": {
+        "F": "Marisha",
+        "M1": "you up",
+        "S1": "them",
+        "M2": "no",
+        "S2": "me",
+        "M3": "good. don't come to the flat tonight",
+        "S3": "them",
+        "TY": "yes"
+      }
+    },
+    "ru": {
+      "chrome": {},
+      "when": "{{user}} получает сообщение в мессенджере или сам его пишет",
+      "dont": "звонок или разговор людей в одной комнате",
+      "legend": "F чья это переписка — имя, подписанный контакт, неизвестный номер.\nM1–M4 сообщения, сверху старое. До четырёх. Пиши так, как люди правда\n  печатают: без заглавной, без точки, с опечаткой. Одна мысль на сообщение —\n  три коротких лучше одного абзаца.\nS1–S4 кто отправил, одно слово: them или me. У каждого M свой S.\nTY ставь TY=yes, только если собеседник ещё печатает и {{user}} ждёт.\n  В остальных случаях не пиши вообще.\nЗначения пиши на языке ролевой.",
+      "example": {
+        "F": "Мариша",
+        "M1": "не спишь",
+        "S1": "them",
+        "M2": "нет",
+        "S2": "me",
+        "M3": "хорошо. на квартиру сегодня не приезжай",
+        "S3": "them",
+        "TY": "yes"
+      }
+    }
+  },
+  "preview": [
+    {
+      "F": "Мариша",
+      "M1": "не спишь",
+      "S1": "them",
+      "M2": "нет",
+      "S2": "me",
+      "M3": "хорошо. на квартиру сегодня не приезжай",
+      "S3": "them",
+      "TY": "yes"
+    },
+    {
+      "F": "+7 900 ··· ·· ··",
+      "M1": "мы нашли машину",
+      "S1": "them",
+      "M2": "кто это",
+      "S2": "me",
+      "M3": "ту самую машину",
+      "S3": "them"
+    }
+  ]
+}

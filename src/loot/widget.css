@@ -1,0 +1,187 @@
+/* Цвет здесь не мера, а разряд: «редкое» не больше «обычного», оно другое.
+   Поэтому никакой шкалы — только метка у строки и рамка вокруг неё, как в
+   играх, откуда эта привычка и взялась.
+
+   Одна вольность: легендарному разряду разрешён бегущий блик. Он заметно
+   дороже остальных строк по вниманию, и это ровно то, чего от него ждут —
+   но именно поэтому в промпте написано использовать его почти никогда. */
+
+.vld-loot {
+  --ink: #e9e6df;
+  --dim: #86837c;
+  --plate: #16171a;
+  --hair: rgba(233, 230, 223, .1);
+
+  --junk: 122, 120, 116;
+  --plain: 196, 196, 192;
+  --good: 118, 172, 118;
+  --rare: 104, 152, 208;
+  --prize: 172, 124, 204;
+  --legend: 214, 164, 68;
+
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+
+  width: min(100%, 344px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .45));
+}
+
+.vld-loot * {
+  box-sizing: border-box;
+}
+
+.vld-loot .haul {
+  padding: 12px 13px 11px;
+  border-radius: 3px;
+  background: var(--plate);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  animation: vld-loot-in .3s ease both;
+}
+
+@keyframes vld-loot-in {
+  from { opacity: 0; transform: translateY(5px); }
+}
+
+.vld-loot .src {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hair);
+}
+
+.vld-loot .k {
+  font: 400 8.5px/1.5 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  color: var(--dim);
+}
+
+.vld-loot .src .v {
+  font: 400 12px/1.3 var(--sans);
+}
+
+.vld-loot .items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 3px;
+}
+
+.vld-loot .it {
+  --tone: var(--plain);
+
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+  padding: 7px 10px;
+  border-radius: 2px;
+  background: rgba(var(--tone), .07);
+  box-shadow: inset 0 0 0 1px rgba(var(--tone), .3);
+  animation: vld-loot-slide .34s cubic-bezier(.2, .85, .3, 1) both;
+}
+
+/* Вещи выкладываются одна за другой — как их и достают из ящика. */
+.vld-loot .items .it:nth-child(2) { animation-delay: .08s; }
+.vld-loot .items .it:nth-child(3) { animation-delay: .16s; }
+.vld-loot .items .it:nth-child(4) { animation-delay: .24s; }
+
+@keyframes vld-loot-slide {
+  from { opacity: 0; transform: translateX(-8px); }
+}
+
+.vld-loot .r-junk   { --tone: var(--junk); }
+.vld-loot .r-plain  { --tone: var(--plain); }
+.vld-loot .r-good   { --tone: var(--good); }
+.vld-loot .r-rare   { --tone: var(--rare); }
+.vld-loot .r-prize  { --tone: var(--prize); }
+.vld-loot .r-legend { --tone: var(--legend); }
+
+/* Хлам и выглядит хламом. Разряд читается ещё до того, как прочитано имя. */
+.vld-loot .r-junk .nm {
+  color: rgba(233, 230, 223, .55);
+}
+
+.vld-loot .pip {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  /* Ромб, а не кружок: круглых точек в интерфейсах и так довольно. */
+  transform: rotate(45deg);
+  border-radius: 1px;
+  background: rgb(var(--tone));
+  box-shadow: 0 0 9px rgba(var(--tone), .6);
+}
+
+.vld-loot .nm {
+  min-width: 0;
+  font: 400 12.5px/1.35 var(--sans);
+}
+
+/* Единственная вещь в паке, которой позволено сиять. */
+.vld-loot .r-legend {
+  box-shadow: inset 0 0 0 1px rgba(var(--legend), .6), 0 0 18px rgba(var(--legend), .16);
+}
+
+.vld-loot .r-legend::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(102deg, transparent 40%, rgba(255, 226, 158, .17) 50%, transparent 60%);
+  animation: vld-loot-shine 3.4s ease-in-out 1.2s infinite;
+}
+
+@keyframes vld-loot-shine {
+  0%      { transform: translateX(-110%); }
+  55%,
+  100%    { transform: translateX(110%); }
+}
+
+.vld-loot .coin {
+  margin-top: 11px;
+  padding-top: 9px;
+  border-top: 1px dashed rgba(233, 230, 223, .16);
+  text-align: right;
+}
+
+.vld-loot .sum {
+  font: 500 12.5px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: rgb(var(--legend));
+}
+
+.vld-loot .sum::before {
+  content: "+ ";
+  opacity: .55;
+}
+
+.vld-loot .coin:has(.sum:empty),
+.vld-loot .it:has(.nm:empty),
+.vld-loot .src:has(.v:empty) {
+  display: none;
+}
+
+/* Ни одной вещи и ни денег — нечего показывать. */
+.vld-loot .haul:not(:has(.nm:not(:empty))):not(:has(.sum:not(:empty))) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-loot .haul,
+  .vld-loot .it,
+  .vld-loot .r-legend::after {
+    animation: none;
+  }
+
+  .vld-loot .r-legend::after {
+    display: none;
+  }
+}

@@ -1,0 +1,18 @@
+<vld:dice>
+FIRE: {{user}} tries something that could plausibly fail and the answer is not obvious
+SKIP: anything {{user}} would simply manage: walking, talking, opening an unlocked door
+
+[[VLD_DICE|A=|R=|D=|O=|C=]]
+
+A what is being attempted, short: "pick the padlock", "lie to the sergeant".
+R what came up on a d20, 1–20. Roll it honestly — do not pick the number
+  the story wants. D what it had to beat, 5 easy · 10 fair · 15 hard · 18 brutal.
+O the outcome, one word from this list and nothing else:
+  crit (R is 20) · pass (R ≥ D) · edge (R is 1 or 2 under D — it works, badly)
+  · fail (R < D) · fumble (R is 1)
+C one line: what this wins or what it costs. Consequence, not narration.
+  On edge and fumble the cost is the point — name it.
+Write every value in the language the roleplay is played in.
+
+→ [[VLD_DICE|A=get over the fence before the dog rounds the corner|R=7|D=12|O=fail|C=one boot stays on the wrong side]]
+</vld:dice>

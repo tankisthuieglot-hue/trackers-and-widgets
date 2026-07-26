@@ -1,0 +1,17 @@
+{
+ "id": "ac345712-09e2-59ed-8e3f-48f195c01398",
+ "scriptName": "🎲 VLD DICE · clean",
+ "findRegex": "/\\[\\[VLD_DICE(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

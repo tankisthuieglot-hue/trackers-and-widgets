@@ -1,0 +1,188 @@
+/* Единственный виджет в паке, который показывает не состояние, а мгновение:
+   бросок уже случился, и переигрывать его нельзя. Отсюда и подача — кубик
+   прилетает и останавливается, а не наливается плавно, как шкала.
+
+   Все пять исходов написаны в разметке, лишние прячет CSS по классу. Так
+   слово исхода переведено на язык пользователя, а не приезжает от модели
+   английским словом из списка. */
+
+.vld-dice {
+  --ink: #ece9e3;
+  --dim: #8a8781;
+  --plate: #17181b;
+  --hair: rgba(236, 233, 227, .1);
+
+  --crit: 214, 176, 84;
+  --pass: 124, 176, 108;
+  --edge: 208, 162, 78;
+  --fail: 150, 152, 158;
+  --fumble: 202, 84, 88;
+
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+  width: min(100%, 356px);
+  margin: 14px auto;
+  color: var(--ink);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .45));
+}
+
+.vld-dice * {
+  box-sizing: border-box;
+}
+
+.vld-dice .throw {
+  --tone: var(--fail);
+
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 13px;
+  align-items: center;
+  padding: 13px 14px;
+  border-radius: 3px;
+  background: var(--plate);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+
+.vld-dice .o-crit   { --tone: var(--crit); }
+.vld-dice .o-pass   { --tone: var(--pass); }
+.vld-dice .o-edge   { --tone: var(--edge); }
+.vld-dice .o-fail   { --tone: var(--fail); }
+.vld-dice .o-fumble { --tone: var(--fumble); }
+
+/* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
+   а не нарисован кружком с цифрой. */
+.vld-dice .die {
+  position: relative;
+  width: 74px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
+  background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
+  box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
+  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+}
+
+/* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
+   место. Крутиться дальше ему незачем — результат известен. */
+@keyframes vld-dice-land {
+  from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+}
+
+/* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
+.vld-dice .facets {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+}
+
+.vld-dice .roll {
+  position: relative;
+  font: 600 27px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: rgb(var(--tone));
+  text-shadow: 0 0 16px rgba(var(--tone), .5);
+}
+
+/* Двадцатка светится и держит на себе взгляд — это единственный бросок,
+   который стоит отпраздновать. Единица дрожит. */
+.vld-dice .o-crit .die {
+  box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
+  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
+             vld-dice-glow 2.2s ease-in-out .5s infinite;
+}
+
+@keyframes vld-dice-glow {
+  50% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 1), 0 0 40px rgba(var(--crit), .6); }
+}
+
+.vld-dice .o-fumble .die {
+  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
+             vld-dice-shake 3.3s steps(1, end) .5s infinite;
+}
+
+@keyframes vld-dice-shake {
+  0%, 90%   { transform: none; }
+  92%       { transform: translateX(-2px) rotate(-1.5deg); }
+  94%       { transform: translateX(2px) rotate(1.5deg); }
+  96%, 100% { transform: none; }
+}
+
+.vld-dice .read {
+  min-width: 0;
+}
+
+.vld-dice .act {
+  font: 400 12.5px/1.35 var(--mono);
+  color: var(--ink);
+}
+
+.vld-dice .verdict {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-top: 7px;
+}
+
+.vld-dice .word {
+  font: 600 11px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  color: rgb(var(--tone));
+}
+
+/* Пять слов лежат в разметке, показывается одно. Модель прислала не то —
+   не показывается ни одного, и виджет молчит вместо того, чтобы врать. */
+.vld-dice .word span {
+  display: none;
+}
+
+.vld-dice .o-crit   .w-crit,
+.vld-dice .o-pass   .w-pass,
+.vld-dice .o-edge   .w-edge,
+.vld-dice .o-fail   .w-fail,
+.vld-dice .o-fumble .w-fumble {
+  display: inline;
+}
+
+.vld-dice .dc {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: .06em;
+  color: var(--dim);
+}
+
+.vld-dice .dc b {
+  font-weight: 600;
+  color: rgba(236, 233, 227, .75);
+}
+
+.vld-dice .cost {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hair);
+  font: 400 11.5px/1.4 var(--mono);
+  color: var(--dim);
+}
+
+/* Порога нет — не показывать «нужно» без числа. */
+.vld-dice .dc:has(b:empty),
+.vld-dice .cost:empty {
+  display: none;
+}
+
+/* Без броска и без действия показывать нечего. */
+.vld-dice .throw:has(.roll:empty),
+.vld-dice .throw:has(.act:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-dice .die,
+  .vld-dice .o-crit .die,
+  .vld-dice .o-fumble .die {
+    animation: none;
+  }
+}

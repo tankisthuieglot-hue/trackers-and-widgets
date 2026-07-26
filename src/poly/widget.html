@@ -1,0 +1,33 @@
+<div class="tape v-$3">
+  <div class="head">
+    <span class="k">%subject%</span>
+    <span class="who">$1</span>
+  </div>
+
+  <blockquote class="said">$2</blockquote>
+
+  <div class="chart">
+    <svg class="trace" viewBox="0 0 300 44" preserveAspectRatio="none" aria-hidden="true">
+      <path class="tr tr-truth" d="M0 22 20 20 40 24 60 21 80 23 100 20 120 23 140 21 160 24 180 21 200 23 220 20 240 23 260 21 280 23 300 22"/>
+      <path class="tr tr-shade" d="M0 22 25 21 50 23 75 20 100 24 120 13 134 31 150 20 175 23 200 21 225 23 250 20 275 23 300 22"/>
+      <path class="tr tr-dodge" d="M0 22 18 17 34 27 52 15 70 29 88 17 104 27 124 14 142 30 160 18 178 28 196 16 214 28 232 20 250 26 270 18 288 26 300 22"/>
+      <path class="tr tr-lie" d="M0 22 20 21 40 23 60 20 80 24 100 7 112 39 126 5 140 41 154 9 168 35 182 13 200 27 220 20 240 24 260 21 280 23 300 22"/>
+    </svg>
+    <span class="needle"></span>
+  </div>
+
+  <div class="verdict">
+    <span class="stamp">
+      <span class="s-truth">%truth%</span>
+      <span class="s-shade">%shade%</span>
+      <span class="s-dodge">%dodge%</span>
+      <span class="s-lie">%lie%</span>
+    </span>
+    <span class="conf">%conf% <b>$4</b>%</span>
+  </div>
+
+  <div class="tell">
+    <span class="k">%tell%</span>
+    <span class="v">$5</span>
+  </div>
+</div>
