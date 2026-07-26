@@ -4,14 +4,14 @@
 import { regexScript, NS } from './lib.mjs';
 
 /**
- * How many recent messages keep their markers in the outgoing prompt.
- * Below this depth the markers are stripped, so old widget data stops paying
- * rent in the context window.
+ * How many recent messages keep their markers in the outgoing prompt. Each
+ * tracker ships its own cleaner built on this depth; below it the marker is
+ * stripped and stops paying rent in the context window.
  *
  * Three is deliberately short. Most widgets are one-offs — a receipt, a post,
- * a notification — and a persistent panel is re-emitted every turn anyway, so
- * older copies are noise. The format itself is anchored by the example in each
- * tracker's prompt, not by the model reading back its own history.
+ * a notification — and a panel that persists is re-emitted anyway, so older
+ * copies are noise. The format is anchored by the example in each tracker's
+ * prompt, not by the model reading back its own history.
  */
 export const FORGET_DEPTH = 3;
 
@@ -95,15 +95,6 @@ export const serviceScripts = [
       find: '/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi',
       display: false,
       minDepth: 0,
-    }),
-  },
-  {
-    file: '04-forget.json',
-    script: regexScript({
-      name: '🕳️ VLD 04 FORGET',
-      find: ANY_MARKER,
-      display: false,
-      minDepth: FORGET_DEPTH,
     }),
   },
   {

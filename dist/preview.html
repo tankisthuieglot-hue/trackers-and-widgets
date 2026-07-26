@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>vladislav — виджеты</title>
+<title>VLD — виджеты</title>
 <style>
   body { margin:0; padding:8px 0 32px; background:#e9eaee;
          font:14px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif; color:#16181d }
@@ -15,313 +15,6 @@
 </style>
 
 <section>
-  <h2>🧪 VLD DEMO</h2>
-  <code>[[VLD_DEMO|…]]</code>
-  <div class="stages">
-    <div class="stage light"><div class="vld-w vld-demo">
-  <div class="card">
-    <div class="head">
-      <b class="title">Демо-виджет</b>
-      <span class="badge">шаблон</span>
-    </div>
-
-    <div class="value">18 742 ₽</div>
-
-    <ul class="list">
-      <li class="item"><i></i><span>Пункты списка кликабельны — это проверка JavaScript.</span></li>
-      <li class="item"><i></i><span>Поля можно переставить местами, разбор не сломается.</span></li>
-      <li class="item"><i></i><span>Пропущенное поле просто останется пустым.</span></li>
-    </ul>
-
-    <div class="foot">Скопируй эту папку, переименуй — получишь свой трекер.</div>
-  </div>
-  <style>
-    /* Every selector contains .vld-demo — inner elements are reached as
-       descendants, never by their own prefixed class. That is what keeps the
-       stylesheet from touching anything outside this widget.
-
-       Colours are fixed. The widget is an object lying on the page, not chrome
-       that follows a theme, so it carries its own opaque surface. */
-
-    .vld-demo {
-      --bg: #ffffff;
-      --ink: #16181d;
-      --muted: #6b7280;
-      --line: rgba(16, 18, 24, 0.10);
-      --accent: #3b6ef5;
-
-      width: min(100%, 380px);
-      margin: 14px auto;
-      font: 14px/1.4 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-      color: var(--ink);
-    }
-
-    .vld-demo * {
-      box-sizing: border-box;
-    }
-
-    .vld-demo .card {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--bg);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
-    }
-
-    .vld-demo .head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .vld-demo .title {
-      font-size: 15px;
-      letter-spacing: -0.01em;
-    }
-
-    .vld-demo .badge {
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent) 14%, transparent);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .vld-demo .value {
-      margin: 10px 0 14px;
-      font-size: 30px;
-      font-weight: 650;
-      letter-spacing: -0.03em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .vld-demo .list {
-      display: grid;
-      gap: 7px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .vld-demo .item {
-      display: flex;
-      gap: 9px;
-      align-items: flex-start;
-      padding: 9px 10px;
-      border-radius: 11px;
-      background: color-mix(in srgb, var(--ink) 4%, transparent);
-      cursor: pointer;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-    }
-
-    .vld-demo .item i {
-      flex: 0 0 auto;
-      width: 16px;
-      height: 16px;
-      margin-top: 1px;
-      border: 2px solid var(--muted);
-      border-radius: 5px;
-      display: grid;
-      place-items: center;
-      font: 700 11px/1 sans-serif;
-      font-style: normal;
-    }
-
-    .vld-demo .item.done {
-      opacity: 0.5;
-      transform: translateX(4px);
-    }
-
-    .vld-demo .item.done i {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .vld-demo .item.done i::before {
-      content: "✓";
-    }
-
-    .vld-demo .foot {
-      margin-top: 13px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-  </style>
-  <script>
-    (function () {
-      var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-demo:not([data-vld-init])');
-      if (!root || root.dataset.vldInit === '1') return;
-      root.dataset.vldInit = '1';
-      // `root` is the widget element; the build wraps this body and guards it against
-      // running twice on the same node. Keep it small — this runs once per widget in
-      // the chat, and there can be a lot of them.
-      root.querySelectorAll('.item').forEach(function (item) {
-        item.addEventListener('click', function () {
-          item.classList.toggle('done');
-        });
-      });
-    })();
-  </script>
-</div></div>
-    <div class="stage dark"><div class="vld-w vld-demo">
-  <div class="card">
-    <div class="head">
-      <b class="title">Демо-виджет</b>
-      <span class="badge">шаблон</span>
-    </div>
-
-    <div class="value">18 742 ₽</div>
-
-    <ul class="list">
-      <li class="item"><i></i><span>Пункты списка кликабельны — это проверка JavaScript.</span></li>
-      <li class="item"><i></i><span>Поля можно переставить местами, разбор не сломается.</span></li>
-      <li class="item"><i></i><span>Пропущенное поле просто останется пустым.</span></li>
-    </ul>
-
-    <div class="foot">Скопируй эту папку, переименуй — получишь свой трекер.</div>
-  </div>
-  <style>
-    /* Every selector contains .vld-demo — inner elements are reached as
-       descendants, never by their own prefixed class. That is what keeps the
-       stylesheet from touching anything outside this widget.
-
-       Colours are fixed. The widget is an object lying on the page, not chrome
-       that follows a theme, so it carries its own opaque surface. */
-
-    .vld-demo {
-      --bg: #ffffff;
-      --ink: #16181d;
-      --muted: #6b7280;
-      --line: rgba(16, 18, 24, 0.10);
-      --accent: #3b6ef5;
-
-      width: min(100%, 380px);
-      margin: 14px auto;
-      font: 14px/1.4 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-      color: var(--ink);
-    }
-
-    .vld-demo * {
-      box-sizing: border-box;
-    }
-
-    .vld-demo .card {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--bg);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
-    }
-
-    .vld-demo .head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .vld-demo .title {
-      font-size: 15px;
-      letter-spacing: -0.01em;
-    }
-
-    .vld-demo .badge {
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent) 14%, transparent);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .vld-demo .value {
-      margin: 10px 0 14px;
-      font-size: 30px;
-      font-weight: 650;
-      letter-spacing: -0.03em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .vld-demo .list {
-      display: grid;
-      gap: 7px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .vld-demo .item {
-      display: flex;
-      gap: 9px;
-      align-items: flex-start;
-      padding: 9px 10px;
-      border-radius: 11px;
-      background: color-mix(in srgb, var(--ink) 4%, transparent);
-      cursor: pointer;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-    }
-
-    .vld-demo .item i {
-      flex: 0 0 auto;
-      width: 16px;
-      height: 16px;
-      margin-top: 1px;
-      border: 2px solid var(--muted);
-      border-radius: 5px;
-      display: grid;
-      place-items: center;
-      font: 700 11px/1 sans-serif;
-      font-style: normal;
-    }
-
-    .vld-demo .item.done {
-      opacity: 0.5;
-      transform: translateX(4px);
-    }
-
-    .vld-demo .item.done i {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .vld-demo .item.done i::before {
-      content: "✓";
-    }
-
-    .vld-demo .foot {
-      margin-top: 13px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-  </style>
-  <script>
-    (function () {
-      var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-demo:not([data-vld-init])');
-      if (!root || root.dataset.vldInit === '1') return;
-      root.dataset.vldInit = '1';
-      // `root` is the widget element; the build wraps this body and guards it against
-      // running twice on the same node. Keep it small — this runs once per widget in
-      // the chat, and there can be a lot of them.
-      root.querySelectorAll('.item').forEach(function (item) {
-        item.addEventListener('click', function () {
-          item.classList.toggle('done');
-        });
-      });
-    })();
-  </script>
-</div></div>
-  </div>
-</section>
-
-<section>
   <h2>🎚️ VLD RPG HUD</h2>
   <code>[[VLD_HUD|…]]</code>
   <div class="stages">
@@ -333,9 +26,9 @@
     </div>
 
     <div class="bars">
-      <div class="bar lv-6"><span class="fill"></span><span class="row"><span class="lbl">Здоровье</span><span class="num">6</span></span></div>
-      <div class="bar lv-3"><span class="fill"></span><span class="row"><span class="lbl">Силы</span><span class="num">3</span></span></div>
-      <div class="bar lv-4"><span class="fill"></span><span class="row"><span class="lbl">Тепло</span><span class="num">4</span></span></div>
+      <div class="bar lv-9"><span class="fill"></span><span class="row"><span class="lbl">Здоровье</span><span class="num">9</span></span></div>
+      <div class="bar lv-6"><span class="fill"></span><span class="row"><span class="lbl">Силы</span><span class="num">6</span></span></div>
+      <div class="bar lv-3"><span class="fill"></span><span class="row"><span class="lbl">Тепло</span><span class="num">3</span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
     </div>
@@ -357,22 +50,26 @@
   </div>
   <style>
     /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
-       сеттинг за пользователя. Характер даёт материал — тёмный анодированный
-       металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
 
-       Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
-       в любом мире. */
+       Корпус держится на материале: тёмный анодированный металл, штриховка, блик
+       сверху, тонкая светящаяся кромка на срезе заливки. */
 
     .vld-hud {
       --panel: #17181c;
       --track: rgba(230, 227, 220, .05);
-      --wash: rgba(230, 227, 220, .15);
-      --edge: rgba(244, 242, 236, .78);
       --ink: #e6e3dc;
       --dim: #83858d;
       --hair: rgba(230, 227, 220, .12);
-      --alert: 204, 90, 100;
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
 
       --serif: "Georgia", "Times New Roman", serif;
       --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -444,7 +141,7 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+      background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
       transform-origin: left center;
       animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
     }
@@ -455,8 +152,8 @@
       position: absolute;
       inset: 0 0 0 auto;
       width: 1.5px;
-      background: var(--edge);
-      box-shadow: 0 0 9px rgba(244, 242, 236, .34);
+      background: rgb(var(--tone));
+      box-shadow: 0 0 10px rgba(var(--tone), .65);
     }
 
     @keyframes vld-grow {
@@ -481,15 +178,43 @@
     .vld-hud .lv-9  .fill { width: 90%; }
     .vld-hud .lv-10 .fill { width: 100%; }
 
-    /* На исходе — видно боковым зрением, читать не обязательно. */
+    .vld-hud .bar          { --tone: var(--crit); }
+    .vld-hud .lv-3,
+    .vld-hud .lv-4         { --tone: var(--low); }
+    .vld-hud .lv-5,
+    .vld-hud .lv-6,
+    .vld-hud .lv-7         { --tone: var(--mid); }
+    .vld-hud .lv-8,
+    .vld-hud .lv-9,
+    .vld-hud .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
     .vld-hud .lv-1,
     .vld-hud .lv-2 {
       animation: vld-alert 2.6s ease-in-out infinite;
     }
 
     @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
     }
 
     .vld-hud .row {
@@ -613,7 +338,8 @@
       .vld-hud .panel,
       .vld-hud .fill,
       .vld-hud .lv-1,
-      .vld-hud .lv-2 {
+      .vld-hud .lv-2,
+      .vld-hud .name {
         animation: none;
       }
 
@@ -673,7 +399,7 @@
     </div>
 
     <div class="bars">
-      <div class="bar lv-10"><span class="fill"></span><span class="row"><span class="lbl">Целостность корпуса</span><span class="num">10</span></span></div>
+      <div class="bar lv-4"><span class="fill"></span><span class="row"><span class="lbl">Целостность скафандра</span><span class="num">4</span></span></div>
       <div class="bar lv-1"><span class="fill"></span><span class="row"><span class="lbl">Кислород</span><span class="num">1</span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
@@ -697,22 +423,26 @@
   </div>
   <style>
     /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
-       сеттинг за пользователя. Характер даёт материал — тёмный анодированный
-       металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
 
-       Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
-       в любом мире. */
+       Корпус держится на материале: тёмный анодированный металл, штриховка, блик
+       сверху, тонкая светящаяся кромка на срезе заливки. */
 
     .vld-hud {
       --panel: #17181c;
       --track: rgba(230, 227, 220, .05);
-      --wash: rgba(230, 227, 220, .15);
-      --edge: rgba(244, 242, 236, .78);
       --ink: #e6e3dc;
       --dim: #83858d;
       --hair: rgba(230, 227, 220, .12);
-      --alert: 204, 90, 100;
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
 
       --serif: "Georgia", "Times New Roman", serif;
       --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -784,7 +514,7 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+      background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
       transform-origin: left center;
       animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
     }
@@ -795,8 +525,8 @@
       position: absolute;
       inset: 0 0 0 auto;
       width: 1.5px;
-      background: var(--edge);
-      box-shadow: 0 0 9px rgba(244, 242, 236, .34);
+      background: rgb(var(--tone));
+      box-shadow: 0 0 10px rgba(var(--tone), .65);
     }
 
     @keyframes vld-grow {
@@ -821,15 +551,43 @@
     .vld-hud .lv-9  .fill { width: 90%; }
     .vld-hud .lv-10 .fill { width: 100%; }
 
-    /* На исходе — видно боковым зрением, читать не обязательно. */
+    .vld-hud .bar          { --tone: var(--crit); }
+    .vld-hud .lv-3,
+    .vld-hud .lv-4         { --tone: var(--low); }
+    .vld-hud .lv-5,
+    .vld-hud .lv-6,
+    .vld-hud .lv-7         { --tone: var(--mid); }
+    .vld-hud .lv-8,
+    .vld-hud .lv-9,
+    .vld-hud .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
     .vld-hud .lv-1,
     .vld-hud .lv-2 {
       animation: vld-alert 2.6s ease-in-out infinite;
     }
 
     @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
     }
 
     .vld-hud .row {
@@ -953,7 +711,8 @@
       .vld-hud .panel,
       .vld-hud .fill,
       .vld-hud .lv-1,
-      .vld-hud .lv-2 {
+      .vld-hud .lv-2,
+      .vld-hud .name {
         animation: none;
       }
 
@@ -1013,9 +772,9 @@
     </div>
 
     <div class="bars">
-      <div class="bar lv-6"><span class="fill"></span><span class="row"><span class="lbl">Здоровье</span><span class="num">6</span></span></div>
-      <div class="bar lv-3"><span class="fill"></span><span class="row"><span class="lbl">Силы</span><span class="num">3</span></span></div>
-      <div class="bar lv-4"><span class="fill"></span><span class="row"><span class="lbl">Тепло</span><span class="num">4</span></span></div>
+      <div class="bar lv-9"><span class="fill"></span><span class="row"><span class="lbl">Здоровье</span><span class="num">9</span></span></div>
+      <div class="bar lv-6"><span class="fill"></span><span class="row"><span class="lbl">Силы</span><span class="num">6</span></span></div>
+      <div class="bar lv-3"><span class="fill"></span><span class="row"><span class="lbl">Тепло</span><span class="num">3</span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
     </div>
@@ -1037,22 +796,26 @@
   </div>
   <style>
     /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
-       сеттинг за пользователя. Характер даёт материал — тёмный анодированный
-       металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
 
-       Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
-       в любом мире. */
+       Корпус держится на материале: тёмный анодированный металл, штриховка, блик
+       сверху, тонкая светящаяся кромка на срезе заливки. */
 
     .vld-hud {
       --panel: #17181c;
       --track: rgba(230, 227, 220, .05);
-      --wash: rgba(230, 227, 220, .15);
-      --edge: rgba(244, 242, 236, .78);
       --ink: #e6e3dc;
       --dim: #83858d;
       --hair: rgba(230, 227, 220, .12);
-      --alert: 204, 90, 100;
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
 
       --serif: "Georgia", "Times New Roman", serif;
       --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -1124,7 +887,7 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+      background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
       transform-origin: left center;
       animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
     }
@@ -1135,8 +898,8 @@
       position: absolute;
       inset: 0 0 0 auto;
       width: 1.5px;
-      background: var(--edge);
-      box-shadow: 0 0 9px rgba(244, 242, 236, .34);
+      background: rgb(var(--tone));
+      box-shadow: 0 0 10px rgba(var(--tone), .65);
     }
 
     @keyframes vld-grow {
@@ -1161,15 +924,43 @@
     .vld-hud .lv-9  .fill { width: 90%; }
     .vld-hud .lv-10 .fill { width: 100%; }
 
-    /* На исходе — видно боковым зрением, читать не обязательно. */
+    .vld-hud .bar          { --tone: var(--crit); }
+    .vld-hud .lv-3,
+    .vld-hud .lv-4         { --tone: var(--low); }
+    .vld-hud .lv-5,
+    .vld-hud .lv-6,
+    .vld-hud .lv-7         { --tone: var(--mid); }
+    .vld-hud .lv-8,
+    .vld-hud .lv-9,
+    .vld-hud .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
     .vld-hud .lv-1,
     .vld-hud .lv-2 {
       animation: vld-alert 2.6s ease-in-out infinite;
     }
 
     @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
     }
 
     .vld-hud .row {
@@ -1293,7 +1084,8 @@
       .vld-hud .panel,
       .vld-hud .fill,
       .vld-hud .lv-1,
-      .vld-hud .lv-2 {
+      .vld-hud .lv-2,
+      .vld-hud .name {
         animation: none;
       }
 
@@ -1353,7 +1145,7 @@
     </div>
 
     <div class="bars">
-      <div class="bar lv-10"><span class="fill"></span><span class="row"><span class="lbl">Целостность корпуса</span><span class="num">10</span></span></div>
+      <div class="bar lv-4"><span class="fill"></span><span class="row"><span class="lbl">Целостность скафандра</span><span class="num">4</span></span></div>
       <div class="bar lv-1"><span class="fill"></span><span class="row"><span class="lbl">Кислород</span><span class="num">1</span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
       <div class="bar lv-"><span class="fill"></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
@@ -1377,22 +1169,26 @@
   </div>
   <style>
     /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
-       сеттинг за пользователя. Характер даёт материал — тёмный анодированный
-       металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
 
-       Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
-       в любом мире. */
+       Корпус держится на материале: тёмный анодированный металл, штриховка, блик
+       сверху, тонкая светящаяся кромка на срезе заливки. */
 
     .vld-hud {
       --panel: #17181c;
       --track: rgba(230, 227, 220, .05);
-      --wash: rgba(230, 227, 220, .15);
-      --edge: rgba(244, 242, 236, .78);
       --ink: #e6e3dc;
       --dim: #83858d;
       --hair: rgba(230, 227, 220, .12);
-      --alert: 204, 90, 100;
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
 
       --serif: "Georgia", "Times New Roman", serif;
       --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -1464,7 +1260,7 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+      background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
       transform-origin: left center;
       animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
     }
@@ -1475,8 +1271,8 @@
       position: absolute;
       inset: 0 0 0 auto;
       width: 1.5px;
-      background: var(--edge);
-      box-shadow: 0 0 9px rgba(244, 242, 236, .34);
+      background: rgb(var(--tone));
+      box-shadow: 0 0 10px rgba(var(--tone), .65);
     }
 
     @keyframes vld-grow {
@@ -1501,15 +1297,43 @@
     .vld-hud .lv-9  .fill { width: 90%; }
     .vld-hud .lv-10 .fill { width: 100%; }
 
-    /* На исходе — видно боковым зрением, читать не обязательно. */
+    .vld-hud .bar          { --tone: var(--crit); }
+    .vld-hud .lv-3,
+    .vld-hud .lv-4         { --tone: var(--low); }
+    .vld-hud .lv-5,
+    .vld-hud .lv-6,
+    .vld-hud .lv-7         { --tone: var(--mid); }
+    .vld-hud .lv-8,
+    .vld-hud .lv-9,
+    .vld-hud .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
     .vld-hud .lv-1,
     .vld-hud .lv-2 {
       animation: vld-alert 2.6s ease-in-out infinite;
     }
 
     @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
     }
 
     .vld-hud .row {
@@ -1633,7 +1457,8 @@
       .vld-hud .panel,
       .vld-hud .fill,
       .vld-hud .lv-1,
-      .vld-hud .lv-2 {
+      .vld-hud .lv-2,
+      .vld-hud .name {
         animation: none;
       }
 

@@ -1,7 +1,7 @@
 // Catches the failures that actually ship in packs like this: a prompt that
 // advertises a field the regex never captures, a stylesheet that leaks into the
 // chat, an example that cannot survive its own grammar.
-import { ATTRIBUTE_SAFE, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
+import { ATTRIBUTE_SAFE, languages, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
 
 const SEP = '\u0000';
 const problems = [];
@@ -14,7 +14,6 @@ for (const t of loadTrackers()) {
   const at = `src/${t.name}`;
 
   if (!t.title) fail(at, 'нет поля title');
-  if (!t.when) fail(at, 'нет поля when — модель не узнает, когда ставить маркер');
 
   if (!/^VLD_[A-Z0-9_]+$/.test(t.tag ?? '')) {
     fail(at, `тег «${t.tag}» должен подходить под VLD_[A-Z0-9_]+`);
@@ -42,21 +41,34 @@ for (const t of loadTrackers()) {
     if (!/^[A-Z][A-Z0-9]*$/.test(f.key ?? '')) fail(at, `ключ «${f.key}» должен быть вида T, D, I1`);
     if (keys.has(f.key)) fail(at, `ключ ${f.key} объявлен дважды`);
     keys.add(f.key);
-    if (!f.desc && !t.legend) fail(at, `у поля ${f.key} нет описания — оно идёт в промпт`);
   }
 
-  if (t.legend) {
-    const mentioned = mentionedKeys(t.legend);
-    for (const f of t.fields) {
-      if (!mentioned.has(f.key)) {
-        fail(at, `ключ ${f.key} не упомянут в legend — модель о нём не узнает`);
-      }
-    }
+  if (!t.lang || !Object.keys(t.lang).length) {
+    fail(at, 'нет ни одного языка в lang');
   }
 
   checkPlaceholders(t, at);
-  checkExample(t, at);
+  checkChrome(t, at);
+  checkPreview(t, at);
   checkCss(t, at);
+
+  for (const lang of languages(t)) checkLanguage(t, lang, `${at} [${lang.code}]`);
+}
+
+/** Каждый язык — это отдельный промпт, и врать он может независимо от других. */
+function checkLanguage(t, lang, at) {
+  if (!lang.when) fail(at, 'нет when — модель не узнает, когда ставить маркер');
+
+  const mentioned = lang.legend ? mentionedKeys(lang.legend) : null;
+  for (const f of t.fields) {
+    if (mentioned) {
+      if (!mentioned.has(f.key)) fail(at, `ключ ${f.key} не упомянут в legend`);
+    } else if (!f.desc) {
+      fail(at, `у поля ${f.key} нет ни desc, ни legend — оно не попадёт в промпт`);
+    }
+  }
+
+  checkExample(t, lang.example ?? {}, at);
 }
 
 // One broken field can trip the same check twice; the author needs the fact once.
@@ -107,12 +119,25 @@ function checkPlaceholders(t, at) {
   }
 }
 
-/**
- * The example is what the model imitates, so it has to survive the real
- * grammar. Building the marker and parsing it back is the only check that
- * proves prompt and regex agree.
- */
-function checkExample(t, at) {
+/** Каждая подстановка %имя% в разметке должна быть переведена на каждый язык. */
+function checkChrome(t, at) {
+  const used = new Set([...t.html.matchAll(/%([a-z][\w]*)%/g)].map((m) => m[1]));
+
+  for (const lang of languages(t)) {
+    for (const key of used) {
+      if (!lang.chrome?.[key]) fail(at, `нет подписи %${key}% для языка ${lang.code}`);
+    }
+    for (const key of Object.keys(lang.chrome ?? {})) {
+      if (!used.has(key)) fail(at, `подпись %${key}% (${lang.code}) нигде не используется`);
+    }
+  }
+}
+
+function checkPreview(t, at) {
+  if (t.previewLang && !t.lang?.[t.previewLang]) {
+    fail(at, `previewLang «${t.previewLang}» не объявлен в lang`);
+  }
+
   for (const [i, state] of (t.preview ?? []).entries()) {
     for (const [key, value] of Object.entries(state)) {
       if (!t.fields.some((f) => f.key === key)) {
@@ -123,14 +148,21 @@ function checkExample(t, at) {
       }
     }
   }
+}
 
+/**
+ * The example is what the model imitates, so it has to survive the real
+ * grammar. Building the marker and parsing it back is the only check that
+ * proves prompt and regex agree.
+ */
+function checkExample(t, example, at) {
   for (const f of t.fields) {
-    const value = t.example?.[f.key];
+    const value = example[f.key];
     if (value === undefined || value === '') {
       // An optional slot with no example is the point: the example shows the
       // model that leaving slots out is allowed.
       if (!f.optional) {
-        fail(at, `в example нет значения для ${f.key} — превью и промпт покажут пустоту`);
+        fail(at, `в example нет значения для ${f.key} — промпт покажет пустоту`);
       }
       continue;
     }
@@ -143,7 +175,7 @@ function checkExample(t, at) {
   }
   if (problems.some((p) => p.startsWith(at + ':'))) return;
 
-  const marker = renderMarker(t.tag, t.fields, t.example, { trim: true });
+  const marker = renderMarker(t.tag, t.fields, example, { trim: true });
   const template = t.fields.map((_, i) => `${SEP}$${i + 1}`).join('');
   const parsed = marker.replace(markerRegExp(t.tag, t.fields), template);
 
@@ -154,7 +186,7 @@ function checkExample(t, at) {
 
   const got = parsed.split(SEP).slice(1);
   t.fields.forEach((f, i) => {
-    const want = String(t.example[f.key] ?? '').replace(/^[ \t]+/, '');
+    const want = String(example[f.key] ?? '').replace(/^[ \t]+/, '');
     if (got[i] !== want) {
       fail(at, `поле ${f.key} разобралось как «${got[i]}», ожидалось «${want}»`);
     }
@@ -187,7 +219,7 @@ function checkCss(t, at) {
       if (keyframesDepth !== -1 && depth > keyframesDepth) continue;
       if (!text) continue;
 
-      for (const selector of text.split(',')) {
+      for (const selector of splitSelectors(text)) {
         if (!scoped(selector, scope)) {
           fail(at, `селектор «${selector.trim()}» не содержит ${scope} — стиль утечёт в чат`);
         }
@@ -209,8 +241,32 @@ function checkCss(t, at) {
 }
 
 /**
- * The class has to appear somewhere in the chain, as a whole token — `.vld-demo
- * .card` and `.vld-demo.compact` pass, a bare `.card` does not. Position is not
+ * Split a selector list on its own commas. The commas inside `:has(.a, .b)`
+ * and `:is(…)` belong to the pseudo-class, not to the list.
+ */
+function splitSelectors(text) {
+  const out = [];
+  let depth = 0;
+  let current = '';
+
+  for (const ch of text) {
+    if (ch === '(') depth += 1;
+    else if (ch === ')') depth -= 1;
+
+    if (ch === ',' && depth === 0) {
+      out.push(current);
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  out.push(current);
+  return out;
+}
+
+/**
+ * The class has to appear somewhere in the chain, as a whole token — `.vld-hud
+ * .card` and `.vld-hud.compact` pass, a bare `.card` does not. Position is not
  * checked: an ancestor selector before the scope is legitimate, and demanding
  * the scope come first would outlaw the safest form of nesting.
  */

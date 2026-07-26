@@ -123,6 +123,14 @@ export function loadTrackers() {
     .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 }
 
+/**
+ * A tracker ships once per language it declares. The marker grammar, markup and
+ * styles are shared; the prompt and the widget's fixed captions are not, because
+ * the model writes in whatever language the roleplay runs in.
+ */
+export const languages = (t) =>
+  Object.entries(t.lang).map(([code, l]) => ({ code, ...l }));
+
 export function loadTracker(name) {
   const dir = join(SRC, name);
   const read = (file) => (existsSync(join(dir, file)) ? readFileSync(join(dir, file), 'utf8') : '');
@@ -149,9 +157,12 @@ export function loadTracker(name) {
  * re-create script elements, where `currentScript` is null. The init flag makes
  * re-rendering the same message idempotent.
  */
-export function renderWidget(t) {
+export function renderWidget(t, chrome = {}) {
   const cls = `vld-${t.name}`;
-  const parts = [`<div class="vld-w ${cls}">`, indent(t.html, 2)];
+  // %key% are the widget's own fixed captions. They are not fields: the model
+  // never writes them, but they still have to speak the player's language.
+  const html = t.html.replace(/%([a-z][\w]*)%/g, (whole, key) => chrome[key] ?? whole);
+  const parts = [`<div class="vld-w ${cls}">`, indent(html, 2)];
 
   if (t.css) parts.push(`  <style>\n${indent(t.css, 4)}\n  </style>`);
 

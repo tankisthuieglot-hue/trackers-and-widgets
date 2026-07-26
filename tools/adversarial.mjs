@@ -4,10 +4,17 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DIST } from './lib.mjs';
 
-const scripts = readdirSync(join(DIST, 'regex'))
-  .sort()
-  .map((f) => JSON.parse(readFileSync(join(DIST, 'regex', f), 'utf8')))
-  .filter((s) => s.markdownOnly && s.findRegex.includes('VLD_'));
+const LANG = process.argv[2] ?? 'ru';
+const load = (...path) => JSON.parse(readFileSync(join(DIST, ...path), 'utf8'));
+
+// Widgets in tracker order, then the fallback — the order the install imposes.
+const scripts = [
+  ...readdirSync(DIST, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && e.name !== 'service')
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => load(e.name, LANG, '2-regex.json')),
+  load('service', '99-fallback.json'),
+];
 
 const compile = (literal) =>
   new RegExp(literal.slice(1, literal.lastIndexOf('/')), literal.slice(literal.lastIndexOf('/') + 1));

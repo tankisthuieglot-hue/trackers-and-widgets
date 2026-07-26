@@ -1,116 +1,99 @@
-// Turns src/<tracker>/ into the two things a user actually installs:
-// regex scripts for SillyTavern and a prompts file to paste into a preset.
-// Both come from the same tracker.json, so the prompt cannot promise a field
-// the regex does not capture.
+// Turns src/<tracker>/ into what a user actually installs.
+//
+// Each tracker ships one folder per language, holding exactly three files in
+// the order they are used: the prompt you paste into the preset, the regex that
+// renders the widget, and the cleaner that takes the marker back out of the
+// context window. Prompt and regex are generated from the same field list, so
+// the prompt cannot promise a field the regex does not capture.
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  DIST, ROOT, loadTrackers, markerLiteral, regexScript, renderMarker, renderWidget,
+  DIST, ROOT, languages, loadTrackers, markerLiteral, NS,
+  regexScript, renderMarker, renderWidget,
 } from './lib.mjs';
 import { serviceScripts, FORGET_DEPTH } from './service.mjs';
 
-/** Shared preamble: without it the model has no idea when a marker is warranted. */
-const RULES = `
-<vld:rules>
-Маркеры — это состояние сцены, а не украшение. Регекс превращает их в виджеты.
-
-КОГДА: только если деталь меняет или проясняет сцену. 1–3 маркера на ответ.
-Маркер ставит {{char}} или мир, но не {{user}} за кадром.
-
-ФОРМАТ:
-- Каждый маркер на своей строке, не внутри прозы.
-- Внутри значений запрещены символы | и ]
-- Один и тот же маркер — не больше одного раза за ответ.
-- Порядок полей произволен, лишние поля можно опустить.
-- Не выдумывай новые маркеры и не пиши HTML вручную.
-
-ЯЗЫК: текст внутри маркеров — русский, кроме названий брендов и приложений.
-ДЛИНА: коротко, значения читаются на экране телефона.
-</vld:rules>`;
-
-/** One widget filled in, exactly as a reader would see it. */
-const filled = (t, values) =>
-  renderWidget(t).replace(/\$(\d+)/g, (_, n) => {
-    const field = t.fields[Number(n) - 1];
-    return field ? String(values[field.key] ?? '') : '';
-  });
-
-/**
- * What the preview shows. A tracker may list several states instead of one,
- * to show how it holds up on data the single canonical example never reaches —
- * a gauge at its last notch, a slot the model left out.
- */
-const states = (t) => t.preview ?? [t.example];
-
 const trackers = loadTrackers();
-const regexDir = join(DIST, 'regex');
 
-rmSync(regexDir, { recursive: true, force: true });
-mkdirSync(regexDir, { recursive: true });
+rmSync(DIST, { recursive: true, force: true });
+mkdirSync(DIST, { recursive: true });
 
 const write = (path, body) => writeFileSync(path, body.replace(/\r\n/g, '\n'), 'utf8');
 
-for (const { file, script } of serviceScripts) {
-  write(join(regexDir, file), JSON.stringify(script, null, 1));
-}
+const writeJson = (path, value) => write(path, JSON.stringify(value, null, 1));
+
+// Installed once, shared by every tracker.
+const serviceDir = join(DIST, 'service');
+mkdirSync(serviceDir, { recursive: true });
+for (const { file, script } of serviceScripts) writeJson(join(serviceDir, file), script);
 
 for (const t of trackers) {
-  const script = regexScript({
-    name: t.title,
-    find: markerLiteral(t.tag, t.fields),
-    replace: renderWidget(t),
-    display: true,
-  });
-  const file = `${String(t.order).padStart(2, '0')}-vld-${t.name}.json`;
-  write(join(regexDir, file), JSON.stringify(script, null, 1));
+  for (const lang of languages(t)) {
+    const dir = join(DIST, t.name, lang.code);
+    mkdirSync(dir, { recursive: true });
+
+    write(join(dir, '1-prompt.txt'), promptBlock(t, lang));
+
+    writeJson(join(dir, '2-regex.json'), regexScript({
+      name: `${t.title} · ${lang.code}`,
+      find: markerLiteral(t.tag, t.fields),
+      replace: renderWidget(t, lang.chrome),
+      display: true,
+    }));
+
+    // Display-only rendering leaves the raw marker in the stored message, so
+    // without this the marker keeps paying rent in every later request.
+    writeJson(join(dir, '3-cleaner.json'), regexScript({
+      name: `${t.title} · clean`,
+      find: `/\\[\\[${t.tag}(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g`,
+      display: false,
+      minDepth: FORGET_DEPTH,
+    }));
+  }
 }
 
-write(join(DIST, 'prompts.md'), promptsFile(trackers));
-write(join(ROOT, 'preview', 'widgets.js'), previewData(trackers));
 write(join(DIST, 'preview.html'), standalonePreview(trackers));
+write(join(ROOT, 'preview', 'widgets.js'), previewData(trackers));
 
 console.log(
-  `built ${trackers.length} tracker(s) + ${serviceScripts.length} service script(s) -> dist/`,
+  `built ${trackers.length} tracker(s) × ${trackers.map((t) => languages(t).length).join('/')} lang` +
+  ` + ${serviceScripts.length} service script(s) -> dist/`,
 );
 
-/** One preset-ready block per tracker, plus the shared output rules. */
-function promptsFile(list) {
-  const blocks = list.map((t) => {
-    // A hand-written legend earns its keep once repeated slots would turn the
-    // generated one-liner into a wall. The validator still requires every key
-    // to appear in it, so it cannot drift from the fields.
-    const legend = t.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
-    const lines = [
-      `<vld:${t.name}>`,
-      `FIRE: ${t.when}`,
-      ...(t.dont ? [`SKIP: ${t.dont}`] : []),
-      '',
-      renderMarker(t.tag, t.fields, {}),
-      '',
-      legend.trim(),
-      '',
-      `→ ${renderMarker(t.tag, t.fields, t.example, { trim: true })}`,
-      `</vld:${t.name}>`,
-    ];
-    return `## ${t.title}\n\n\`\`\`\n${lines.join('\n')}\n\`\`\``;
-  });
+/** The block that goes into the preset, as raw text ready to paste. */
+function promptBlock(t, lang) {
+  const legend = lang.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
 
   return [
-    '# vladislav — блоки для пресета',
+    `<vld:${t.name}>`,
+    `FIRE: ${lang.when}`,
+    ...(lang.dont ? [`SKIP: ${lang.dont}`] : []),
     '',
-    'Собрано автоматически, править здесь бессмысленно — правь `src/` и запусти `npm run build`.',
+    renderMarker(t.tag, t.fields, {}),
     '',
-    'Каждый блок добавляется в пресет отдельным промптом с ролью **system**.',
-    'Начни с правил вывода — без них модель не знает, когда маркеры уместны.',
+    legend.trim(),
     '',
-    '## Правила вывода',
+    `→ ${renderMarker(t.tag, t.fields, lang.example, { trim: true })}`,
+    `</vld:${t.name}>`,
     '',
-    '```',
-    RULES.trim(),
-    '```',
-    '',
-    ...blocks.flatMap((b) => [b, '']),
   ].join('\n');
+}
+
+/**
+ * Which language and which data the preview page draws.
+ *
+ * Declared, not assigned to a const: the top-level code above runs before any
+ * `const` further down is initialised, and a const here would throw.
+ */
+function shown(t) {
+  const lang = t.lang[t.previewLang] ?? languages(t)[0];
+  const states = t.preview ?? [lang.example];
+
+  return states.map((values) =>
+    renderWidget(t, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
+      const field = t.fields[Number(n) - 1];
+      return field ? String(values[field.key] ?? '') : '';
+    }));
 }
 
 /**
@@ -119,7 +102,7 @@ function promptsFile(list) {
  */
 function standalonePreview(list) {
   const sections = list.map((t) => {
-    const widgets = states(t).map((s) => filled(t, s)).join('\n');
+    const widgets = shown(t).join('\n');
     return `
 <section>
   <h2>${t.title}</h2>
@@ -133,7 +116,7 @@ function standalonePreview(list) {
 
   return `<!doctype html>
 <meta charset="utf-8">
-<title>vladislav — виджеты</title>
+<title>${NS} — виджеты</title>
 <style>
   body { margin:0; padding:8px 0 32px; background:#e9eaee;
          font:14px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif; color:#16181d }
@@ -156,7 +139,7 @@ function previewData(list) {
     name: t.name,
     title: t.title,
     tag: t.tag,
-    html: states(t).map((s) => filled(t, s)).join('\n'),
+    html: shown(t).join('\n'),
   }));
 
   return [

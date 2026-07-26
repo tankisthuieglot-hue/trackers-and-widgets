@@ -1,20 +1,24 @@
 /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-   тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
-   сеттинг за пользователя. Характер даёт материал — тёмный анодированный
-   металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
+   тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+   за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+   в порядке. Это читается в любом мире.
 
-   Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
-   в любом мире. */
+   Корпус держится на материале: тёмный анодированный металл, штриховка, блик
+   сверху, тонкая светящаяся кромка на срезе заливки. */
 
 .vld-hud {
   --panel: #17181c;
   --track: rgba(230, 227, 220, .05);
-  --wash: rgba(230, 227, 220, .15);
-  --edge: rgba(244, 242, 236, .78);
   --ink: #e6e3dc;
   --dim: #83858d;
   --hair: rgba(230, 227, 220, .12);
-  --alert: 204, 90, 100;
+
+  /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+     цифру можно не искать. */
+  --crit: 204, 90, 100;
+  --low: 214, 128, 64;
+  --mid: 214, 180, 74;
+  --good: 127, 174, 99;
 
   --serif: "Georgia", "Times New Roman", serif;
   --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -86,7 +90,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 0;
-  background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+  background: linear-gradient(90deg, rgba(var(--tone), .10), rgba(var(--tone), .30));
   transform-origin: left center;
   animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
 }
@@ -97,8 +101,8 @@
   position: absolute;
   inset: 0 0 0 auto;
   width: 1.5px;
-  background: var(--edge);
-  box-shadow: 0 0 9px rgba(244, 242, 236, .34);
+  background: rgb(var(--tone));
+  box-shadow: 0 0 10px rgba(var(--tone), .65);
 }
 
 @keyframes vld-grow {
@@ -123,15 +127,43 @@
 .vld-hud .lv-9  .fill { width: 90%; }
 .vld-hud .lv-10 .fill { width: 100%; }
 
-/* На исходе — видно боковым зрением, читать не обязательно. */
+.vld-hud .bar          { --tone: var(--crit); }
+.vld-hud .lv-3,
+.vld-hud .lv-4         { --tone: var(--low); }
+.vld-hud .lv-5,
+.vld-hud .lv-6,
+.vld-hud .lv-7         { --tone: var(--mid); }
+.vld-hud .lv-8,
+.vld-hud .lv-9,
+.vld-hud .lv-10        { --tone: var(--good); }
+
+/* На исходе — видно, даже если не читать. */
 .vld-hud .lv-1,
 .vld-hud .lv-2 {
   animation: vld-alert 2.6s ease-in-out infinite;
 }
 
 @keyframes vld-alert {
-  0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
-  50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+  50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+}
+
+/* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+   пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+.vld-hud .panel:has(.lv-1, .lv-2) .name {
+  animation: vld-adrenaline .5s ease-in-out infinite alternate;
+}
+
+.vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+  animation: vld-unease 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes vld-adrenaline {
+  to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+}
+
+@keyframes vld-unease {
+  to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
 }
 
 .vld-hud .row {
@@ -255,7 +287,8 @@
   .vld-hud .panel,
   .vld-hud .fill,
   .vld-hud .lv-1,
-  .vld-hud .lv-2 {
+  .vld-hud .lv-2,
+  .vld-hud .name {
     animation: none;
   }
 

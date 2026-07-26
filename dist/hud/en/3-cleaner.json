@@ -1,7 +1,7 @@
 {
- "id": "df0520e4-c82d-5a6d-8cf7-e754a2c07fb0",
- "scriptName": "🕳️ VLD 04 FORGET",
- "findRegex": "/\\[\\[VLD_[A-Z0-9_]*[^\\]\\n]*\\]{0,2}/g",
+ "id": "57e0eeb2-f0da-5532-8a57-b4da98a16204",
+ "scriptName": "🎚️ VLD RPG HUD · clean",
+ "findRegex": "/\\[\\[VLD_HUD(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
  "replaceString": "",
  "trimStrings": [],
  "placement": [
