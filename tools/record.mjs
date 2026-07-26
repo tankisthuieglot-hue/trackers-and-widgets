@@ -26,15 +26,24 @@ const BROWSER = process.env.VLD_BROWSER
   ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 
 const LANG = process.argv[2] ?? 'en';
+const NAME = process.argv[3] ?? 'hud';
 const FPS = 14;
 const SCALE = 1.5;
 const WIDTH = 420;
 
-const tracker = loadTrackers().find((t) => t.name === (process.argv[3] ?? 'hud'));
+const tracker = loadTrackers().find((t) => t.name === NAME);
+if (!tracker) {
+  console.error(`нет трекера «${NAME}» — есть: ${loadTrackers().map((t) => t.name).join(', ')}`);
+  process.exit(1);
+}
 const lang = languages(tracker).find((l) => l.code === LANG);
 
-/** The two states the film cuts between. */
-const CALM = {
+/**
+ * The HUD is filmed by hand: it is the only tracker with things to do to it —
+ * a pack that opens, a readout that clears when tapped — and a generic loop
+ * would show none of that.
+ */
+const HUD_CALM = {
   N: 'Vlad Kostsov', A: '32', H: "5'10\"",
   B1: 'Health', V1: '9', B2: 'Stamina', V2: '6', B3: 'Warmth', V3: '3',
   C: 'soaked parka, sweater on bare skin, combat boots',
@@ -42,33 +51,62 @@ const CALM = {
   S: 'split knuckles, wet through, voice gone',
 };
 
-const HURT = {
-  ...CALM,
-  V1: '4', V2: '2', V3: '1',
-  S: 'brow split open, shaking, breathing through the mouth',
-  E: 'Concussed', EF: 'blur',
+const HUD_FILM = {
+  states: [
+    HUD_CALM,
+    {
+      ...HUD_CALM,
+      V1: '4', V2: '2', V3: '1',
+      S: 'brow split open, shaking, breathing through the mouth',
+      E: 'Concussed', EF: 'blur',
+    },
+  ],
+  // Each beat holds for `hold` seconds; `act` runs once when it starts.
+  // Declarative so the pacing can be retuned without touching the capture.
+  script: [
+    { hold: 1.9, label: 'calm appears', act: 'show-0' },
+    { hold: 0.5, label: 'open the pack', act: 'open-pack' },
+    { hold: 1.3, label: 'pack open' },
+    { hold: 0.4, label: 'close the pack', act: 'close-pack' },
+    { hold: 1.7, label: 'hurt appears', act: 'show-1' },
+    { hold: 1.4, label: 'obscured', poster: true },
+    { hold: 1.9, label: 'tap to read', act: 'peek' },
+    { hold: 0.9, label: 'back to obscured', act: 'unpeek' },
+  ],
 };
+
+/**
+ * Every other tracker cycles through the states it already declares for the
+ * preview. That is enough for a loop worth watching: each cut replays the
+ * entrance, and whatever the widget does on its own — a shine, an alarm, a
+ * typing indicator — runs for the length of the hold.
+ */
+function autoFilm(t, l) {
+  // Состояния для превью написаны на одном языке — том, что указан в
+  // previewLang. Для любого другого единственный текст на нужном языке — это
+  // пример из самого языка, иначе в кадре окажется русский текст под
+  // английскими подписями.
+  const previewLang = t.previewLang ?? Object.keys(t.lang)[0];
+  const states = previewLang === l.code ? (t.preview ?? [l.example]) : [l.example];
+
+  return {
+    states,
+    script: states.map((_, i) => ({
+      hold: states.length > 1 ? 2.7 : 3.4,
+      label: `состояние ${i + 1}`,
+      act: `show-${i}`,
+      poster: i === 0,
+    })),
+  };
+}
+
+const { states: STATES, script } = NAME === 'hud' ? HUD_FILM : autoFilm(tracker, lang);
 
 const fill = (values) =>
   renderWidget(tracker, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
     const field = tracker.fields[Number(n) - 1];
     return field ? String(values[field.key] ?? '') : '';
   });
-
-/**
- * The film. Each beat holds for `hold` seconds; `act` runs once when it starts.
- * Kept declarative so the pacing can be retuned without touching the capture.
- */
-const script = [
-  { hold: 1.9, label: 'calm appears', act: 'show-calm' },
-  { hold: 0.5, label: 'open the pack', act: 'open-pack' },
-  { hold: 1.3, label: 'pack open' },
-  { hold: 0.4, label: 'close the pack', act: 'close-pack' },
-  { hold: 1.7, label: 'hurt appears', act: 'show-hurt' },
-  { hold: 1.4, label: 'obscured', poster: true },
-  { hold: 1.9, label: 'tap to read', act: 'peek' },
-  { hold: 0.9, label: 'back to obscured', act: 'unpeek' },
-];
 
 const total = script.reduce((n, b) => n + Math.round(b.hold * FPS), 0);
 const page = await open();
@@ -95,9 +133,9 @@ await page.browser().close();
 
 const out = join(ROOT, 'docs', 'media');
 mkdirSync(out, { recursive: true });
-if (poster) writeFileSync(join(out, `hud-${LANG}.png`), poster);
+if (poster) writeFileSync(join(out, `${NAME}-${LANG}.png`), poster);
 
-const file = join(out, `hud-${LANG}.gif`);
+const file = join(out, `${NAME}-${LANG}.gif`);
 const gif = await encode(frames);
 writeFileSync(file, gif);
 
@@ -143,8 +181,7 @@ function stage() {
 </style>
 <div id="slot"></div>
 <script>
-  const CALM = ${embed(CALM)};
-  const HURT = ${embed(HURT)};
+  const STATES = [${STATES.map(embed).join(', ')}];
   const slot = document.getElementById('slot');
 
   function mount(html) {
@@ -161,8 +198,10 @@ function stage() {
   }
 
   window.act = (what) => {
-    if (what === 'show-calm') mount(CALM);
-    if (what === 'show-hurt') mount(HURT);
+    const shown = /^show-(\\d+)$/.exec(what);
+    if (shown) mount(STATES[Number(shown[1])]);
+    // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
+    // разметке нет, поэтому обращения к ним и не случится.
     if (what === 'open-pack') slot.querySelector('details').open = true;
     if (what === 'close-pack') slot.querySelector('details').open = false;
     if (what === 'peek') slot.querySelector('.panel').classList.add('peeking');
@@ -170,13 +209,13 @@ function stage() {
     document.getAnimations().forEach((a) => { a.pause(); });
   };
 
-  // Кадр не должен менять размер по ходу, поэтому берём самое высокое из
-  // состояний — с раскрытым инвентарём и со строкой состояния.
+  // Кадр не должен менять размер по ходу, поэтому меряем самое высокое из
+  // состояний — и раскрываем всё, что раскрывается.
   window.measure = () => {
     let tallest = 0;
-    for (const html of [CALM, HURT]) {
+    for (const html of STATES) {
       mount(html);
-      slot.querySelector('details').open = true;
+      slot.querySelectorAll('details').forEach((d) => { d.open = true; });
       tallest = Math.max(tallest, document.body.scrollHeight);
     }
     slot.innerHTML = '';

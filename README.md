@@ -44,6 +44,16 @@ node tools/shot.mjs
 
 ![RPG HUD в работе](docs/media/hud-en.gif)
 
+| | | |
+|---|---|---|
+| ![](docs/media/phone-ru.gif) | ![](docs/media/loot-ru.gif) | ![](docs/media/clock-ru.gif) |
+
+Записать любой трекер на любом языке:
+
+```bash
+node tools/record.mjs ru clock
+```
+
 ## Установка
 
 Три файла на трекер, порядок в именах. Подробно — в [INSTALL.md](INSTALL.md).
