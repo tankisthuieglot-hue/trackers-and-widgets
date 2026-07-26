@@ -10,5 +10,10 @@
     "check": "node tools/check.mjs",
     "preview": "node tools/serve.mjs",
     "all": "node tools/check.mjs && node tools/build.mjs"
+  },
+  "devDependencies": {
+    "gifenc": "^1.0.3",
+    "puppeteer-core": "^25.3.0",
+    "upng-js": "^2.1.0"
   }
 }
