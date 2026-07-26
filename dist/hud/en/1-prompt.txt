@@ -5,24 +5,18 @@ SKIP: every turn. This is a summary, not a signature. Nothing moved — do not e
 [[VLD_HUD|N=|A=|H=|B1=|V1=|B2=|V2=|B3=|V3=|B4=|V4=|B5=|V5=|C=|I=|S=|E=|EF=]]
 
 N name · A age · H height
-B1–B5 gauge labels, V1–V5 their values as a whole number from 0 to 10
-  B1 is always health, or whatever this world calls it.
-  Take the rest from the setting: no mana where there is no magic, no ammo where there are no guns.
-  Once you pick a set of gauges, keep it. Do not reorder them, do not add new ones without reason, do not drop one you already showed.
-  Leave unused gauges out of the marker entirely.
-C what {{user}} is wearing · I what {{user}} carries, comma separated, any number of items
-S how {{user}} looks from the outside: wounds, dirt, shaking, a voice gone hoarse.
-  Only what is visible and undeniable. Never assign {{user}} feelings, thoughts or mood — the player chooses those.
-E + EF — only while something clouds {{user}}'s own senses. Drop both the moment it passes.
-  E is the name of it: Concussed, Poisoned, Bleeding out, Freezing, Blinded.
-  EF is how that reads on the panel, one word from this list and nothing else:
-    blur — stunned, concussed, drunk, dazed
-    poison — poison, venom, fever, infection
-    bleed — blood loss, a wound going bad
-    cold — freezing, hypothermia
-    dark — blinded, smoke, pitch black
-  Do not use them for a wound that merely hurts. Only when {{user}} cannot read their own state clearly.
-LANGUAGE: write every value in the language the roleplay is being played in.
+B1–B5 gauge labels, V1–V5 their values, whole number 0–10.
+  B1 is health, or whatever this world calls it. Take the rest from the setting:
+  no mana without magic, no ammo without guns. Keep the set you picked — same
+  gauges, same order, every time. Leave unused ones out of the marker.
+C what {{user}} wears · I what {{user}} carries, comma separated, any number
+S how {{user}} looks from outside: wounds, dirt, shaking, a voice gone.
+  Only the visible and undeniable. Never assign {{user}} feelings or mood.
+E + EF only while {{user}} cannot read their own state. Drop both once it passes.
+  E names it; EF is one word of: blur (stunned, drunk) · poison (venom, fever)
+  · bleed (blood loss) · cold (freezing) · dark (blinded, smoke).
+  Not for a wound that merely hurts.
+Write every value in the language the roleplay is played in.
 
 → [[VLD_HUD|N=Vlad Kostsov|A=32|H=178 cm|B1=Health|V1=6|B2=Stamina|V2=3|B3=Warmth|V3=2|C=soaked parka, sweater on bare skin, combat boots|I=knife, coil of rope, flask, matches, someone else's passport|S=split knuckles, wet through, voice gone]]
 </vld:hud>

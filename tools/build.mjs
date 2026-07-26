@@ -9,7 +9,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   DIST, ROOT, languages, loadTrackers, markerLiteral, NS,
-  regexScript, renderMarker, renderWidget,
+  promptBlock, regexScript, renderWidget,
 } from './lib.mjs';
 import { serviceScripts, FORGET_DEPTH } from './service.mjs';
 
@@ -66,25 +66,6 @@ console.log(
   `built ${trackers.length} tracker(s) as ${bundles} bundle(s)` +
   ` + ${serviceScripts.length} service script(s) -> dist/`,
 );
-
-/** The block that goes into the preset, as raw text ready to paste. */
-function promptBlock(t, lang) {
-  const legend = lang.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
-
-  return [
-    `<vld:${t.name}>`,
-    `FIRE: ${lang.when}`,
-    ...(lang.dont ? [`SKIP: ${lang.dont}`] : []),
-    '',
-    renderMarker(t.tag, t.fields, {}),
-    '',
-    legend.trim(),
-    '',
-    `→ ${renderMarker(t.tag, t.fields, lang.example, { trim: true })}`,
-    `</vld:${t.name}>`,
-    '',
-  ].join('\n');
-}
 
 /**
  * One preview entry per look, each holding every state the tracker declares.

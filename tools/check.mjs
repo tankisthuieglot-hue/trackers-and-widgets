@@ -1,7 +1,10 @@
 // Catches the failures that actually ship in packs like this: a prompt that
 // advertises a field the regex never captures, a stylesheet that leaks into the
 // chat, an example that cannot survive its own grammar.
-import { attributeSafe, languages, loadTrackers, markerRegExp, renderMarker } from './lib.mjs';
+import {
+  attributeSafe, estimateTokens, languages, loadTrackers,
+  markerRegExp, promptBlock, renderMarker, TOKEN_BUDGET,
+} from './lib.mjs';
 
 const SEP = '\u0000';
 const problems = [];
@@ -66,6 +69,13 @@ for (const t of loadTrackers()) {
 function checkLanguage(t, lang, at) {
   if (!lang.when) fail(at, 'нет when — модель не узнает, когда ставить маркер');
 
+  // Виджет бесплатный, промпт — нет, и платится он каждым запросом до конца
+  // переписки. Правила, которые не влезли, надо не ужимать шрифтом, а выкидывать.
+  const cost = estimateTokens(promptBlock(t, lang));
+  if (cost > TOKEN_BUDGET) {
+    fail(at, `промпт весит ~${cost} токенов при потолке ${TOKEN_BUDGET} — сократи legend`);
+  }
+
   const mentioned = lang.legend ? mentionedKeys(lang.legend) : null;
   for (const f of t.fields) {
     if (mentioned) {
@@ -118,10 +128,16 @@ function checkPlaceholders(t, at) {
   // Inside a text node any character is harmless. Inside an attribute a quote
   // ends the attribute and whatever follows becomes markup, so only fields
   // declared numeric — capped to digits by the grammar — are allowed there.
-  for (const m of t.html.matchAll(/=\s*"[^"]*?\$(\d+)/g)) {
-    const field = t.fields[Number(m[1]) - 1];
-    if (field && !attributeSafe(field)) {
-      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num", "level" или со списком "of"`);
+  //
+  // The whole attribute value is scanned, not just up to its first $n: one
+  // element routinely carries two of them (`class="pin wx-$2 ty-$3"`), and
+  // stopping at the first would wave the second one through unchecked.
+  for (const [, value] of t.html.matchAll(/=\s*"([^"]*)"/g)) {
+    for (const [, n] of value.matchAll(/\$(\d+)/g)) {
+      const field = t.fields[Number(n) - 1];
+      if (field && !attributeSafe(field)) {
+        fail(at, `$${n} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num", "level" или со списком "of"`);
+      }
     }
   }
 }

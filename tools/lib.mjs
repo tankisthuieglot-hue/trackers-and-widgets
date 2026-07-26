@@ -80,6 +80,54 @@ export const renderMarker = (tag, fields, values, { trim = false } = {}) =>
   ']]';
 
 /**
+ * Roughly how many tokens a prompt block costs, without pulling in a tokenizer.
+ *
+ * The pack's whole argument is that a widget is cheap, and a prompt that grows
+ * to a page of rules quietly repeals it. So the budget is checked, not promised.
+ *
+ * Deliberately pessimistic. Latin words run about four characters to a token;
+ * Cyrillic is far worse in every BPE vocabulary trained mostly on English, and
+ * counting it at two keeps the estimate above the real number rather than
+ * below it. Punctuation is counted whole — it rarely merges with its neighbour.
+ */
+export function estimateTokens(text) {
+  let total = 0;
+
+  for (const [word] of text.matchAll(/[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu)) {
+    const cyrillic = /\p{Script=Cyrillic}/u.test(word);
+    total += Math.ceil(word.length / (cyrillic ? 2 : 4));
+  }
+  return total;
+}
+
+/** Одна страница правил на трекер. Больше — это уже не дешёвый маркер. */
+export const TOKEN_BUDGET = 600;
+
+/**
+ * The block that goes into the preset, as raw text ready to paste.
+ *
+ * Lives here rather than in the build so the validator can weigh the exact
+ * bytes the reader will install, instead of an approximation of them.
+ */
+export function promptBlock(t, lang) {
+  const legend = lang.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
+
+  return [
+    `<vld:${t.name}>`,
+    `FIRE: ${lang.when}`,
+    ...(lang.dont ? [`SKIP: ${lang.dont}`] : []),
+    '',
+    renderMarker(t.tag, t.fields, {}),
+    '',
+    legend.trim(),
+    '',
+    `→ ${renderMarker(t.tag, t.fields, lang.example ?? {}, { trim: true })}`,
+    `</vld:${t.name}>`,
+    '',
+  ].join('\n');
+}
+
+/**
  * Stable id derived from the tag, so rebuilding does not churn the diff.
  * SillyTavern only needs the id to be unique and uuid-shaped.
  */

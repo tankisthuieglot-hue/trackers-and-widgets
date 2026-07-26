@@ -33,7 +33,7 @@
       "chrome": { "carrying": "Carrying", "wearing": "Wearing", "look": "Look", "peek": "tap to read" },
       "when": "{{user}}'s condition has visibly moved: a wound, exhaustion, hunger, cold, an item taken or lost, a change of clothes",
       "dont": "every turn. This is a summary, not a signature. Nothing moved — do not emit it",
-      "legend": "N name · A age · H height\nB1–B5 gauge labels, V1–V5 their values as a whole number from 0 to 10\n  B1 is always health, or whatever this world calls it.\n  Take the rest from the setting: no mana where there is no magic, no ammo where there are no guns.\n  Once you pick a set of gauges, keep it. Do not reorder them, do not add new ones without reason, do not drop one you already showed.\n  Leave unused gauges out of the marker entirely.\nC what {{user}} is wearing · I what {{user}} carries, comma separated, any number of items\nS how {{user}} looks from the outside: wounds, dirt, shaking, a voice gone hoarse.\n  Only what is visible and undeniable. Never assign {{user}} feelings, thoughts or mood — the player chooses those.\nE + EF — only while something clouds {{user}}'s own senses. Drop both the moment it passes.\n  E is the name of it: Concussed, Poisoned, Bleeding out, Freezing, Blinded.\n  EF is how that reads on the panel, one word from this list and nothing else:\n    blur — stunned, concussed, drunk, dazed\n    poison — poison, venom, fever, infection\n    bleed — blood loss, a wound going bad\n    cold — freezing, hypothermia\n    dark — blinded, smoke, pitch black\n  Do not use them for a wound that merely hurts. Only when {{user}} cannot read their own state clearly.\nLANGUAGE: write every value in the language the roleplay is being played in.",
+      "legend": "N name · A age · H height\nB1–B5 gauge labels, V1–V5 their values, whole number 0–10.\n  B1 is health, or whatever this world calls it. Take the rest from the setting:\n  no mana without magic, no ammo without guns. Keep the set you picked — same\n  gauges, same order, every time. Leave unused ones out of the marker.\nC what {{user}} wears · I what {{user}} carries, comma separated, any number\nS how {{user}} looks from outside: wounds, dirt, shaking, a voice gone.\n  Only the visible and undeniable. Never assign {{user}} feelings or mood.\nE + EF only while {{user}} cannot read their own state. Drop both once it passes.\n  E names it; EF is one word of: blur (stunned, drunk) · poison (venom, fever)\n  · bleed (blood loss) · cold (freezing) · dark (blinded, smoke).\n  Not for a wound that merely hurts.\nWrite every value in the language the roleplay is played in.",
       "example": {
         "N": "Vlad Kostsov",
         "A": "32",
@@ -53,7 +53,7 @@
       "chrome": { "carrying": "При себе", "wearing": "Одет", "look": "Вид", "peek": "нажми, чтобы прочесть" },
       "when": "состояние {{user}} заметно сдвинулось: рана, усталость, голод, холод, взятая или потерянная вещь, смена одежды",
       "dont": "каждый ход. Это сводка, а не подпись. Ничего не изменилось — не выводи",
-      "legend": "N имя · A возраст · H рост\nB1–B5 названия шкал, V1–V5 их значения целым числом от 0 до 10\n  B1 — всегда здоровье или то, чем оно зовётся в этом мире.\n  Остальные шкалы бери из сеттинга: маны нет там, где нет магии, патронов — там, где нет оружия.\n  Выбрал набор шкал — держи его. Не меняй местами, не добавляй новые без причины, не убирай уже показанные.\n  Ненужные шкалы просто не пиши.\nC во что одет {{user}} · I что при себе, через запятую, сколько угодно предметов\nS как {{user}} выглядит со стороны: раны, грязь, дрожь, севший голос.\n  Только то, что видно и неоспоримо. Не приписывай {{user}} чувства, мысли и настроение — их выбирает игрок.\nE + EF — только пока {{user}} плохо соображает сам. Как отпустило — убирай оба поля.\n  E — название: Оглушение, Отравление, Кровопотеря, Переохлаждение, Ослеплён.\n  EF — как это ложится на панель, одно слово строго из списка:\n    blur — оглушение, контузия, опьянение, дурнота\n    poison — яд, отрава, жар, заражение\n    bleed — кровопотеря, загноившаяся рана\n    cold — холод, переохлаждение\n    dark — ослепление, дым, полная темнота\n  Не ставь их из-за того, что рана просто болит. Только когда {{user}} не может ясно оценить своё состояние.\nЯЗЫК: значения пиши на том языке, на котором идёт ролевая.",
+      "legend": "N имя · A возраст · H рост\nB1–B5 названия шкал, V1–V5 значения 0–10 целым числом.\n  B1 — здоровье или его местное имя. Остальные из сеттинга: маны нет без\n  магии, патронов — без оружия. Набор выбрал — держи его. Ненужные не пиши.\nC во что одет · I что при себе, через запятую\nS как выглядит со стороны: раны, грязь, дрожь. Только видимое, без чувств и\n  настроения — их выбирает игрок.\nE + EF — пока {{user}} сам плохо соображает. Отпустило — убирай оба.\n  E — название; EF — одно слово из: blur (оглушение) · poison (яд, жар)\n  · bleed (кровопотеря) · cold (холод) · dark (ослеплён, дым).\nЗначения пиши на языке ролевой.",
       "example": {
         "N": "Влад Косцов",
         "A": "32",
@@ -62,11 +62,9 @@
         "V1": "6",
         "B2": "Силы",
         "V2": "3",
-        "B3": "Тепло",
-        "V3": "2",
-        "C": "промокшая парка, свитер на голое тело, берцы",
-        "I": "нож, моток верёвки, фляга, спички, чужой паспорт",
-        "S": "разбитые костяшки, мокрый до нитки, голос сел"
+        "C": "промокшая парка, берцы",
+        "I": "нож, верёвка, фляга, чужой паспорт",
+        "S": "разбитые костяшки, мокрый насквозь"
       }
     }
   },
