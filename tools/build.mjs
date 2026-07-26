@@ -28,12 +28,19 @@ const RULES = `
 ДЛИНА: коротко, значения читаются на экране телефона.
 </vld:rules>`;
 
-/** Every widget filled with its own example, exactly as a reader would see it. */
-const filled = (t) =>
+/** One widget filled in, exactly as a reader would see it. */
+const filled = (t, values) =>
   renderWidget(t).replace(/\$(\d+)/g, (_, n) => {
     const field = t.fields[Number(n) - 1];
-    return field ? String(t.example[field.key] ?? '') : '';
+    return field ? String(values[field.key] ?? '') : '';
   });
+
+/**
+ * What the preview shows. A tracker may list several states instead of one,
+ * to show how it holds up on data the single canonical example never reaches —
+ * a gauge at its last notch, a slot the model left out.
+ */
+const states = (t) => t.preview ?? [t.example];
 
 const trackers = loadTrackers();
 const regexDir = join(DIST, 'regex');
@@ -111,15 +118,18 @@ function promptsFile(list) {
  * link, a bug report, or showing someone the pack before they install it.
  */
 function standalonePreview(list) {
-  const sections = list.map((t) => `
+  const sections = list.map((t) => {
+    const widgets = states(t).map((s) => filled(t, s)).join('\n');
+    return `
 <section>
   <h2>${t.title}</h2>
   <code>[[${t.tag}|…]]</code>
   <div class="stages">
-    <div class="stage light">${filled(t)}</div>
-    <div class="stage dark">${filled(t)}</div>
+    <div class="stage light">${widgets}</div>
+    <div class="stage dark">${widgets}</div>
   </div>
-</section>`).join('\n');
+</section>`;
+  }).join('\n');
 
   return `<!doctype html>
 <meta charset="utf-8">
@@ -143,7 +153,10 @@ ${sections}
 /** The same widgets as data, for the served preview page. */
 function previewData(list) {
   const entries = list.map((t) => ({
-    name: t.name, title: t.title, tag: t.tag, html: filled(t),
+    name: t.name,
+    title: t.title,
+    tag: t.tag,
+    html: states(t).map((s) => filled(t, s)).join('\n'),
   }));
 
   return [

@@ -1,17 +1,20 @@
-/* Виджет обязан работать и в фэнтези, и на космической станции, поэтому в нём
-   нет цвета: красная полоска здоровья и синяя маны выбрали бы сеттинг за
-   пользователя. Монохром, сеттинг приносят подписи.
+/* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
+   тут ничего не называет: красная шкала здоровья и синяя маны выбрали бы
+   сеттинг за пользователя. Характер даёт материал — тёмный анодированный
+   металл, штриховка, блик сверху, тонкая световая кромка на срезе заливки.
 
-   Ни одной строчки JavaScript. Заливка шкалы приходит классом из значения,
-   инвентарь раскрывается нативным <details>. */
+   Цвет включается ровно в одном месте — когда шкала на исходе. Это читается
+   в любом мире. */
 
 .vld-hud {
-  --panel: #191a1e;
-  --track: #26272d;
-  --fill: #dcd8cf;
-  --ink: #dcd8cf;
-  --dim: #7f8189;
-  --hair: rgba(220, 216, 207, .13);
+  --panel: #17181c;
+  --track: rgba(230, 227, 220, .05);
+  --wash: rgba(230, 227, 220, .15);
+  --edge: rgba(244, 242, 236, .78);
+  --ink: #e6e3dc;
+  --dim: #83858d;
+  --hair: rgba(230, 227, 220, .12);
+  --alert: 204, 90, 100;
 
   --serif: "Georgia", "Times New Roman", serif;
   --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
@@ -26,11 +29,22 @@
 }
 
 .vld-hud .panel {
+  position: relative;
+  overflow: hidden;
   padding: 14px 15px 13px;
   border: 1px solid var(--hair);
   border-radius: 5px;
-  background: var(--panel);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, .45);
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 38%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .014) 0 1px, transparent 1px 3px),
+    var(--panel);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .06);
+  animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes vld-rise {
+  from { opacity: 0; transform: translateY(7px); }
 }
 
 .vld-hud .ident {
@@ -60,13 +74,10 @@
   padding: 12px 0;
 }
 
-/* Подпись лежит на шкале, а не рядом с ней, и инвертируется ровно там, где её
-   накрыла заливка. Один элемент вместо двух копий с обрезкой. */
 .vld-hud .bar {
   position: relative;
-  isolation: isolate;
   overflow: hidden;
-  height: 25px;
+  height: 26px;
   border-radius: 3px;
   background: var(--track);
 }
@@ -75,41 +86,32 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 0;
-  background: var(--fill);
+  background: linear-gradient(90deg, rgba(230, 227, 220, .07), var(--wash));
+  transform-origin: left center;
+  animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
 }
 
-.vld-hud .lbl,
-.vld-hud .num {
+/* Световая кромка на срезе: заливка не обрывается, а имеет край. */
+.vld-hud .fill::after {
+  content: "";
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fff;
-  mix-blend-mode: difference;
-  white-space: nowrap;
+  inset: 0 0 0 auto;
+  width: 1.5px;
+  background: var(--edge);
+  box-shadow: 0 0 9px rgba(244, 242, 236, .34);
 }
 
-.vld-hud .lbl {
-  left: 10px;
-  right: 52px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font: 500 12px/1 var(--mono);
+@keyframes vld-grow {
+  from { transform: scaleX(0); }
 }
 
-.vld-hud .num {
-  right: 10px;
-  font: 500 12px/1 var(--mono);
-  font-variant-numeric: tabular-nums;
-}
+.vld-hud .bars .bar:nth-child(2) .fill { animation-delay: .07s; }
+.vld-hud .bars .bar:nth-child(3) .fill { animation-delay: .14s; }
+.vld-hud .bars .bar:nth-child(4) .fill { animation-delay: .21s; }
+.vld-hud .bars .bar:nth-child(5) .fill { animation-delay: .28s; }
 
-.vld-hud .num::after {
-  content: "/10";
-  opacity: .5;
-}
-
-/* Значение поля приезжает классом lv-N, поэтому заливка рисуется без скриптов.
-   Мусор вместо числа не совпадёт ни с одним правилом — шкала останется пустой,
-   а вёрстка целой. */
+/* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
+   Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
 .vld-hud .lv-1  .fill { width: 10%; }
 .vld-hud .lv-2  .fill { width: 20%; }
 .vld-hud .lv-3  .fill { width: 30%; }
@@ -120,6 +122,46 @@
 .vld-hud .lv-8  .fill { width: 80%; }
 .vld-hud .lv-9  .fill { width: 90%; }
 .vld-hud .lv-10 .fill { width: 100%; }
+
+/* На исходе — видно боковым зрением, читать не обязательно. */
+.vld-hud .lv-1,
+.vld-hud .lv-2 {
+  animation: vld-alert 2.6s ease-in-out infinite;
+}
+
+@keyframes vld-alert {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--alert), 0); }
+  50%      { box-shadow: inset 0 0 0 1px rgba(var(--alert), .5); }
+}
+
+.vld-hud .row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 11px;
+}
+
+.vld-hud .lbl {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 500 12px/1 var(--mono);
+}
+
+.vld-hud .num {
+  flex: 0 0 auto;
+  font: 500 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.vld-hud .num::after {
+  content: "/10";
+  opacity: .42;
+}
 
 .vld-hud .pack {
   border-top: 1px solid var(--hair);
@@ -138,21 +180,42 @@
   display: none;
 }
 
-.vld-hud .hint {
+.vld-hud .chev {
   width: 0;
   height: 0;
   border-left: 4px solid var(--dim);
   border-top: 3.5px solid transparent;
   border-bottom: 3.5px solid transparent;
-  transition: transform .16s ease;
+  transition: transform .18s ease;
 }
 
-.vld-hud .pack[open] .hint {
+.vld-hud .pack[open] .chev {
   transform: rotate(90deg);
 }
 
+.vld-hud summary:hover .k {
+  color: var(--ink);
+}
+
 .vld-hud .pack .v {
-  padding-top: 5px;
+  padding-top: 6px;
+}
+
+/* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
+@supports (interpolate-size: allow-keywords) {
+  .vld-hud {
+    interpolate-size: allow-keywords;
+  }
+
+  .vld-hud .pack::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size .28s ease, content-visibility .28s allow-discrete;
+  }
+
+  .vld-hud .pack[open]::details-content {
+    block-size: auto;
+  }
 }
 
 .vld-hud .entry {
@@ -166,6 +229,7 @@
   text-transform: uppercase;
   letter-spacing: .15em;
   color: var(--dim);
+  transition: color .18s ease;
 }
 
 .vld-hud .v {
@@ -173,7 +237,7 @@
   color: var(--ink);
 }
 
-/* Модель не заполнила слот — он исчезает целиком, а не висит пустой полоской.
+/* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
    Шкала без названия бессмысленна, шкала без значения — тоже. */
 .vld-hud .bar:has(.lbl:empty),
 .vld-hud .bar:has(.num:empty),
@@ -188,5 +252,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vld-hud .hint { transition: none; }
+  .vld-hud .panel,
+  .vld-hud .fill,
+  .vld-hud .lv-1,
+  .vld-hud .lv-2 {
+    animation: none;
+  }
+
+  .vld-hud .chev,
+  .vld-hud .pack::details-content {
+    transition: none;
+  }
 }

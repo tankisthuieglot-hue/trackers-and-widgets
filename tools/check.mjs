@@ -113,6 +113,17 @@ function checkPlaceholders(t, at) {
  * proves prompt and regex agree.
  */
 function checkExample(t, at) {
+  for (const [i, state] of (t.preview ?? []).entries()) {
+    for (const [key, value] of Object.entries(state)) {
+      if (!t.fields.some((f) => f.key === key)) {
+        fail(at, `preview[${i}] задаёт неизвестное поле ${key}`);
+      }
+      if (/[|\]\r\n]/.test(String(value))) {
+        fail(at, `preview[${i}].${key} содержит | ] или перенос строки`);
+      }
+    }
+  }
+
   for (const f of t.fields) {
     const value = t.example?.[f.key];
     if (value === undefined || value === '') {
