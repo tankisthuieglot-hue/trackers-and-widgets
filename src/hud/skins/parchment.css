@@ -1,0 +1,362 @@
+/* Лист учётной книги: телячий пергамент, железо-галловые чернила, рубрикация.
+   Разметка та же, что у стального скина, — различается только этот файл.
+
+   Цветовые ступени взяты не из видеоигры, а из палитры, которой в то время
+   действительно писали: киноварь, аурипигмент, ярь-медянка. Читаются как
+   красный, жёлтый и зелёный, но не выглядят светодиодом.
+
+   Ни строчки JavaScript: уровень приезжает классом, буквица делается
+   через ::first-letter, шкала набрана точками. */
+
+.vld-hud {
+  --vellum: #e8ddc6;
+  --ink: #2f2519;
+  --faded: #6d5e47;
+  --rule: rgba(47, 37, 25, .22);
+
+  --crit: 168, 50, 31;
+  --low: 181, 85, 31;
+  --mid: 192, 138, 30;
+  --good: 74, 122, 82;
+
+  --hand: "Palatino Linotype", "Book Antiqua", Palatino, "Georgia", serif;
+
+  width: min(100%, 384px);
+  margin: 14px auto;
+  color: var(--ink);
+  font-family: var(--hand);
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .42));
+}
+
+.vld-hud * {
+  box-sizing: border-box;
+}
+
+.vld-hud .panel {
+  position: relative;
+  overflow: hidden;
+  padding: 17px 19px 20px;
+
+  /* Низ листа оборван, а не отрезан по линейке. */
+  clip-path: polygon(
+    0 0, 100% 0, 100% calc(100% - 7px),
+    92% 100%, 83% calc(100% - 5px), 71% calc(100% - 1px), 58% calc(100% - 6px),
+    46% calc(100% - 2px), 33% calc(100% - 7px), 21% calc(100% - 2px),
+    9% calc(100% - 6px), 0 calc(100% - 2px)
+  );
+
+  background:
+    /* волокно пергамента */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"),
+    /* пятна от времени */
+    radial-gradient(60% 44% at 8% 6%, rgba(140, 110, 62, .16), transparent 70%),
+    radial-gradient(46% 36% at 96% 74%, rgba(120, 92, 48, .14), transparent 72%),
+    /* затемнение по краям */
+    radial-gradient(120% 96% at 50% 50%, transparent 52%, rgba(96, 74, 40, .22)),
+    var(--vellum);
+  background-blend-mode: multiply, normal, normal, normal, normal;
+
+  animation: vld-lay .36s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes vld-lay {
+  from { opacity: 0; transform: translateY(6px) rotate(-.4deg); }
+}
+
+/* Двойная линейка по краю листа, как в настоящей описи. */
+.vld-hud .panel::before {
+  content: "";
+  position: absolute;
+  inset: 6px 6px 12px;
+  pointer-events: none;
+  border: 1px solid rgba(47, 37, 25, .30);
+  box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px rgba(47, 37, 25, .16);
+}
+
+/* Сургучная печать в углу. */
+.vld-hud .panel::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 17px;
+  width: 26px;
+  height: 26px;
+  border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+  background:
+    radial-gradient(circle at 36% 32%, rgba(255, 255, 255, .3), transparent 46%),
+    radial-gradient(circle at 62% 68%, rgba(0, 0, 0, .34), transparent 58%),
+    rgb(var(--crit));
+  box-shadow: 0 2px 5px rgba(60, 20, 12, .5);
+}
+
+.vld-hud .ident {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.vld-hud .name {
+  font: 400 21px/1.15 var(--hand);
+  letter-spacing: .005em;
+}
+
+/* Буквица киноварью — рубрикация, а не декор ради декора. */
+.vld-hud .name::first-letter {
+  font-size: 1.55em;
+  line-height: .8;
+  color: rgb(var(--crit));
+  padding-right: 1px;
+}
+
+.vld-hud .metrics {
+  flex: 0 0 auto;
+  font: italic 400 12px/1 var(--hand);
+  color: var(--faded);
+}
+
+.vld-hud .bars {
+  display: grid;
+  gap: 2px;
+  padding: 11px 0 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Строка описи: название, точки, число. Разметка общая со стальным скином,
+   поэтому .row растворяется, а её содержимое становится частью строки. */
+.vld-hud .bar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 22px;
+  background: none;
+  overflow: visible;
+}
+
+.vld-hud .row {
+  display: contents;
+}
+
+.vld-hud .lbl {
+  order: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 400 13.5px/1 var(--hand);
+}
+
+.vld-hud .cells {
+  order: 1;
+  position: static;
+  flex: 0 0 106px;
+  display: flex;
+  gap: 0;
+  height: 9px;
+  animation: vld-ink .6s ease-out both;
+}
+
+@keyframes vld-ink {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+.vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .06s; }
+.vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .12s; }
+.vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .18s; }
+.vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .24s; }
+
+/* Пустое деление — непрокрашенный кружок. */
+.vld-hud .cells i {
+  flex: 1;
+  background: radial-gradient(circle 3.2px at center,
+    transparent 0 1.6px, rgba(47, 37, 25, .34) 1.7px 100%, transparent);
+}
+
+/* Занятые деления залиты чернилами. */
+.vld-hud .lv-1  i:nth-child(-n+1),
+.vld-hud .lv-2  i:nth-child(-n+2),
+.vld-hud .lv-3  i:nth-child(-n+3),
+.vld-hud .lv-4  i:nth-child(-n+4),
+.vld-hud .lv-5  i:nth-child(-n+5),
+.vld-hud .lv-6  i:nth-child(-n+6),
+.vld-hud .lv-7  i:nth-child(-n+7),
+.vld-hud .lv-8  i:nth-child(-n+8),
+.vld-hud .lv-9  i:nth-child(-n+9),
+.vld-hud .lv-10 i:nth-child(-n+10) {
+  background: radial-gradient(circle 3.4px at center,
+    rgba(var(--tone), .92) 0 100%, transparent);
+}
+
+/* Последнее занятое деление обведено — видно, где стоит уровень. */
+.vld-hud .lv-1  i:nth-child(1),
+.vld-hud .lv-2  i:nth-child(2),
+.vld-hud .lv-3  i:nth-child(3),
+.vld-hud .lv-4  i:nth-child(4),
+.vld-hud .lv-5  i:nth-child(5),
+.vld-hud .lv-6  i:nth-child(6),
+.vld-hud .lv-7  i:nth-child(7),
+.vld-hud .lv-8  i:nth-child(8),
+.vld-hud .lv-9  i:nth-child(9),
+.vld-hud .lv-10 i:nth-child(10) {
+  background:
+    radial-gradient(circle 5.4px at center, transparent 0 4.4px, rgba(var(--tone), .5) 4.5px 100%, transparent),
+    radial-gradient(circle 3.4px at center, rgb(var(--tone)) 0 100%, transparent);
+}
+
+.vld-hud .bar   { --tone: var(--crit); }
+.vld-hud .lv-3,
+.vld-hud .lv-4  { --tone: var(--low); }
+.vld-hud .lv-5,
+.vld-hud .lv-6,
+.vld-hud .lv-7  { --tone: var(--mid); }
+.vld-hud .lv-8,
+.vld-hud .lv-9,
+.vld-hud .lv-10 { --tone: var(--good); }
+
+.vld-hud .num {
+  order: 2;
+  flex: 0 0 auto;
+  width: 20px;
+  text-align: right;
+  font: 400 13px/1 var(--hand);
+  font-variant-numeric: oldstyle-nums;
+  color: var(--faded);
+}
+
+/* Точек хватает, чтобы понять шкалу. */
+.vld-hud .num::after {
+  content: "";
+}
+
+/* На исходе — деления тлеют, как непросохшая киноварь. */
+.vld-hud .lv-1 .cells,
+.vld-hud .lv-2 .cells {
+  animation: vld-ink .6s ease-out both, vld-ember 2.4s ease-in-out .6s infinite;
+}
+
+@keyframes vld-ember {
+  50% { filter: brightness(1.5) saturate(1.4); }
+}
+
+/* Имя ловит обстановку, а не чувства игрока: пока что-то на исходе, киноварь
+   на буквице разгорается. Считается прямо из шкал через :has(). */
+.vld-hud .panel:has(.lv-1, .lv-2) .name::first-letter {
+  animation: vld-flare .55s ease-in-out infinite alternate;
+}
+
+.vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name::first-letter {
+  animation: vld-smoulder 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes vld-flare {
+  to { color: rgb(214, 74, 48); text-shadow: 0 0 10px rgba(var(--crit), .45); }
+}
+
+@keyframes vld-smoulder {
+  to { color: rgb(181, 106, 40); }
+}
+
+.vld-hud .pack {
+  padding-top: 10px;
+}
+
+.vld-hud summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.vld-hud summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Вместо стрелки — росчерк пером. */
+.vld-hud .chev {
+  width: 9px;
+  height: 9px;
+  border-right: 1.5px solid var(--faded);
+  border-bottom: 1.5px solid var(--faded);
+  border-radius: 0 0 3px 0;
+  transform: rotate(-45deg);
+  transition: transform .2s ease;
+}
+
+.vld-hud .pack[open] .chev {
+  transform: rotate(45deg);
+}
+
+.vld-hud summary:hover .k {
+  color: rgb(var(--crit));
+}
+
+.vld-hud .pack .v {
+  padding-top: 5px;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  .vld-hud {
+    interpolate-size: allow-keywords;
+  }
+
+  .vld-hud .pack::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size .28s ease, content-visibility .28s allow-discrete;
+  }
+
+  .vld-hud .pack[open]::details-content {
+    block-size: auto;
+  }
+}
+
+.vld-hud .entry {
+  display: grid;
+  gap: 2px;
+  padding-top: 9px;
+}
+
+/* Капитель вместо машинного капслока. */
+.vld-hud .k {
+  font: 400 11px/1.2 var(--hand);
+  font-variant: small-caps;
+  letter-spacing: .09em;
+  color: var(--faded);
+  transition: color .18s ease;
+}
+
+.vld-hud .v {
+  font: 400 13.5px/1.42 var(--hand);
+  color: var(--ink);
+}
+
+.vld-hud .bar:has(.lbl:empty),
+.vld-hud .bar:has(.num:empty),
+.vld-hud .entry:has(.v:empty),
+.vld-hud .pack:has(.v:empty) {
+  display: none;
+}
+
+.vld-hud .panel:has(.name:empty) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vld-hud .panel,
+  .vld-hud .cells,
+  .vld-hud .lv-1 .cells,
+  .vld-hud .lv-2 .cells,
+  .vld-hud .name::first-letter {
+    animation: none;
+  }
+
+  .vld-hud .chev,
+  .vld-hud .pack::details-content {
+    transition: none;
+  }
+}

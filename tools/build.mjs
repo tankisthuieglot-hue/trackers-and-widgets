@@ -27,36 +27,43 @@ const serviceDir = join(DIST, 'service');
 mkdirSync(serviceDir, { recursive: true });
 for (const { file, script } of serviceScripts) writeJson(join(serviceDir, file), script);
 
+// One self-contained folder per language and look: the three files a reader
+// installs, in the order they install them.
 for (const t of trackers) {
   for (const lang of languages(t)) {
-    const dir = join(DIST, t.name, lang.code);
-    mkdirSync(dir, { recursive: true });
+    for (const skin of t.skins) {
+      const dir = join(DIST, t.name, lang.code, skin.name);
+      mkdirSync(dir, { recursive: true });
 
-    write(join(dir, '1-prompt.txt'), promptBlock(t, lang));
+      const suffix = skin.name ? ` · ${skin.name}` : '';
 
-    writeJson(join(dir, '2-regex.json'), regexScript({
-      name: `${t.title} · ${lang.code}`,
-      find: markerLiteral(t.tag, t.fields),
-      replace: renderWidget(t, lang.chrome),
-      display: true,
-    }));
+      write(join(dir, '1-prompt.txt'), promptBlock(t, lang));
 
-    // Display-only rendering leaves the raw marker in the stored message, so
-    // without this the marker keeps paying rent in every later request.
-    writeJson(join(dir, '3-cleaner.json'), regexScript({
-      name: `${t.title} · clean`,
-      find: `/\\[\\[${t.tag}(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g`,
-      display: false,
-      minDepth: FORGET_DEPTH,
-    }));
+      writeJson(join(dir, '2-regex.json'), regexScript({
+        name: `${t.title} · ${lang.code}${suffix}`,
+        find: markerLiteral(t.tag, t.fields),
+        replace: renderWidget(t, lang.chrome, skin.css),
+        display: true,
+      }));
+
+      // Display-only rendering leaves the raw marker in the stored message, so
+      // without this the marker keeps paying rent in every later request.
+      writeJson(join(dir, '3-cleaner.json'), regexScript({
+        name: `${t.title} · clean`,
+        find: `/\\[\\[${t.tag}(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g`,
+        display: false,
+        minDepth: FORGET_DEPTH,
+      }));
+    }
   }
 }
 
 write(join(DIST, 'preview.html'), standalonePreview(trackers));
 write(join(ROOT, 'preview', 'widgets.js'), previewData(trackers));
 
+const bundles = trackers.reduce((n, t) => n + languages(t).length * t.skins.length, 0);
 console.log(
-  `built ${trackers.length} tracker(s) × ${trackers.map((t) => languages(t).length).join('/')} lang` +
+  `built ${trackers.length} tracker(s) as ${bundles} bundle(s)` +
   ` + ${serviceScripts.length} service script(s) -> dist/`,
 );
 
@@ -80,7 +87,7 @@ function promptBlock(t, lang) {
 }
 
 /**
- * Which language and which data the preview page draws.
+ * One preview entry per look, each holding every state the tracker declares.
  *
  * Declared, not assigned to a const: the top-level code above runs before any
  * `const` further down is initialised, and a const here would throw.
@@ -88,12 +95,25 @@ function promptBlock(t, lang) {
 function shown(t) {
   const lang = t.lang[t.previewLang] ?? languages(t)[0];
   const states = t.preview ?? [lang.example];
+  const scope = `.vld-${t.name}`;
 
-  return states.map((values) =>
-    renderWidget(t, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
-      const field = t.fields[Number(n) - 1];
-      return field ? String(values[field.key] ?? '') : '';
-    }));
+  return t.skins.map((skin) => {
+    // Only one skin is ever installed, so the shipped stylesheets are free to
+    // share selectors. On the preview page they all load at once and the last
+    // one would win, so each gets its own marker class — preview only, the
+    // built regex keeps the stylesheet exactly as written.
+    const mark = skin.name && `pv-${skin.name}`;
+    const css = mark ? skin.css.replaceAll(scope, `${scope}.${mark}`) : skin.css;
+
+    return {
+      label: skin.name ? `${t.title} · ${skin.name}` : t.title,
+      html: states.map((values) =>
+        renderWidget(t, lang.chrome, css, mark).replace(/\$(\d+)/g, (_, n) => {
+          const field = t.fields[Number(n) - 1];
+          return field ? String(values[field.key] ?? '') : '';
+        })).join('\n'),
+    };
+  });
 }
 
 /**
@@ -101,18 +121,15 @@ function shown(t) {
  * link, a bug report, or showing someone the pack before they install it.
  */
 function standalonePreview(list) {
-  const sections = list.map((t) => {
-    const widgets = shown(t).join('\n');
-    return `
+  const sections = list.flatMap((t) => shown(t).map((v) => `
 <section>
-  <h2>${t.title}</h2>
+  <h2>${v.label}</h2>
   <code>[[${t.tag}|…]]</code>
   <div class="stages">
-    <div class="stage light">${widgets}</div>
-    <div class="stage dark">${widgets}</div>
+    <div class="stage light">${v.html}</div>
+    <div class="stage dark">${v.html}</div>
   </div>
-</section>`;
-  }).join('\n');
+</section>`)).join('\n');
 
   return `<!doctype html>
 <meta charset="utf-8">
@@ -135,12 +152,12 @@ ${sections}
 
 /** The same widgets as data, for the served preview page. */
 function previewData(list) {
-  const entries = list.map((t) => ({
+  const entries = list.flatMap((t) => shown(t).map((v) => ({
     name: t.name,
-    title: t.title,
+    title: v.label,
     tag: t.tag,
-    html: shown(t).join('\n'),
-  }));
+    html: v.html,
+  })));
 
   return [
     '// Generated by tools/build.mjs — do not edit.',

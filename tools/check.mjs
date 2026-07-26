@@ -198,9 +198,15 @@ function checkExample(t, example, at) {
  * scoped under this tracker's own class or it will style somebody else.
  */
 function checkCss(t, at) {
-  if (!t.css) return;
+  for (const skin of t.skins) {
+    checkStylesheet(t, skin.css, skin.name ? `${at} (${skin.name})` : at);
+  }
+}
+
+function checkStylesheet(t, source, at) {
+  if (!source) return;
   const scope = `.vld-${t.name}`;
-  const css = t.css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
 
   let prelude = '';
   let depth = 0;

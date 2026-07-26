@@ -1,0 +1,19 @@
+<vld:hud>
+FIRE: {{user}}'s condition has visibly moved: a wound, exhaustion, hunger, cold, an item taken or lost, a change of clothes
+SKIP: every turn. This is a summary, not a signature. Nothing moved — do not emit it
+
+[[VLD_HUD|N=|A=|H=|B1=|V1=|B2=|V2=|B3=|V3=|B4=|V4=|B5=|V5=|C=|I=|S=]]
+
+N name · A age · H height
+B1–B5 gauge labels, V1–V5 their values as a whole number from 0 to 10
+  B1 is always health, or whatever this world calls it.
+  Take the rest from the setting: no mana where there is no magic, no ammo where there are no guns.
+  Once you pick a set of gauges, keep it. Do not reorder them, do not add new ones without reason, do not drop one you already showed.
+  Leave unused gauges out of the marker entirely.
+C what {{user}} is wearing · I what {{user}} carries, comma separated, any number of items
+S how {{user}} looks from the outside: wounds, dirt, shaking, a voice gone hoarse.
+  Only what is visible and undeniable. Never assign {{user}} feelings, thoughts or mood — the player chooses those.
+LANGUAGE: write every value in the language the roleplay is being played in.
+
+→ [[VLD_HUD|N=Vlad Kostsov|A=32|H=178 cm|B1=Health|V1=6|B2=Stamina|V2=3|B3=Warmth|V3=2|C=soaked parka, sweater on bare skin, combat boots|I=knife, coil of rope, flask, matches, someone else's passport|S=split knuckles, wet through, voice gone]]
+</vld:hud>

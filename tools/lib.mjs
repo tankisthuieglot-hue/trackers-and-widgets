@@ -133,16 +133,33 @@ export const languages = (t) =>
 
 export function loadTracker(name) {
   const dir = join(SRC, name);
-  const read = (file) => (existsSync(join(dir, file)) ? readFileSync(join(dir, file), 'utf8') : '');
+  const read = (...file) =>
+    (existsSync(join(dir, ...file)) ? readFileSync(join(dir, ...file), 'utf8').trimEnd() : '');
   const meta = JSON.parse(readFileSync(join(dir, 'tracker.json'), 'utf8'));
+
   return {
     ...meta,
     name,
     dir,
-    html: read('widget.html').trimEnd(),
-    css: read('widget.css').trimEnd(),
-    js: read('widget.js').trimEnd(),
+    html: read('widget.html'),
+    js: read('widget.js'),
+    skins: loadSkins(dir, read),
   };
+}
+
+/**
+ * A tracker can ship several looks over one markup. Only the stylesheet
+ * differs — grammar, fields and behaviour are shared, and the reader installs
+ * whichever one suits the world being played. A tracker with a plain
+ * widget.css has exactly one, unnamed.
+ */
+function loadSkins(dir, read) {
+  if (!existsSync(join(dir, 'skins'))) return [{ name: '', css: read('widget.css') }];
+
+  return readdirSync(join(dir, 'skins'))
+    .filter((f) => f.endsWith('.css'))
+    .sort()
+    .map((f) => ({ name: f.replace(/\.css$/, ''), css: read('skins', f) }));
 }
 
 /**
@@ -157,14 +174,14 @@ export function loadTracker(name) {
  * re-create script elements, where `currentScript` is null. The init flag makes
  * re-rendering the same message idempotent.
  */
-export function renderWidget(t, chrome = {}) {
-  const cls = `vld-${t.name}`;
+export function renderWidget(t, chrome = {}, css = t.skins[0].css, extraClass = '') {
+  const cls = `vld-${t.name}${extraClass ? ` ${extraClass}` : ''}`;
   // %key% are the widget's own fixed captions. They are not fields: the model
   // never writes them, but they still have to speak the player's language.
   const html = t.html.replace(/%([a-z][\w]*)%/g, (whole, key) => chrome[key] ?? whole);
   const parts = [`<div class="vld-w ${cls}">`, indent(html, 2)];
 
-  if (t.css) parts.push(`  <style>\n${indent(t.css, 4)}\n  </style>`);
+  if (css) parts.push(`  <style>\n${indent(css, 4)}\n  </style>`);
 
   if (t.js) {
     parts.push(

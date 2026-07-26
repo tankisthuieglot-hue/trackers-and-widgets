@@ -15,10 +15,10 @@
 </style>
 
 <section>
-  <h2>🎚️ VLD RPG HUD</h2>
+  <h2>🎚️ VLD RPG HUD · parchment</h2>
   <code>[[VLD_HUD|…]]</code>
   <div class="stages">
-    <div class="stage light"><div class="vld-w vld-hud">
+    <div class="stage light"><div class="vld-w vld-hud pv-parchment">
   <div class="panel">
     <div class="ident">
       <b class="name">Влад Косцов</b>
@@ -49,270 +49,273 @@
     </div>
   </div>
   <style>
-    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
-       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
-       в порядке. Это читается в любом мире.
+    /* Лист учётной книги: телячий пергамент, железо-галловые чернила, рубрикация.
+       Разметка та же, что у стального скина, — различается только этот файл.
 
-       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
-       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+       Цветовые ступени взяты не из видеоигры, а из палитры, которой в то время
+       действительно писали: киноварь, аурипигмент, ярь-медянка. Читаются как
+       красный, жёлтый и зелёный, но не выглядят светодиодом.
 
-    .vld-hud {
-      --panel: #17181c;
-      --track: rgba(230, 227, 220, .05);
-      --ink: #e6e3dc;
-      --dim: #83858d;
-      --hair: rgba(230, 227, 220, .12);
+       Ни строчки JavaScript: уровень приезжает классом, буквица делается
+       через ::first-letter, шкала набрана точками. */
 
-      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
-         цифру можно не искать. */
-      --crit: 204, 90, 100;
-      --low: 214, 128, 64;
-      --mid: 214, 180, 74;
-      --good: 127, 174, 99;
+    .vld-hud.pv-parchment {
+      --vellum: #e8ddc6;
+      --ink: #2f2519;
+      --faded: #6d5e47;
+      --rule: rgba(47, 37, 25, .22);
 
-      --serif: "Georgia", "Times New Roman", serif;
-      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+      --crit: 168, 50, 31;
+      --low: 181, 85, 31;
+      --mid: 192, 138, 30;
+      --good: 74, 122, 82;
+
+      --hand: "Palatino Linotype", "Book Antiqua", Palatino, "Georgia", serif;
 
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
-
-      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
-         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
-      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+      font-family: var(--hand);
+      filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .42));
     }
 
-    .vld-hud * {
+    .vld-hud.pv-parchment * {
       box-sizing: border-box;
     }
 
-    .vld-hud .panel {
+    .vld-hud.pv-parchment .panel {
       position: relative;
       overflow: hidden;
-      padding: 15px 15px 13px;
-      border-radius: 4px;
-      color: var(--ink);
+      padding: 17px 19px 20px;
 
-      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
-         карточки на сайте. */
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+      /* Низ листа оборван, а не отрезан по линейке. */
+      clip-path: polygon(
+        0 0, 100% 0, 100% calc(100% - 7px),
+        92% 100%, 83% calc(100% - 5px), 71% calc(100% - 1px), 58% calc(100% - 6px),
+        46% calc(100% - 2px), 33% calc(100% - 7px), 21% calc(100% - 2px),
+        9% calc(100% - 6px), 0 calc(100% - 2px)
+      );
 
       background:
-        /* зерно: настоящий шум, а не полосы */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
-        /* две заклёпки внизу */
-        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        /* блик сверху и продольная шлифовка */
-        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
-        var(--panel);
-      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+        /* волокно пергамента */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"),
+        /* пятна от времени */
+        radial-gradient(60% 44% at 8% 6%, rgba(140, 110, 62, .16), transparent 70%),
+        radial-gradient(46% 36% at 96% 74%, rgba(120, 92, 48, .14), transparent 72%),
+        /* затемнение по краям */
+        radial-gradient(120% 96% at 50% 50%, transparent 52%, rgba(96, 74, 40, .22)),
+        var(--vellum);
+      background-blend-mode: multiply, normal, normal, normal, normal;
 
-      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
-      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+      animation: vld-lay .36s cubic-bezier(.2, .8, .2, 1) both;
     }
 
-    @keyframes vld-rise {
-      from { opacity: 0; transform: translateY(7px); }
+    @keyframes vld-lay {
+      from { opacity: 0; transform: translateY(6px) rotate(-.4deg); }
     }
 
-    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
-    .vld-hud .panel::after {
+    /* Двойная линейка по краю листа, как в настоящей описи. */
+    .vld-hud.pv-parchment .panel::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: 6px 6px 12px;
       pointer-events: none;
-      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
-      animation: vld-scan 1.05s ease-out .12s both;
+      border: 1px solid rgba(47, 37, 25, .30);
+      box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px rgba(47, 37, 25, .16);
     }
 
-    @keyframes vld-scan {
-      from { transform: translateX(-115%); }
-      to   { transform: translateX(115%); }
+    /* Сургучная печать в углу. */
+    .vld-hud.pv-parchment .panel::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      bottom: 17px;
+      width: 26px;
+      height: 26px;
+      border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+      background:
+        radial-gradient(circle at 36% 32%, rgba(255, 255, 255, .3), transparent 46%),
+        radial-gradient(circle at 62% 68%, rgba(0, 0, 0, .34), transparent 58%),
+        rgb(var(--crit));
+      box-shadow: 0 2px 5px rgba(60, 20, 12, .5);
     }
 
-    .vld-hud .ident {
+    .vld-hud.pv-parchment .ident {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--hair);
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .name {
-      font: 400 19px/1.1 var(--serif);
-      letter-spacing: -.015em;
+    .vld-hud.pv-parchment .name {
+      font: 400 21px/1.15 var(--hand);
+      letter-spacing: .005em;
     }
 
-    .vld-hud .metrics {
+    /* Буквица киноварью — рубрикация, а не декор ради декора. */
+    .vld-hud.pv-parchment .name::first-letter {
+      font-size: 1.55em;
+      line-height: .8;
+      color: rgb(var(--crit));
+      padding-right: 1px;
+    }
+
+    .vld-hud.pv-parchment .metrics {
       flex: 0 0 auto;
-      font: 400 11px/1 var(--mono);
-      letter-spacing: .04em;
-      color: var(--dim);
+      font: italic 400 12px/1 var(--hand);
+      color: var(--faded);
     }
 
-    .vld-hud .bars {
+    .vld-hud.pv-parchment .bars {
       display: grid;
-      gap: 4px;
-      padding: 12px 0;
-    }
-
-    .vld-hud .bar {
-      position: relative;
-      overflow: hidden;
-      height: 26px;
-      border-radius: 2px;
-    }
-
-    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
-       цифру можно не искать. */
-    .vld-hud .cells {
-      position: absolute;
-      inset: 0;
-      display: flex;
       gap: 2px;
-      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+      padding: 11px 0 12px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .cells i {
-      flex: 1;
-      border-radius: 1px;
-      background: var(--track);
-      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
-    }
-
-    /* Развёртка слева направо одним движением, а не десятью анимациями. */
-    @keyframes vld-grow {
-      from { clip-path: inset(0 100% 0 0); }
-      to   { clip-path: inset(0 0 0 0); }
-    }
-
-    .vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
-    .vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
-    .vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
-    .vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
-
-    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
-       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
-    .vld-hud .lv-1  i:nth-child(-n+1),
-    .vld-hud .lv-2  i:nth-child(-n+2),
-    .vld-hud .lv-3  i:nth-child(-n+3),
-    .vld-hud .lv-4  i:nth-child(-n+4),
-    .vld-hud .lv-5  i:nth-child(-n+5),
-    .vld-hud .lv-6  i:nth-child(-n+6),
-    .vld-hud .lv-7  i:nth-child(-n+7),
-    .vld-hud .lv-8  i:nth-child(-n+8),
-    .vld-hud .lv-9  i:nth-child(-n+9),
-    .vld-hud .lv-10 i:nth-child(-n+10) {
-      background: rgba(var(--tone), .26);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
-    }
-
-    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
-    .vld-hud .lv-1  i:nth-child(1),
-    .vld-hud .lv-2  i:nth-child(2),
-    .vld-hud .lv-3  i:nth-child(3),
-    .vld-hud .lv-4  i:nth-child(4),
-    .vld-hud .lv-5  i:nth-child(5),
-    .vld-hud .lv-6  i:nth-child(6),
-    .vld-hud .lv-7  i:nth-child(7),
-    .vld-hud .lv-8  i:nth-child(8),
-    .vld-hud .lv-9  i:nth-child(9),
-    .vld-hud .lv-10 i:nth-child(10) {
-      background: rgba(var(--tone), .62);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
-    }
-
-    .vld-hud .bar          { --tone: var(--crit); }
-    .vld-hud .lv-3,
-    .vld-hud .lv-4         { --tone: var(--low); }
-    .vld-hud .lv-5,
-    .vld-hud .lv-6,
-    .vld-hud .lv-7         { --tone: var(--mid); }
-    .vld-hud .lv-8,
-    .vld-hud .lv-9,
-    .vld-hud .lv-10        { --tone: var(--good); }
-
-    /* На исходе — видно, даже если не читать. */
-    .vld-hud .lv-1,
-    .vld-hud .lv-2 {
-      animation: vld-alert 2.6s ease-in-out infinite;
-    }
-
-    @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
-    }
-
-    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
-       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .name {
-      animation: vld-adrenaline .5s ease-in-out infinite alternate;
-    }
-
-    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
-      animation: vld-unease 1.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes vld-adrenaline {
-      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
-    }
-
-    @keyframes vld-unease {
-      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
-    }
-
-    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
-       секунды: должно цеплять краем глаза, а не мельтешить. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
-      animation: vld-tear 4.1s steps(1, end) infinite;
-    }
-
-    @keyframes vld-tear {
-      0%, 92%   { transform: none; }
-      93%       { transform: translateX(-2px) skewX(-.6deg); }
-      94%       { transform: translateX(3px); }
-      95%, 100% { transform: none; }
-    }
-
-    .vld-hud .row {
-      position: relative;
+    /* Строка описи: название, точки, число. Разметка общая со стальным скином,
+       поэтому .row растворяется, а её содержимое становится частью строки. */
+    .vld-hud.pv-parchment .bar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      height: 100%;
-      padding: 0 11px;
+      gap: 9px;
+      height: 22px;
+      background: none;
+      overflow: visible;
     }
 
-    .vld-hud .lbl {
+    .vld-hud.pv-parchment .row {
+      display: contents;
+    }
+
+    .vld-hud.pv-parchment .lbl {
+      order: 0;
       flex: 1;
       min-width: 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font: 500 12px/1 var(--mono);
+      font: 400 13.5px/1 var(--hand);
     }
 
-    .vld-hud .num {
+    .vld-hud.pv-parchment .cells {
+      order: 1;
+      position: static;
+      flex: 0 0 106px;
+      display: flex;
+      gap: 0;
+      height: 9px;
+      animation: vld-ink .6s ease-out both;
+    }
+
+    @keyframes vld-ink {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-parchment .bars .bar:nth-child(2) .cells { animation-delay: .06s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(3) .cells { animation-delay: .12s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(4) .cells { animation-delay: .18s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(5) .cells { animation-delay: .24s; }
+
+    /* Пустое деление — непрокрашенный кружок. */
+    .vld-hud.pv-parchment .cells i {
+      flex: 1;
+      background: radial-gradient(circle 3.2px at center,
+        transparent 0 1.6px, rgba(47, 37, 25, .34) 1.7px 100%, transparent);
+    }
+
+    /* Занятые деления залиты чернилами. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(-n+10) {
+      background: radial-gradient(circle 3.4px at center,
+        rgba(var(--tone), .92) 0 100%, transparent);
+    }
+
+    /* Последнее занятое деление обведено — видно, где стоит уровень. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(10) {
+      background:
+        radial-gradient(circle 5.4px at center, transparent 0 4.4px, rgba(var(--tone), .5) 4.5px 100%, transparent),
+        radial-gradient(circle 3.4px at center, rgb(var(--tone)) 0 100%, transparent);
+    }
+
+    .vld-hud.pv-parchment .bar   { --tone: var(--crit); }
+    .vld-hud.pv-parchment .lv-3,
+    .vld-hud.pv-parchment .lv-4  { --tone: var(--low); }
+    .vld-hud.pv-parchment .lv-5,
+    .vld-hud.pv-parchment .lv-6,
+    .vld-hud.pv-parchment .lv-7  { --tone: var(--mid); }
+    .vld-hud.pv-parchment .lv-8,
+    .vld-hud.pv-parchment .lv-9,
+    .vld-hud.pv-parchment .lv-10 { --tone: var(--good); }
+
+    .vld-hud.pv-parchment .num {
+      order: 2;
       flex: 0 0 auto;
-      font: 500 12px/1 var(--mono);
-      font-variant-numeric: tabular-nums;
+      width: 20px;
+      text-align: right;
+      font: 400 13px/1 var(--hand);
+      font-variant-numeric: oldstyle-nums;
+      color: var(--faded);
     }
 
-    .vld-hud .num::after {
-      content: "/10";
-      opacity: .42;
+    /* Точек хватает, чтобы понять шкалу. */
+    .vld-hud.pv-parchment .num::after {
+      content: "";
     }
 
-    .vld-hud .pack {
-      border-top: 1px solid var(--hair);
+    /* На исходе — деления тлеют, как непросохшая киноварь. */
+    .vld-hud.pv-parchment .lv-1 .cells,
+    .vld-hud.pv-parchment .lv-2 .cells {
+      animation: vld-ink .6s ease-out both, vld-ember 2.4s ease-in-out .6s infinite;
+    }
+
+    @keyframes vld-ember {
+      50% { filter: brightness(1.5) saturate(1.4); }
+    }
+
+    /* Имя ловит обстановку, а не чувства игрока: пока что-то на исходе, киноварь
+       на буквице разгорается. Считается прямо из шкал через :has(). */
+    .vld-hud.pv-parchment .panel:has(.lv-1, .lv-2) .name::first-letter {
+      animation: vld-flare .55s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-parchment .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name::first-letter {
+      animation: vld-smoulder 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-flare {
+      to { color: rgb(214, 74, 48); text-shadow: 0 0 10px rgba(var(--crit), .45); }
+    }
+
+    @keyframes vld-smoulder {
+      to { color: rgb(181, 106, 40); }
+    }
+
+    .vld-hud.pv-parchment .pack {
       padding-top: 10px;
     }
 
-    .vld-hud summary {
+    .vld-hud.pv-parchment summary {
       display: flex;
       align-items: center;
       gap: 7px;
@@ -320,98 +323,91 @@
       cursor: pointer;
     }
 
-    .vld-hud summary::-webkit-details-marker {
+    .vld-hud.pv-parchment summary::-webkit-details-marker {
       display: none;
     }
 
-    .vld-hud .chev {
-      width: 0;
-      height: 0;
-      border-left: 4px solid var(--dim);
-      border-top: 3.5px solid transparent;
-      border-bottom: 3.5px solid transparent;
-      transition: transform .18s ease;
+    /* Вместо стрелки — росчерк пером. */
+    .vld-hud.pv-parchment .chev {
+      width: 9px;
+      height: 9px;
+      border-right: 1.5px solid var(--faded);
+      border-bottom: 1.5px solid var(--faded);
+      border-radius: 0 0 3px 0;
+      transform: rotate(-45deg);
+      transition: transform .2s ease;
     }
 
-    .vld-hud .pack[open] .chev {
-      transform: rotate(90deg);
+    .vld-hud.pv-parchment .pack[open] .chev {
+      transform: rotate(45deg);
     }
 
-    .vld-hud summary:hover .k {
-      color: var(--ink);
+    .vld-hud.pv-parchment summary:hover .k {
+      color: rgb(var(--crit));
     }
 
-    .vld-hud .pack .v {
-      padding-top: 6px;
+    .vld-hud.pv-parchment .pack .v {
+      padding-top: 5px;
     }
 
-    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
     @supports (interpolate-size: allow-keywords) {
-      .vld-hud {
+      .vld-hud.pv-parchment {
         interpolate-size: allow-keywords;
       }
 
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .pack::details-content {
         block-size: 0;
         overflow: hidden;
         transition: block-size .28s ease, content-visibility .28s allow-discrete;
       }
 
-      .vld-hud .pack[open]::details-content {
+      .vld-hud.pv-parchment .pack[open]::details-content {
         block-size: auto;
       }
     }
 
-    .vld-hud .entry {
+    .vld-hud.pv-parchment .entry {
       display: grid;
-      gap: 3px;
-      padding-top: 10px;
+      gap: 2px;
+      padding-top: 9px;
     }
 
-    .vld-hud .k {
-      font: 400 9px/1.2 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: .15em;
-      color: var(--dim);
+    /* Капитель вместо машинного капслока. */
+    .vld-hud.pv-parchment .k {
+      font: 400 11px/1.2 var(--hand);
+      font-variant: small-caps;
+      letter-spacing: .09em;
+      color: var(--faded);
       transition: color .18s ease;
     }
 
-    .vld-hud .v {
-      font: 400 12.5px/1.45 var(--mono);
+    .vld-hud.pv-parchment .v {
+      font: 400 13.5px/1.42 var(--hand);
       color: var(--ink);
     }
 
-    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
-       Шкала без названия бессмысленна, шкала без значения — тоже. */
-    .vld-hud .bar:has(.lbl:empty),
-    .vld-hud .bar:has(.num:empty),
-    .vld-hud .entry:has(.v:empty),
-    .vld-hud .pack:has(.v:empty) {
+    .vld-hud.pv-parchment .bar:has(.lbl:empty),
+    .vld-hud.pv-parchment .bar:has(.num:empty),
+    .vld-hud.pv-parchment .entry:has(.v:empty),
+    .vld-hud.pv-parchment .pack:has(.v:empty) {
       display: none;
     }
 
-    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
-    .vld-hud .panel:has(.name:empty) {
+    .vld-hud.pv-parchment .panel:has(.name:empty) {
       display: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .vld-hud .panel,
-      .vld-hud .panel::after,
-      .vld-hud .bars,
-      .vld-hud .cells,
-      .vld-hud .lv-1,
-      .vld-hud .lv-2,
-      .vld-hud .name {
+      .vld-hud.pv-parchment .panel,
+      .vld-hud.pv-parchment .cells,
+      .vld-hud.pv-parchment .lv-1 .cells,
+      .vld-hud.pv-parchment .lv-2 .cells,
+      .vld-hud.pv-parchment .name::first-letter {
         animation: none;
       }
 
-      .vld-hud .panel::after {
-        display: none;
-      }
-
-      .vld-hud .chev,
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .chev,
+      .vld-hud.pv-parchment .pack::details-content {
         transition: none;
       }
     }
@@ -419,7 +415,7 @@
   <script>
     (function () {
       var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-hud:not([data-vld-init])');
+        || document.querySelector('.vld-hud pv-parchment:not([data-vld-init])');
       if (!root || root.dataset.vldInit === '1') return;
       root.dataset.vldInit = '1';
       // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
@@ -458,7 +454,7 @@
     })();
   </script>
 </div>
-<div class="vld-w vld-hud">
+<div class="vld-w vld-hud pv-parchment">
   <div class="panel">
     <div class="ident">
       <b class="name">Влад Косцов</b>
@@ -489,270 +485,273 @@
     </div>
   </div>
   <style>
-    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
-       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
-       в порядке. Это читается в любом мире.
+    /* Лист учётной книги: телячий пергамент, железо-галловые чернила, рубрикация.
+       Разметка та же, что у стального скина, — различается только этот файл.
 
-       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
-       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+       Цветовые ступени взяты не из видеоигры, а из палитры, которой в то время
+       действительно писали: киноварь, аурипигмент, ярь-медянка. Читаются как
+       красный, жёлтый и зелёный, но не выглядят светодиодом.
 
-    .vld-hud {
-      --panel: #17181c;
-      --track: rgba(230, 227, 220, .05);
-      --ink: #e6e3dc;
-      --dim: #83858d;
-      --hair: rgba(230, 227, 220, .12);
+       Ни строчки JavaScript: уровень приезжает классом, буквица делается
+       через ::first-letter, шкала набрана точками. */
 
-      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
-         цифру можно не искать. */
-      --crit: 204, 90, 100;
-      --low: 214, 128, 64;
-      --mid: 214, 180, 74;
-      --good: 127, 174, 99;
+    .vld-hud.pv-parchment {
+      --vellum: #e8ddc6;
+      --ink: #2f2519;
+      --faded: #6d5e47;
+      --rule: rgba(47, 37, 25, .22);
 
-      --serif: "Georgia", "Times New Roman", serif;
-      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+      --crit: 168, 50, 31;
+      --low: 181, 85, 31;
+      --mid: 192, 138, 30;
+      --good: 74, 122, 82;
+
+      --hand: "Palatino Linotype", "Book Antiqua", Palatino, "Georgia", serif;
 
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
-
-      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
-         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
-      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+      font-family: var(--hand);
+      filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .42));
     }
 
-    .vld-hud * {
+    .vld-hud.pv-parchment * {
       box-sizing: border-box;
     }
 
-    .vld-hud .panel {
+    .vld-hud.pv-parchment .panel {
       position: relative;
       overflow: hidden;
-      padding: 15px 15px 13px;
-      border-radius: 4px;
-      color: var(--ink);
+      padding: 17px 19px 20px;
 
-      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
-         карточки на сайте. */
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+      /* Низ листа оборван, а не отрезан по линейке. */
+      clip-path: polygon(
+        0 0, 100% 0, 100% calc(100% - 7px),
+        92% 100%, 83% calc(100% - 5px), 71% calc(100% - 1px), 58% calc(100% - 6px),
+        46% calc(100% - 2px), 33% calc(100% - 7px), 21% calc(100% - 2px),
+        9% calc(100% - 6px), 0 calc(100% - 2px)
+      );
 
       background:
-        /* зерно: настоящий шум, а не полосы */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
-        /* две заклёпки внизу */
-        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        /* блик сверху и продольная шлифовка */
-        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
-        var(--panel);
-      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+        /* волокно пергамента */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"),
+        /* пятна от времени */
+        radial-gradient(60% 44% at 8% 6%, rgba(140, 110, 62, .16), transparent 70%),
+        radial-gradient(46% 36% at 96% 74%, rgba(120, 92, 48, .14), transparent 72%),
+        /* затемнение по краям */
+        radial-gradient(120% 96% at 50% 50%, transparent 52%, rgba(96, 74, 40, .22)),
+        var(--vellum);
+      background-blend-mode: multiply, normal, normal, normal, normal;
 
-      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
-      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+      animation: vld-lay .36s cubic-bezier(.2, .8, .2, 1) both;
     }
 
-    @keyframes vld-rise {
-      from { opacity: 0; transform: translateY(7px); }
+    @keyframes vld-lay {
+      from { opacity: 0; transform: translateY(6px) rotate(-.4deg); }
     }
 
-    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
-    .vld-hud .panel::after {
+    /* Двойная линейка по краю листа, как в настоящей описи. */
+    .vld-hud.pv-parchment .panel::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: 6px 6px 12px;
       pointer-events: none;
-      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
-      animation: vld-scan 1.05s ease-out .12s both;
+      border: 1px solid rgba(47, 37, 25, .30);
+      box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px rgba(47, 37, 25, .16);
     }
 
-    @keyframes vld-scan {
-      from { transform: translateX(-115%); }
-      to   { transform: translateX(115%); }
+    /* Сургучная печать в углу. */
+    .vld-hud.pv-parchment .panel::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      bottom: 17px;
+      width: 26px;
+      height: 26px;
+      border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+      background:
+        radial-gradient(circle at 36% 32%, rgba(255, 255, 255, .3), transparent 46%),
+        radial-gradient(circle at 62% 68%, rgba(0, 0, 0, .34), transparent 58%),
+        rgb(var(--crit));
+      box-shadow: 0 2px 5px rgba(60, 20, 12, .5);
     }
 
-    .vld-hud .ident {
+    .vld-hud.pv-parchment .ident {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--hair);
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .name {
-      font: 400 19px/1.1 var(--serif);
-      letter-spacing: -.015em;
+    .vld-hud.pv-parchment .name {
+      font: 400 21px/1.15 var(--hand);
+      letter-spacing: .005em;
     }
 
-    .vld-hud .metrics {
+    /* Буквица киноварью — рубрикация, а не декор ради декора. */
+    .vld-hud.pv-parchment .name::first-letter {
+      font-size: 1.55em;
+      line-height: .8;
+      color: rgb(var(--crit));
+      padding-right: 1px;
+    }
+
+    .vld-hud.pv-parchment .metrics {
       flex: 0 0 auto;
-      font: 400 11px/1 var(--mono);
-      letter-spacing: .04em;
-      color: var(--dim);
+      font: italic 400 12px/1 var(--hand);
+      color: var(--faded);
     }
 
-    .vld-hud .bars {
+    .vld-hud.pv-parchment .bars {
       display: grid;
-      gap: 4px;
-      padding: 12px 0;
-    }
-
-    .vld-hud .bar {
-      position: relative;
-      overflow: hidden;
-      height: 26px;
-      border-radius: 2px;
-    }
-
-    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
-       цифру можно не искать. */
-    .vld-hud .cells {
-      position: absolute;
-      inset: 0;
-      display: flex;
       gap: 2px;
-      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+      padding: 11px 0 12px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .cells i {
-      flex: 1;
-      border-radius: 1px;
-      background: var(--track);
-      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
-    }
-
-    /* Развёртка слева направо одним движением, а не десятью анимациями. */
-    @keyframes vld-grow {
-      from { clip-path: inset(0 100% 0 0); }
-      to   { clip-path: inset(0 0 0 0); }
-    }
-
-    .vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
-    .vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
-    .vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
-    .vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
-
-    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
-       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
-    .vld-hud .lv-1  i:nth-child(-n+1),
-    .vld-hud .lv-2  i:nth-child(-n+2),
-    .vld-hud .lv-3  i:nth-child(-n+3),
-    .vld-hud .lv-4  i:nth-child(-n+4),
-    .vld-hud .lv-5  i:nth-child(-n+5),
-    .vld-hud .lv-6  i:nth-child(-n+6),
-    .vld-hud .lv-7  i:nth-child(-n+7),
-    .vld-hud .lv-8  i:nth-child(-n+8),
-    .vld-hud .lv-9  i:nth-child(-n+9),
-    .vld-hud .lv-10 i:nth-child(-n+10) {
-      background: rgba(var(--tone), .26);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
-    }
-
-    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
-    .vld-hud .lv-1  i:nth-child(1),
-    .vld-hud .lv-2  i:nth-child(2),
-    .vld-hud .lv-3  i:nth-child(3),
-    .vld-hud .lv-4  i:nth-child(4),
-    .vld-hud .lv-5  i:nth-child(5),
-    .vld-hud .lv-6  i:nth-child(6),
-    .vld-hud .lv-7  i:nth-child(7),
-    .vld-hud .lv-8  i:nth-child(8),
-    .vld-hud .lv-9  i:nth-child(9),
-    .vld-hud .lv-10 i:nth-child(10) {
-      background: rgba(var(--tone), .62);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
-    }
-
-    .vld-hud .bar          { --tone: var(--crit); }
-    .vld-hud .lv-3,
-    .vld-hud .lv-4         { --tone: var(--low); }
-    .vld-hud .lv-5,
-    .vld-hud .lv-6,
-    .vld-hud .lv-7         { --tone: var(--mid); }
-    .vld-hud .lv-8,
-    .vld-hud .lv-9,
-    .vld-hud .lv-10        { --tone: var(--good); }
-
-    /* На исходе — видно, даже если не читать. */
-    .vld-hud .lv-1,
-    .vld-hud .lv-2 {
-      animation: vld-alert 2.6s ease-in-out infinite;
-    }
-
-    @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
-    }
-
-    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
-       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .name {
-      animation: vld-adrenaline .5s ease-in-out infinite alternate;
-    }
-
-    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
-      animation: vld-unease 1.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes vld-adrenaline {
-      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
-    }
-
-    @keyframes vld-unease {
-      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
-    }
-
-    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
-       секунды: должно цеплять краем глаза, а не мельтешить. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
-      animation: vld-tear 4.1s steps(1, end) infinite;
-    }
-
-    @keyframes vld-tear {
-      0%, 92%   { transform: none; }
-      93%       { transform: translateX(-2px) skewX(-.6deg); }
-      94%       { transform: translateX(3px); }
-      95%, 100% { transform: none; }
-    }
-
-    .vld-hud .row {
-      position: relative;
+    /* Строка описи: название, точки, число. Разметка общая со стальным скином,
+       поэтому .row растворяется, а её содержимое становится частью строки. */
+    .vld-hud.pv-parchment .bar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      height: 100%;
-      padding: 0 11px;
+      gap: 9px;
+      height: 22px;
+      background: none;
+      overflow: visible;
     }
 
-    .vld-hud .lbl {
+    .vld-hud.pv-parchment .row {
+      display: contents;
+    }
+
+    .vld-hud.pv-parchment .lbl {
+      order: 0;
       flex: 1;
       min-width: 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font: 500 12px/1 var(--mono);
+      font: 400 13.5px/1 var(--hand);
     }
 
-    .vld-hud .num {
+    .vld-hud.pv-parchment .cells {
+      order: 1;
+      position: static;
+      flex: 0 0 106px;
+      display: flex;
+      gap: 0;
+      height: 9px;
+      animation: vld-ink .6s ease-out both;
+    }
+
+    @keyframes vld-ink {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-parchment .bars .bar:nth-child(2) .cells { animation-delay: .06s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(3) .cells { animation-delay: .12s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(4) .cells { animation-delay: .18s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(5) .cells { animation-delay: .24s; }
+
+    /* Пустое деление — непрокрашенный кружок. */
+    .vld-hud.pv-parchment .cells i {
+      flex: 1;
+      background: radial-gradient(circle 3.2px at center,
+        transparent 0 1.6px, rgba(47, 37, 25, .34) 1.7px 100%, transparent);
+    }
+
+    /* Занятые деления залиты чернилами. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(-n+10) {
+      background: radial-gradient(circle 3.4px at center,
+        rgba(var(--tone), .92) 0 100%, transparent);
+    }
+
+    /* Последнее занятое деление обведено — видно, где стоит уровень. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(10) {
+      background:
+        radial-gradient(circle 5.4px at center, transparent 0 4.4px, rgba(var(--tone), .5) 4.5px 100%, transparent),
+        radial-gradient(circle 3.4px at center, rgb(var(--tone)) 0 100%, transparent);
+    }
+
+    .vld-hud.pv-parchment .bar   { --tone: var(--crit); }
+    .vld-hud.pv-parchment .lv-3,
+    .vld-hud.pv-parchment .lv-4  { --tone: var(--low); }
+    .vld-hud.pv-parchment .lv-5,
+    .vld-hud.pv-parchment .lv-6,
+    .vld-hud.pv-parchment .lv-7  { --tone: var(--mid); }
+    .vld-hud.pv-parchment .lv-8,
+    .vld-hud.pv-parchment .lv-9,
+    .vld-hud.pv-parchment .lv-10 { --tone: var(--good); }
+
+    .vld-hud.pv-parchment .num {
+      order: 2;
       flex: 0 0 auto;
-      font: 500 12px/1 var(--mono);
-      font-variant-numeric: tabular-nums;
+      width: 20px;
+      text-align: right;
+      font: 400 13px/1 var(--hand);
+      font-variant-numeric: oldstyle-nums;
+      color: var(--faded);
     }
 
-    .vld-hud .num::after {
-      content: "/10";
-      opacity: .42;
+    /* Точек хватает, чтобы понять шкалу. */
+    .vld-hud.pv-parchment .num::after {
+      content: "";
     }
 
-    .vld-hud .pack {
-      border-top: 1px solid var(--hair);
+    /* На исходе — деления тлеют, как непросохшая киноварь. */
+    .vld-hud.pv-parchment .lv-1 .cells,
+    .vld-hud.pv-parchment .lv-2 .cells {
+      animation: vld-ink .6s ease-out both, vld-ember 2.4s ease-in-out .6s infinite;
+    }
+
+    @keyframes vld-ember {
+      50% { filter: brightness(1.5) saturate(1.4); }
+    }
+
+    /* Имя ловит обстановку, а не чувства игрока: пока что-то на исходе, киноварь
+       на буквице разгорается. Считается прямо из шкал через :has(). */
+    .vld-hud.pv-parchment .panel:has(.lv-1, .lv-2) .name::first-letter {
+      animation: vld-flare .55s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-parchment .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name::first-letter {
+      animation: vld-smoulder 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-flare {
+      to { color: rgb(214, 74, 48); text-shadow: 0 0 10px rgba(var(--crit), .45); }
+    }
+
+    @keyframes vld-smoulder {
+      to { color: rgb(181, 106, 40); }
+    }
+
+    .vld-hud.pv-parchment .pack {
       padding-top: 10px;
     }
 
-    .vld-hud summary {
+    .vld-hud.pv-parchment summary {
       display: flex;
       align-items: center;
       gap: 7px;
@@ -760,98 +759,91 @@
       cursor: pointer;
     }
 
-    .vld-hud summary::-webkit-details-marker {
+    .vld-hud.pv-parchment summary::-webkit-details-marker {
       display: none;
     }
 
-    .vld-hud .chev {
-      width: 0;
-      height: 0;
-      border-left: 4px solid var(--dim);
-      border-top: 3.5px solid transparent;
-      border-bottom: 3.5px solid transparent;
-      transition: transform .18s ease;
+    /* Вместо стрелки — росчерк пером. */
+    .vld-hud.pv-parchment .chev {
+      width: 9px;
+      height: 9px;
+      border-right: 1.5px solid var(--faded);
+      border-bottom: 1.5px solid var(--faded);
+      border-radius: 0 0 3px 0;
+      transform: rotate(-45deg);
+      transition: transform .2s ease;
     }
 
-    .vld-hud .pack[open] .chev {
-      transform: rotate(90deg);
+    .vld-hud.pv-parchment .pack[open] .chev {
+      transform: rotate(45deg);
     }
 
-    .vld-hud summary:hover .k {
-      color: var(--ink);
+    .vld-hud.pv-parchment summary:hover .k {
+      color: rgb(var(--crit));
     }
 
-    .vld-hud .pack .v {
-      padding-top: 6px;
+    .vld-hud.pv-parchment .pack .v {
+      padding-top: 5px;
     }
 
-    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
     @supports (interpolate-size: allow-keywords) {
-      .vld-hud {
+      .vld-hud.pv-parchment {
         interpolate-size: allow-keywords;
       }
 
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .pack::details-content {
         block-size: 0;
         overflow: hidden;
         transition: block-size .28s ease, content-visibility .28s allow-discrete;
       }
 
-      .vld-hud .pack[open]::details-content {
+      .vld-hud.pv-parchment .pack[open]::details-content {
         block-size: auto;
       }
     }
 
-    .vld-hud .entry {
+    .vld-hud.pv-parchment .entry {
       display: grid;
-      gap: 3px;
-      padding-top: 10px;
+      gap: 2px;
+      padding-top: 9px;
     }
 
-    .vld-hud .k {
-      font: 400 9px/1.2 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: .15em;
-      color: var(--dim);
+    /* Капитель вместо машинного капслока. */
+    .vld-hud.pv-parchment .k {
+      font: 400 11px/1.2 var(--hand);
+      font-variant: small-caps;
+      letter-spacing: .09em;
+      color: var(--faded);
       transition: color .18s ease;
     }
 
-    .vld-hud .v {
-      font: 400 12.5px/1.45 var(--mono);
+    .vld-hud.pv-parchment .v {
+      font: 400 13.5px/1.42 var(--hand);
       color: var(--ink);
     }
 
-    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
-       Шкала без названия бессмысленна, шкала без значения — тоже. */
-    .vld-hud .bar:has(.lbl:empty),
-    .vld-hud .bar:has(.num:empty),
-    .vld-hud .entry:has(.v:empty),
-    .vld-hud .pack:has(.v:empty) {
+    .vld-hud.pv-parchment .bar:has(.lbl:empty),
+    .vld-hud.pv-parchment .bar:has(.num:empty),
+    .vld-hud.pv-parchment .entry:has(.v:empty),
+    .vld-hud.pv-parchment .pack:has(.v:empty) {
       display: none;
     }
 
-    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
-    .vld-hud .panel:has(.name:empty) {
+    .vld-hud.pv-parchment .panel:has(.name:empty) {
       display: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .vld-hud .panel,
-      .vld-hud .panel::after,
-      .vld-hud .bars,
-      .vld-hud .cells,
-      .vld-hud .lv-1,
-      .vld-hud .lv-2,
-      .vld-hud .name {
+      .vld-hud.pv-parchment .panel,
+      .vld-hud.pv-parchment .cells,
+      .vld-hud.pv-parchment .lv-1 .cells,
+      .vld-hud.pv-parchment .lv-2 .cells,
+      .vld-hud.pv-parchment .name::first-letter {
         animation: none;
       }
 
-      .vld-hud .panel::after {
-        display: none;
-      }
-
-      .vld-hud .chev,
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .chev,
+      .vld-hud.pv-parchment .pack::details-content {
         transition: none;
       }
     }
@@ -859,7 +851,7 @@
   <script>
     (function () {
       var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-hud:not([data-vld-init])');
+        || document.querySelector('.vld-hud pv-parchment:not([data-vld-init])');
       if (!root || root.dataset.vldInit === '1') return;
       root.dataset.vldInit = '1';
       // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
@@ -898,7 +890,7 @@
     })();
   </script>
 </div></div>
-    <div class="stage dark"><div class="vld-w vld-hud">
+    <div class="stage dark"><div class="vld-w vld-hud pv-parchment">
   <div class="panel">
     <div class="ident">
       <b class="name">Влад Косцов</b>
@@ -929,270 +921,273 @@
     </div>
   </div>
   <style>
-    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
-       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
-       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
-       в порядке. Это читается в любом мире.
+    /* Лист учётной книги: телячий пергамент, железо-галловые чернила, рубрикация.
+       Разметка та же, что у стального скина, — различается только этот файл.
 
-       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
-       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+       Цветовые ступени взяты не из видеоигры, а из палитры, которой в то время
+       действительно писали: киноварь, аурипигмент, ярь-медянка. Читаются как
+       красный, жёлтый и зелёный, но не выглядят светодиодом.
 
-    .vld-hud {
-      --panel: #17181c;
-      --track: rgba(230, 227, 220, .05);
-      --ink: #e6e3dc;
-      --dim: #83858d;
-      --hair: rgba(230, 227, 220, .12);
+       Ни строчки JavaScript: уровень приезжает классом, буквица делается
+       через ::first-letter, шкала набрана точками. */
 
-      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
-         цифру можно не искать. */
-      --crit: 204, 90, 100;
-      --low: 214, 128, 64;
-      --mid: 214, 180, 74;
-      --good: 127, 174, 99;
+    .vld-hud.pv-parchment {
+      --vellum: #e8ddc6;
+      --ink: #2f2519;
+      --faded: #6d5e47;
+      --rule: rgba(47, 37, 25, .22);
 
-      --serif: "Georgia", "Times New Roman", serif;
-      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+      --crit: 168, 50, 31;
+      --low: 181, 85, 31;
+      --mid: 192, 138, 30;
+      --good: 74, 122, 82;
+
+      --hand: "Palatino Linotype", "Book Antiqua", Palatino, "Georgia", serif;
 
       width: min(100%, 384px);
       margin: 14px auto;
       color: var(--ink);
-
-      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
-         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
-      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+      font-family: var(--hand);
+      filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .42));
     }
 
-    .vld-hud * {
+    .vld-hud.pv-parchment * {
       box-sizing: border-box;
     }
 
-    .vld-hud .panel {
+    .vld-hud.pv-parchment .panel {
       position: relative;
       overflow: hidden;
-      padding: 15px 15px 13px;
-      border-radius: 4px;
-      color: var(--ink);
+      padding: 17px 19px 20px;
 
-      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
-         карточки на сайте. */
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+      /* Низ листа оборван, а не отрезан по линейке. */
+      clip-path: polygon(
+        0 0, 100% 0, 100% calc(100% - 7px),
+        92% 100%, 83% calc(100% - 5px), 71% calc(100% - 1px), 58% calc(100% - 6px),
+        46% calc(100% - 2px), 33% calc(100% - 7px), 21% calc(100% - 2px),
+        9% calc(100% - 6px), 0 calc(100% - 2px)
+      );
 
       background:
-        /* зерно: настоящий шум, а не полосы */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
-        /* две заклёпки внизу */
-        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
-        /* блик сверху и продольная шлифовка */
-        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
-        var(--panel);
-      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+        /* волокно пергамента */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"),
+        /* пятна от времени */
+        radial-gradient(60% 44% at 8% 6%, rgba(140, 110, 62, .16), transparent 70%),
+        radial-gradient(46% 36% at 96% 74%, rgba(120, 92, 48, .14), transparent 72%),
+        /* затемнение по краям */
+        radial-gradient(120% 96% at 50% 50%, transparent 52%, rgba(96, 74, 40, .22)),
+        var(--vellum);
+      background-blend-mode: multiply, normal, normal, normal, normal;
 
-      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
-      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+      animation: vld-lay .36s cubic-bezier(.2, .8, .2, 1) both;
     }
 
-    @keyframes vld-rise {
-      from { opacity: 0; transform: translateY(7px); }
+    @keyframes vld-lay {
+      from { opacity: 0; transform: translateY(6px) rotate(-.4deg); }
     }
 
-    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
-    .vld-hud .panel::after {
+    /* Двойная линейка по краю листа, как в настоящей описи. */
+    .vld-hud.pv-parchment .panel::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: 6px 6px 12px;
       pointer-events: none;
-      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
-      animation: vld-scan 1.05s ease-out .12s both;
+      border: 1px solid rgba(47, 37, 25, .30);
+      box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px rgba(47, 37, 25, .16);
     }
 
-    @keyframes vld-scan {
-      from { transform: translateX(-115%); }
-      to   { transform: translateX(115%); }
+    /* Сургучная печать в углу. */
+    .vld-hud.pv-parchment .panel::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      bottom: 17px;
+      width: 26px;
+      height: 26px;
+      border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+      background:
+        radial-gradient(circle at 36% 32%, rgba(255, 255, 255, .3), transparent 46%),
+        radial-gradient(circle at 62% 68%, rgba(0, 0, 0, .34), transparent 58%),
+        rgb(var(--crit));
+      box-shadow: 0 2px 5px rgba(60, 20, 12, .5);
     }
 
-    .vld-hud .ident {
+    .vld-hud.pv-parchment .ident {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--hair);
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .name {
-      font: 400 19px/1.1 var(--serif);
-      letter-spacing: -.015em;
+    .vld-hud.pv-parchment .name {
+      font: 400 21px/1.15 var(--hand);
+      letter-spacing: .005em;
     }
 
-    .vld-hud .metrics {
+    /* Буквица киноварью — рубрикация, а не декор ради декора. */
+    .vld-hud.pv-parchment .name::first-letter {
+      font-size: 1.55em;
+      line-height: .8;
+      color: rgb(var(--crit));
+      padding-right: 1px;
+    }
+
+    .vld-hud.pv-parchment .metrics {
       flex: 0 0 auto;
-      font: 400 11px/1 var(--mono);
-      letter-spacing: .04em;
-      color: var(--dim);
+      font: italic 400 12px/1 var(--hand);
+      color: var(--faded);
     }
 
-    .vld-hud .bars {
+    .vld-hud.pv-parchment .bars {
       display: grid;
-      gap: 4px;
-      padding: 12px 0;
-    }
-
-    .vld-hud .bar {
-      position: relative;
-      overflow: hidden;
-      height: 26px;
-      border-radius: 2px;
-    }
-
-    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
-       цифру можно не искать. */
-    .vld-hud .cells {
-      position: absolute;
-      inset: 0;
-      display: flex;
       gap: 2px;
-      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+      padding: 11px 0 12px;
+      border-bottom: 1px solid var(--rule);
     }
 
-    .vld-hud .cells i {
-      flex: 1;
-      border-radius: 1px;
-      background: var(--track);
-      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
-    }
-
-    /* Развёртка слева направо одним движением, а не десятью анимациями. */
-    @keyframes vld-grow {
-      from { clip-path: inset(0 100% 0 0); }
-      to   { clip-path: inset(0 0 0 0); }
-    }
-
-    .vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
-    .vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
-    .vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
-    .vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
-
-    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
-       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
-    .vld-hud .lv-1  i:nth-child(-n+1),
-    .vld-hud .lv-2  i:nth-child(-n+2),
-    .vld-hud .lv-3  i:nth-child(-n+3),
-    .vld-hud .lv-4  i:nth-child(-n+4),
-    .vld-hud .lv-5  i:nth-child(-n+5),
-    .vld-hud .lv-6  i:nth-child(-n+6),
-    .vld-hud .lv-7  i:nth-child(-n+7),
-    .vld-hud .lv-8  i:nth-child(-n+8),
-    .vld-hud .lv-9  i:nth-child(-n+9),
-    .vld-hud .lv-10 i:nth-child(-n+10) {
-      background: rgba(var(--tone), .26);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
-    }
-
-    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
-    .vld-hud .lv-1  i:nth-child(1),
-    .vld-hud .lv-2  i:nth-child(2),
-    .vld-hud .lv-3  i:nth-child(3),
-    .vld-hud .lv-4  i:nth-child(4),
-    .vld-hud .lv-5  i:nth-child(5),
-    .vld-hud .lv-6  i:nth-child(6),
-    .vld-hud .lv-7  i:nth-child(7),
-    .vld-hud .lv-8  i:nth-child(8),
-    .vld-hud .lv-9  i:nth-child(9),
-    .vld-hud .lv-10 i:nth-child(10) {
-      background: rgba(var(--tone), .62);
-      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
-    }
-
-    .vld-hud .bar          { --tone: var(--crit); }
-    .vld-hud .lv-3,
-    .vld-hud .lv-4         { --tone: var(--low); }
-    .vld-hud .lv-5,
-    .vld-hud .lv-6,
-    .vld-hud .lv-7         { --tone: var(--mid); }
-    .vld-hud .lv-8,
-    .vld-hud .lv-9,
-    .vld-hud .lv-10        { --tone: var(--good); }
-
-    /* На исходе — видно, даже если не читать. */
-    .vld-hud .lv-1,
-    .vld-hud .lv-2 {
-      animation: vld-alert 2.6s ease-in-out infinite;
-    }
-
-    @keyframes vld-alert {
-      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
-      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
-    }
-
-    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
-       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .name {
-      animation: vld-adrenaline .5s ease-in-out infinite alternate;
-    }
-
-    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
-      animation: vld-unease 1.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes vld-adrenaline {
-      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
-    }
-
-    @keyframes vld-unease {
-      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
-    }
-
-    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
-       секунды: должно цеплять краем глаза, а не мельтешить. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
-      animation: vld-tear 4.1s steps(1, end) infinite;
-    }
-
-    @keyframes vld-tear {
-      0%, 92%   { transform: none; }
-      93%       { transform: translateX(-2px) skewX(-.6deg); }
-      94%       { transform: translateX(3px); }
-      95%, 100% { transform: none; }
-    }
-
-    .vld-hud .row {
-      position: relative;
+    /* Строка описи: название, точки, число. Разметка общая со стальным скином,
+       поэтому .row растворяется, а её содержимое становится частью строки. */
+    .vld-hud.pv-parchment .bar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      height: 100%;
-      padding: 0 11px;
+      gap: 9px;
+      height: 22px;
+      background: none;
+      overflow: visible;
     }
 
-    .vld-hud .lbl {
+    .vld-hud.pv-parchment .row {
+      display: contents;
+    }
+
+    .vld-hud.pv-parchment .lbl {
+      order: 0;
       flex: 1;
       min-width: 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font: 500 12px/1 var(--mono);
+      font: 400 13.5px/1 var(--hand);
     }
 
-    .vld-hud .num {
+    .vld-hud.pv-parchment .cells {
+      order: 1;
+      position: static;
+      flex: 0 0 106px;
+      display: flex;
+      gap: 0;
+      height: 9px;
+      animation: vld-ink .6s ease-out both;
+    }
+
+    @keyframes vld-ink {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-parchment .bars .bar:nth-child(2) .cells { animation-delay: .06s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(3) .cells { animation-delay: .12s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(4) .cells { animation-delay: .18s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(5) .cells { animation-delay: .24s; }
+
+    /* Пустое деление — непрокрашенный кружок. */
+    .vld-hud.pv-parchment .cells i {
+      flex: 1;
+      background: radial-gradient(circle 3.2px at center,
+        transparent 0 1.6px, rgba(47, 37, 25, .34) 1.7px 100%, transparent);
+    }
+
+    /* Занятые деления залиты чернилами. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(-n+10) {
+      background: radial-gradient(circle 3.4px at center,
+        rgba(var(--tone), .92) 0 100%, transparent);
+    }
+
+    /* Последнее занятое деление обведено — видно, где стоит уровень. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(10) {
+      background:
+        radial-gradient(circle 5.4px at center, transparent 0 4.4px, rgba(var(--tone), .5) 4.5px 100%, transparent),
+        radial-gradient(circle 3.4px at center, rgb(var(--tone)) 0 100%, transparent);
+    }
+
+    .vld-hud.pv-parchment .bar   { --tone: var(--crit); }
+    .vld-hud.pv-parchment .lv-3,
+    .vld-hud.pv-parchment .lv-4  { --tone: var(--low); }
+    .vld-hud.pv-parchment .lv-5,
+    .vld-hud.pv-parchment .lv-6,
+    .vld-hud.pv-parchment .lv-7  { --tone: var(--mid); }
+    .vld-hud.pv-parchment .lv-8,
+    .vld-hud.pv-parchment .lv-9,
+    .vld-hud.pv-parchment .lv-10 { --tone: var(--good); }
+
+    .vld-hud.pv-parchment .num {
+      order: 2;
       flex: 0 0 auto;
-      font: 500 12px/1 var(--mono);
-      font-variant-numeric: tabular-nums;
+      width: 20px;
+      text-align: right;
+      font: 400 13px/1 var(--hand);
+      font-variant-numeric: oldstyle-nums;
+      color: var(--faded);
     }
 
-    .vld-hud .num::after {
-      content: "/10";
-      opacity: .42;
+    /* Точек хватает, чтобы понять шкалу. */
+    .vld-hud.pv-parchment .num::after {
+      content: "";
     }
 
-    .vld-hud .pack {
-      border-top: 1px solid var(--hair);
+    /* На исходе — деления тлеют, как непросохшая киноварь. */
+    .vld-hud.pv-parchment .lv-1 .cells,
+    .vld-hud.pv-parchment .lv-2 .cells {
+      animation: vld-ink .6s ease-out both, vld-ember 2.4s ease-in-out .6s infinite;
+    }
+
+    @keyframes vld-ember {
+      50% { filter: brightness(1.5) saturate(1.4); }
+    }
+
+    /* Имя ловит обстановку, а не чувства игрока: пока что-то на исходе, киноварь
+       на буквице разгорается. Считается прямо из шкал через :has(). */
+    .vld-hud.pv-parchment .panel:has(.lv-1, .lv-2) .name::first-letter {
+      animation: vld-flare .55s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-parchment .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name::first-letter {
+      animation: vld-smoulder 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-flare {
+      to { color: rgb(214, 74, 48); text-shadow: 0 0 10px rgba(var(--crit), .45); }
+    }
+
+    @keyframes vld-smoulder {
+      to { color: rgb(181, 106, 40); }
+    }
+
+    .vld-hud.pv-parchment .pack {
       padding-top: 10px;
     }
 
-    .vld-hud summary {
+    .vld-hud.pv-parchment summary {
       display: flex;
       align-items: center;
       gap: 7px;
@@ -1200,98 +1195,91 @@
       cursor: pointer;
     }
 
-    .vld-hud summary::-webkit-details-marker {
+    .vld-hud.pv-parchment summary::-webkit-details-marker {
       display: none;
     }
 
-    .vld-hud .chev {
-      width: 0;
-      height: 0;
-      border-left: 4px solid var(--dim);
-      border-top: 3.5px solid transparent;
-      border-bottom: 3.5px solid transparent;
-      transition: transform .18s ease;
+    /* Вместо стрелки — росчерк пером. */
+    .vld-hud.pv-parchment .chev {
+      width: 9px;
+      height: 9px;
+      border-right: 1.5px solid var(--faded);
+      border-bottom: 1.5px solid var(--faded);
+      border-radius: 0 0 3px 0;
+      transform: rotate(-45deg);
+      transition: transform .2s ease;
     }
 
-    .vld-hud .pack[open] .chev {
-      transform: rotate(90deg);
+    .vld-hud.pv-parchment .pack[open] .chev {
+      transform: rotate(45deg);
     }
 
-    .vld-hud summary:hover .k {
-      color: var(--ink);
+    .vld-hud.pv-parchment summary:hover .k {
+      color: rgb(var(--crit));
     }
 
-    .vld-hud .pack .v {
-      padding-top: 6px;
+    .vld-hud.pv-parchment .pack .v {
+      padding-top: 5px;
     }
 
-    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
     @supports (interpolate-size: allow-keywords) {
-      .vld-hud {
+      .vld-hud.pv-parchment {
         interpolate-size: allow-keywords;
       }
 
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .pack::details-content {
         block-size: 0;
         overflow: hidden;
         transition: block-size .28s ease, content-visibility .28s allow-discrete;
       }
 
-      .vld-hud .pack[open]::details-content {
+      .vld-hud.pv-parchment .pack[open]::details-content {
         block-size: auto;
       }
     }
 
-    .vld-hud .entry {
+    .vld-hud.pv-parchment .entry {
       display: grid;
-      gap: 3px;
-      padding-top: 10px;
+      gap: 2px;
+      padding-top: 9px;
     }
 
-    .vld-hud .k {
-      font: 400 9px/1.2 var(--mono);
-      text-transform: uppercase;
-      letter-spacing: .15em;
-      color: var(--dim);
+    /* Капитель вместо машинного капслока. */
+    .vld-hud.pv-parchment .k {
+      font: 400 11px/1.2 var(--hand);
+      font-variant: small-caps;
+      letter-spacing: .09em;
+      color: var(--faded);
       transition: color .18s ease;
     }
 
-    .vld-hud .v {
-      font: 400 12.5px/1.45 var(--mono);
+    .vld-hud.pv-parchment .v {
+      font: 400 13.5px/1.42 var(--hand);
       color: var(--ink);
     }
 
-    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
-       Шкала без названия бессмысленна, шкала без значения — тоже. */
-    .vld-hud .bar:has(.lbl:empty),
-    .vld-hud .bar:has(.num:empty),
-    .vld-hud .entry:has(.v:empty),
-    .vld-hud .pack:has(.v:empty) {
+    .vld-hud.pv-parchment .bar:has(.lbl:empty),
+    .vld-hud.pv-parchment .bar:has(.num:empty),
+    .vld-hud.pv-parchment .entry:has(.v:empty),
+    .vld-hud.pv-parchment .pack:has(.v:empty) {
       display: none;
     }
 
-    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
-    .vld-hud .panel:has(.name:empty) {
+    .vld-hud.pv-parchment .panel:has(.name:empty) {
       display: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .vld-hud .panel,
-      .vld-hud .panel::after,
-      .vld-hud .bars,
-      .vld-hud .cells,
-      .vld-hud .lv-1,
-      .vld-hud .lv-2,
-      .vld-hud .name {
+      .vld-hud.pv-parchment .panel,
+      .vld-hud.pv-parchment .cells,
+      .vld-hud.pv-parchment .lv-1 .cells,
+      .vld-hud.pv-parchment .lv-2 .cells,
+      .vld-hud.pv-parchment .name::first-letter {
         animation: none;
       }
 
-      .vld-hud .panel::after {
-        display: none;
-      }
-
-      .vld-hud .chev,
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-parchment .chev,
+      .vld-hud.pv-parchment .pack::details-content {
         transition: none;
       }
     }
@@ -1299,7 +1287,7 @@
   <script>
     (function () {
       var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-hud:not([data-vld-init])');
+        || document.querySelector('.vld-hud pv-parchment:not([data-vld-init])');
       if (!root || root.dataset.vldInit === '1') return;
       root.dataset.vldInit = '1';
       // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
@@ -1338,7 +1326,890 @@
     })();
   </script>
 </div>
-<div class="vld-w vld-hud">
+<div class="vld-w vld-hud pv-parchment">
+  <div class="panel">
+    <div class="ident">
+      <b class="name">Влад Косцов</b>
+      <span class="metrics">32 · 178 см</span>
+    </div>
+
+    <div class="bars">
+      <div class="bar lv-4"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Целостность скафандра</span><span class="num">4</span></span></div>
+      <div class="bar lv-1"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Кислород</span><span class="num">1</span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+    </div>
+
+    <details class="pack">
+      <summary><span class="chev"></span><span class="k">При себе</span></summary>
+      <div class="v">резак, аварийный маяк</div>
+    </details>
+
+    <div class="entry">
+      <span class="k">Одет</span>
+      <span class="v">лётный комбинезон, магнитные боты</span>
+    </div>
+
+    <div class="entry">
+      <span class="k">Вид</span>
+      <span class="v">ожог на скуле, кашляет</span>
+    </div>
+  </div>
+  <style>
+    /* Лист учётной книги: телячий пергамент, железо-галловые чернила, рубрикация.
+       Разметка та же, что у стального скина, — различается только этот файл.
+
+       Цветовые ступени взяты не из видеоигры, а из палитры, которой в то время
+       действительно писали: киноварь, аурипигмент, ярь-медянка. Читаются как
+       красный, жёлтый и зелёный, но не выглядят светодиодом.
+
+       Ни строчки JavaScript: уровень приезжает классом, буквица делается
+       через ::first-letter, шкала набрана точками. */
+
+    .vld-hud.pv-parchment {
+      --vellum: #e8ddc6;
+      --ink: #2f2519;
+      --faded: #6d5e47;
+      --rule: rgba(47, 37, 25, .22);
+
+      --crit: 168, 50, 31;
+      --low: 181, 85, 31;
+      --mid: 192, 138, 30;
+      --good: 74, 122, 82;
+
+      --hand: "Palatino Linotype", "Book Antiqua", Palatino, "Georgia", serif;
+
+      width: min(100%, 384px);
+      margin: 14px auto;
+      color: var(--ink);
+      font-family: var(--hand);
+      filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .42));
+    }
+
+    .vld-hud.pv-parchment * {
+      box-sizing: border-box;
+    }
+
+    .vld-hud.pv-parchment .panel {
+      position: relative;
+      overflow: hidden;
+      padding: 17px 19px 20px;
+
+      /* Низ листа оборван, а не отрезан по линейке. */
+      clip-path: polygon(
+        0 0, 100% 0, 100% calc(100% - 7px),
+        92% 100%, 83% calc(100% - 5px), 71% calc(100% - 1px), 58% calc(100% - 6px),
+        46% calc(100% - 2px), 33% calc(100% - 7px), 21% calc(100% - 2px),
+        9% calc(100% - 6px), 0 calc(100% - 2px)
+      );
+
+      background:
+        /* волокно пергамента */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"),
+        /* пятна от времени */
+        radial-gradient(60% 44% at 8% 6%, rgba(140, 110, 62, .16), transparent 70%),
+        radial-gradient(46% 36% at 96% 74%, rgba(120, 92, 48, .14), transparent 72%),
+        /* затемнение по краям */
+        radial-gradient(120% 96% at 50% 50%, transparent 52%, rgba(96, 74, 40, .22)),
+        var(--vellum);
+      background-blend-mode: multiply, normal, normal, normal, normal;
+
+      animation: vld-lay .36s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes vld-lay {
+      from { opacity: 0; transform: translateY(6px) rotate(-.4deg); }
+    }
+
+    /* Двойная линейка по краю листа, как в настоящей описи. */
+    .vld-hud.pv-parchment .panel::before {
+      content: "";
+      position: absolute;
+      inset: 6px 6px 12px;
+      pointer-events: none;
+      border: 1px solid rgba(47, 37, 25, .30);
+      box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px rgba(47, 37, 25, .16);
+    }
+
+    /* Сургучная печать в углу. */
+    .vld-hud.pv-parchment .panel::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      bottom: 17px;
+      width: 26px;
+      height: 26px;
+      border-radius: 48% 52% 46% 54% / 52% 46% 54% 48%;
+      background:
+        radial-gradient(circle at 36% 32%, rgba(255, 255, 255, .3), transparent 46%),
+        radial-gradient(circle at 62% 68%, rgba(0, 0, 0, .34), transparent 58%),
+        rgb(var(--crit));
+      box-shadow: 0 2px 5px rgba(60, 20, 12, .5);
+    }
+
+    .vld-hud.pv-parchment .ident {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .vld-hud.pv-parchment .name {
+      font: 400 21px/1.15 var(--hand);
+      letter-spacing: .005em;
+    }
+
+    /* Буквица киноварью — рубрикация, а не декор ради декора. */
+    .vld-hud.pv-parchment .name::first-letter {
+      font-size: 1.55em;
+      line-height: .8;
+      color: rgb(var(--crit));
+      padding-right: 1px;
+    }
+
+    .vld-hud.pv-parchment .metrics {
+      flex: 0 0 auto;
+      font: italic 400 12px/1 var(--hand);
+      color: var(--faded);
+    }
+
+    .vld-hud.pv-parchment .bars {
+      display: grid;
+      gap: 2px;
+      padding: 11px 0 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* Строка описи: название, точки, число. Разметка общая со стальным скином,
+       поэтому .row растворяется, а её содержимое становится частью строки. */
+    .vld-hud.pv-parchment .bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 22px;
+      background: none;
+      overflow: visible;
+    }
+
+    .vld-hud.pv-parchment .row {
+      display: contents;
+    }
+
+    .vld-hud.pv-parchment .lbl {
+      order: 0;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font: 400 13.5px/1 var(--hand);
+    }
+
+    .vld-hud.pv-parchment .cells {
+      order: 1;
+      position: static;
+      flex: 0 0 106px;
+      display: flex;
+      gap: 0;
+      height: 9px;
+      animation: vld-ink .6s ease-out both;
+    }
+
+    @keyframes vld-ink {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-parchment .bars .bar:nth-child(2) .cells { animation-delay: .06s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(3) .cells { animation-delay: .12s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(4) .cells { animation-delay: .18s; }
+    .vld-hud.pv-parchment .bars .bar:nth-child(5) .cells { animation-delay: .24s; }
+
+    /* Пустое деление — непрокрашенный кружок. */
+    .vld-hud.pv-parchment .cells i {
+      flex: 1;
+      background: radial-gradient(circle 3.2px at center,
+        transparent 0 1.6px, rgba(47, 37, 25, .34) 1.7px 100%, transparent);
+    }
+
+    /* Занятые деления залиты чернилами. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(-n+10) {
+      background: radial-gradient(circle 3.4px at center,
+        rgba(var(--tone), .92) 0 100%, transparent);
+    }
+
+    /* Последнее занятое деление обведено — видно, где стоит уровень. */
+    .vld-hud.pv-parchment .lv-1  i:nth-child(1),
+    .vld-hud.pv-parchment .lv-2  i:nth-child(2),
+    .vld-hud.pv-parchment .lv-3  i:nth-child(3),
+    .vld-hud.pv-parchment .lv-4  i:nth-child(4),
+    .vld-hud.pv-parchment .lv-5  i:nth-child(5),
+    .vld-hud.pv-parchment .lv-6  i:nth-child(6),
+    .vld-hud.pv-parchment .lv-7  i:nth-child(7),
+    .vld-hud.pv-parchment .lv-8  i:nth-child(8),
+    .vld-hud.pv-parchment .lv-9  i:nth-child(9),
+    .vld-hud.pv-parchment .lv-10 i:nth-child(10) {
+      background:
+        radial-gradient(circle 5.4px at center, transparent 0 4.4px, rgba(var(--tone), .5) 4.5px 100%, transparent),
+        radial-gradient(circle 3.4px at center, rgb(var(--tone)) 0 100%, transparent);
+    }
+
+    .vld-hud.pv-parchment .bar   { --tone: var(--crit); }
+    .vld-hud.pv-parchment .lv-3,
+    .vld-hud.pv-parchment .lv-4  { --tone: var(--low); }
+    .vld-hud.pv-parchment .lv-5,
+    .vld-hud.pv-parchment .lv-6,
+    .vld-hud.pv-parchment .lv-7  { --tone: var(--mid); }
+    .vld-hud.pv-parchment .lv-8,
+    .vld-hud.pv-parchment .lv-9,
+    .vld-hud.pv-parchment .lv-10 { --tone: var(--good); }
+
+    .vld-hud.pv-parchment .num {
+      order: 2;
+      flex: 0 0 auto;
+      width: 20px;
+      text-align: right;
+      font: 400 13px/1 var(--hand);
+      font-variant-numeric: oldstyle-nums;
+      color: var(--faded);
+    }
+
+    /* Точек хватает, чтобы понять шкалу. */
+    .vld-hud.pv-parchment .num::after {
+      content: "";
+    }
+
+    /* На исходе — деления тлеют, как непросохшая киноварь. */
+    .vld-hud.pv-parchment .lv-1 .cells,
+    .vld-hud.pv-parchment .lv-2 .cells {
+      animation: vld-ink .6s ease-out both, vld-ember 2.4s ease-in-out .6s infinite;
+    }
+
+    @keyframes vld-ember {
+      50% { filter: brightness(1.5) saturate(1.4); }
+    }
+
+    /* Имя ловит обстановку, а не чувства игрока: пока что-то на исходе, киноварь
+       на буквице разгорается. Считается прямо из шкал через :has(). */
+    .vld-hud.pv-parchment .panel:has(.lv-1, .lv-2) .name::first-letter {
+      animation: vld-flare .55s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-parchment .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name::first-letter {
+      animation: vld-smoulder 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-flare {
+      to { color: rgb(214, 74, 48); text-shadow: 0 0 10px rgba(var(--crit), .45); }
+    }
+
+    @keyframes vld-smoulder {
+      to { color: rgb(181, 106, 40); }
+    }
+
+    .vld-hud.pv-parchment .pack {
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-parchment summary {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .vld-hud.pv-parchment summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Вместо стрелки — росчерк пером. */
+    .vld-hud.pv-parchment .chev {
+      width: 9px;
+      height: 9px;
+      border-right: 1.5px solid var(--faded);
+      border-bottom: 1.5px solid var(--faded);
+      border-radius: 0 0 3px 0;
+      transform: rotate(-45deg);
+      transition: transform .2s ease;
+    }
+
+    .vld-hud.pv-parchment .pack[open] .chev {
+      transform: rotate(45deg);
+    }
+
+    .vld-hud.pv-parchment summary:hover .k {
+      color: rgb(var(--crit));
+    }
+
+    .vld-hud.pv-parchment .pack .v {
+      padding-top: 5px;
+    }
+
+    @supports (interpolate-size: allow-keywords) {
+      .vld-hud.pv-parchment {
+        interpolate-size: allow-keywords;
+      }
+
+      .vld-hud.pv-parchment .pack::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition: block-size .28s ease, content-visibility .28s allow-discrete;
+      }
+
+      .vld-hud.pv-parchment .pack[open]::details-content {
+        block-size: auto;
+      }
+    }
+
+    .vld-hud.pv-parchment .entry {
+      display: grid;
+      gap: 2px;
+      padding-top: 9px;
+    }
+
+    /* Капитель вместо машинного капслока. */
+    .vld-hud.pv-parchment .k {
+      font: 400 11px/1.2 var(--hand);
+      font-variant: small-caps;
+      letter-spacing: .09em;
+      color: var(--faded);
+      transition: color .18s ease;
+    }
+
+    .vld-hud.pv-parchment .v {
+      font: 400 13.5px/1.42 var(--hand);
+      color: var(--ink);
+    }
+
+    .vld-hud.pv-parchment .bar:has(.lbl:empty),
+    .vld-hud.pv-parchment .bar:has(.num:empty),
+    .vld-hud.pv-parchment .entry:has(.v:empty),
+    .vld-hud.pv-parchment .pack:has(.v:empty) {
+      display: none;
+    }
+
+    .vld-hud.pv-parchment .panel:has(.name:empty) {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vld-hud.pv-parchment .panel,
+      .vld-hud.pv-parchment .cells,
+      .vld-hud.pv-parchment .lv-1 .cells,
+      .vld-hud.pv-parchment .lv-2 .cells,
+      .vld-hud.pv-parchment .name::first-letter {
+        animation: none;
+      }
+
+      .vld-hud.pv-parchment .chev,
+      .vld-hud.pv-parchment .pack::details-content {
+        transition: none;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-hud pv-parchment:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
+      // может: маркеры вырезаются из контекста на глубине 3, так что и сама модель
+      // не помнит прошлых значений. Всё, что здесь происходит, выводится из одного
+      // снимка.
+      //
+      // CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
+      // заливкой, а не стояла готовой над растущей полоской.
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.querySelectorAll('.bar').forEach(function (bar, index) {
+          var num = bar.querySelector('.num');
+          var target = parseInt(num.textContent, 10);
+          if (isNaN(target)) return;
+
+          num.textContent = '0';
+          countUp(num, target, index * 70);
+        });
+      }
+
+      /** Те же 70 мс лесенкой и та же длительность, что у vld-grow в стилях. */
+      function countUp(el, target, delay) {
+        setTimeout(function () {
+          var started = null;
+
+          requestAnimationFrame(function step(now) {
+            if (started === null) started = now;
+            var t = Math.min(1, (now - started) / 580);
+
+            el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) requestAnimationFrame(step);
+          });
+        }, delay);
+      }
+    })();
+  </script>
+</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>🎚️ VLD RPG HUD · steel</h2>
+  <code>[[VLD_HUD|…]]</code>
+  <div class="stages">
+    <div class="stage light"><div class="vld-w vld-hud pv-steel">
+  <div class="panel">
+    <div class="ident">
+      <b class="name">Влад Косцов</b>
+      <span class="metrics">32 · 178 см</span>
+    </div>
+
+    <div class="bars">
+      <div class="bar lv-9"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Здоровье</span><span class="num">9</span></span></div>
+      <div class="bar lv-6"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Силы</span><span class="num">6</span></span></div>
+      <div class="bar lv-3"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Тепло</span><span class="num">3</span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+    </div>
+
+    <details class="pack">
+      <summary><span class="chev"></span><span class="k">При себе</span></summary>
+      <div class="v">нож, моток верёвки, фляга, спички, чужой паспорт</div>
+    </details>
+
+    <div class="entry">
+      <span class="k">Одет</span>
+      <span class="v">промокшая парка, свитер на голое тело, берцы</span>
+    </div>
+
+    <div class="entry">
+      <span class="k">Вид</span>
+      <span class="v">разбитые костяшки, мокрый до нитки, голос сел</span>
+    </div>
+  </div>
+  <style>
+    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
+
+       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
+       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+
+    .vld-hud.pv-steel {
+      --panel: #17181c;
+      --track: rgba(230, 227, 220, .05);
+      --ink: #e6e3dc;
+      --dim: #83858d;
+      --hair: rgba(230, 227, 220, .12);
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
+
+      --serif: "Georgia", "Times New Roman", serif;
+      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+      width: min(100%, 384px);
+      margin: 14px auto;
+      color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+    }
+
+    .vld-hud.pv-steel * {
+      box-sizing: border-box;
+    }
+
+    .vld-hud.pv-steel .panel {
+      position: relative;
+      overflow: hidden;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
+      color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
+      background:
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
+        var(--panel);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
+      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes vld-rise {
+      from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud.pv-steel .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
+    }
+
+    .vld-hud.pv-steel .ident {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hair);
+    }
+
+    .vld-hud.pv-steel .name {
+      font: 400 19px/1.1 var(--serif);
+      letter-spacing: -.015em;
+    }
+
+    .vld-hud.pv-steel .metrics {
+      flex: 0 0 auto;
+      font: 400 11px/1 var(--mono);
+      letter-spacing: .04em;
+      color: var(--dim);
+    }
+
+    .vld-hud.pv-steel .bars {
+      display: grid;
+      gap: 4px;
+      padding: 12px 0;
+    }
+
+    .vld-hud.pv-steel .bar {
+      position: relative;
+      overflow: hidden;
+      height: 26px;
+      border-radius: 2px;
+    }
+
+    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
+       цифру можно не искать. */
+    .vld-hud.pv-steel .cells {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 2px;
+      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+    }
+
+    .vld-hud.pv-steel .cells i {
+      flex: 1;
+      border-radius: 1px;
+      background: var(--track);
+      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
+    }
+
+    /* Развёртка слева направо одним движением, а не десятью анимациями. */
+    @keyframes vld-grow {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-steel .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
+
+    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
+       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(-n+10) {
+      background: rgba(var(--tone), .26);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
+    }
+
+    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(10) {
+      background: rgba(var(--tone), .62);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
+    }
+
+    .vld-hud.pv-steel .bar          { --tone: var(--crit); }
+    .vld-hud.pv-steel .lv-3,
+    .vld-hud.pv-steel .lv-4         { --tone: var(--low); }
+    .vld-hud.pv-steel .lv-5,
+    .vld-hud.pv-steel .lv-6,
+    .vld-hud.pv-steel .lv-7         { --tone: var(--mid); }
+    .vld-hud.pv-steel .lv-8,
+    .vld-hud.pv-steel .lv-9,
+    .vld-hud.pv-steel .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
+    .vld-hud.pv-steel .lv-1,
+    .vld-hud.pv-steel .lv-2 {
+      animation: vld-alert 2.6s ease-in-out infinite;
+    }
+
+    @keyframes vld-alert {
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-steel .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
+    }
+
+    .vld-hud.pv-steel .row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      padding: 0 11px;
+    }
+
+    .vld-hud.pv-steel .lbl {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font: 500 12px/1 var(--mono);
+    }
+
+    .vld-hud.pv-steel .num {
+      flex: 0 0 auto;
+      font: 500 12px/1 var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vld-hud.pv-steel .num::after {
+      content: "/10";
+      opacity: .42;
+    }
+
+    .vld-hud.pv-steel .pack {
+      border-top: 1px solid var(--hair);
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel summary {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .vld-hud.pv-steel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .vld-hud.pv-steel .chev {
+      width: 0;
+      height: 0;
+      border-left: 4px solid var(--dim);
+      border-top: 3.5px solid transparent;
+      border-bottom: 3.5px solid transparent;
+      transition: transform .18s ease;
+    }
+
+    .vld-hud.pv-steel .pack[open] .chev {
+      transform: rotate(90deg);
+    }
+
+    .vld-hud.pv-steel summary:hover .k {
+      color: var(--ink);
+    }
+
+    .vld-hud.pv-steel .pack .v {
+      padding-top: 6px;
+    }
+
+    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
+    @supports (interpolate-size: allow-keywords) {
+      .vld-hud.pv-steel {
+        interpolate-size: allow-keywords;
+      }
+
+      .vld-hud.pv-steel .pack::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition: block-size .28s ease, content-visibility .28s allow-discrete;
+      }
+
+      .vld-hud.pv-steel .pack[open]::details-content {
+        block-size: auto;
+      }
+    }
+
+    .vld-hud.pv-steel .entry {
+      display: grid;
+      gap: 3px;
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel .k {
+      font: 400 9px/1.2 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--dim);
+      transition: color .18s ease;
+    }
+
+    .vld-hud.pv-steel .v {
+      font: 400 12.5px/1.45 var(--mono);
+      color: var(--ink);
+    }
+
+    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
+       Шкала без названия бессмысленна, шкала без значения — тоже. */
+    .vld-hud.pv-steel .bar:has(.lbl:empty),
+    .vld-hud.pv-steel .bar:has(.num:empty),
+    .vld-hud.pv-steel .entry:has(.v:empty),
+    .vld-hud.pv-steel .pack:has(.v:empty) {
+      display: none;
+    }
+
+    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
+    .vld-hud.pv-steel .panel:has(.name:empty) {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vld-hud.pv-steel .panel,
+      .vld-hud.pv-steel .panel::after,
+      .vld-hud.pv-steel .bars,
+      .vld-hud.pv-steel .cells,
+      .vld-hud.pv-steel .lv-1,
+      .vld-hud.pv-steel .lv-2,
+      .vld-hud.pv-steel .name {
+        animation: none;
+      }
+
+      .vld-hud.pv-steel .panel::after {
+        display: none;
+      }
+
+      .vld-hud.pv-steel .chev,
+      .vld-hud.pv-steel .pack::details-content {
+        transition: none;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-hud pv-steel:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
+      // может: маркеры вырезаются из контекста на глубине 3, так что и сама модель
+      // не помнит прошлых значений. Всё, что здесь происходит, выводится из одного
+      // снимка.
+      //
+      // CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
+      // заливкой, а не стояла готовой над растущей полоской.
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.querySelectorAll('.bar').forEach(function (bar, index) {
+          var num = bar.querySelector('.num');
+          var target = parseInt(num.textContent, 10);
+          if (isNaN(target)) return;
+
+          num.textContent = '0';
+          countUp(num, target, index * 70);
+        });
+      }
+
+      /** Те же 70 мс лесенкой и та же длительность, что у vld-grow в стилях. */
+      function countUp(el, target, delay) {
+        setTimeout(function () {
+          var started = null;
+
+          requestAnimationFrame(function step(now) {
+            if (started === null) started = now;
+            var t = Math.min(1, (now - started) / 580);
+
+            el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) requestAnimationFrame(step);
+          });
+        }, delay);
+      }
+    })();
+  </script>
+</div>
+<div class="vld-w vld-hud pv-steel">
   <div class="panel">
     <div class="ident">
       <b class="name">Влад Косцов</b>
@@ -1377,7 +2248,7 @@
        Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
        угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
 
-    .vld-hud {
+    .vld-hud.pv-steel {
       --panel: #17181c;
       --track: rgba(230, 227, 220, .05);
       --ink: #e6e3dc;
@@ -1403,11 +2274,11 @@
       filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
     }
 
-    .vld-hud * {
+    .vld-hud.pv-steel * {
       box-sizing: border-box;
     }
 
-    .vld-hud .panel {
+    .vld-hud.pv-steel .panel {
       position: relative;
       overflow: hidden;
       padding: 15px 15px 13px;
@@ -1439,7 +2310,7 @@
     }
 
     /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
-    .vld-hud .panel::after {
+    .vld-hud.pv-steel .panel::after {
       content: "";
       position: absolute;
       inset: 0;
@@ -1453,7 +2324,7 @@
       to   { transform: translateX(115%); }
     }
 
-    .vld-hud .ident {
+    .vld-hud.pv-steel .ident {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
@@ -1462,25 +2333,25 @@
       border-bottom: 1px solid var(--hair);
     }
 
-    .vld-hud .name {
+    .vld-hud.pv-steel .name {
       font: 400 19px/1.1 var(--serif);
       letter-spacing: -.015em;
     }
 
-    .vld-hud .metrics {
+    .vld-hud.pv-steel .metrics {
       flex: 0 0 auto;
       font: 400 11px/1 var(--mono);
       letter-spacing: .04em;
       color: var(--dim);
     }
 
-    .vld-hud .bars {
+    .vld-hud.pv-steel .bars {
       display: grid;
       gap: 4px;
       padding: 12px 0;
     }
 
-    .vld-hud .bar {
+    .vld-hud.pv-steel .bar {
       position: relative;
       overflow: hidden;
       height: 26px;
@@ -1489,7 +2360,7 @@
 
     /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
        цифру можно не искать. */
-    .vld-hud .cells {
+    .vld-hud.pv-steel .cells {
       position: absolute;
       inset: 0;
       display: flex;
@@ -1497,7 +2368,7 @@
       animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
     }
 
-    .vld-hud .cells i {
+    .vld-hud.pv-steel .cells i {
       flex: 1;
       border-radius: 1px;
       background: var(--track);
@@ -1510,55 +2381,55 @@
       to   { clip-path: inset(0 0 0 0); }
     }
 
-    .vld-hud .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
-    .vld-hud .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
-    .vld-hud .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
-    .vld-hud .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
 
     /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
        Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
-    .vld-hud .lv-1  i:nth-child(-n+1),
-    .vld-hud .lv-2  i:nth-child(-n+2),
-    .vld-hud .lv-3  i:nth-child(-n+3),
-    .vld-hud .lv-4  i:nth-child(-n+4),
-    .vld-hud .lv-5  i:nth-child(-n+5),
-    .vld-hud .lv-6  i:nth-child(-n+6),
-    .vld-hud .lv-7  i:nth-child(-n+7),
-    .vld-hud .lv-8  i:nth-child(-n+8),
-    .vld-hud .lv-9  i:nth-child(-n+9),
-    .vld-hud .lv-10 i:nth-child(-n+10) {
+    .vld-hud.pv-steel .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(-n+10) {
       background: rgba(var(--tone), .26);
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
     }
 
     /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
-    .vld-hud .lv-1  i:nth-child(1),
-    .vld-hud .lv-2  i:nth-child(2),
-    .vld-hud .lv-3  i:nth-child(3),
-    .vld-hud .lv-4  i:nth-child(4),
-    .vld-hud .lv-5  i:nth-child(5),
-    .vld-hud .lv-6  i:nth-child(6),
-    .vld-hud .lv-7  i:nth-child(7),
-    .vld-hud .lv-8  i:nth-child(8),
-    .vld-hud .lv-9  i:nth-child(9),
-    .vld-hud .lv-10 i:nth-child(10) {
+    .vld-hud.pv-steel .lv-1  i:nth-child(1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(10) {
       background: rgba(var(--tone), .62);
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
     }
 
-    .vld-hud .bar          { --tone: var(--crit); }
-    .vld-hud .lv-3,
-    .vld-hud .lv-4         { --tone: var(--low); }
-    .vld-hud .lv-5,
-    .vld-hud .lv-6,
-    .vld-hud .lv-7         { --tone: var(--mid); }
-    .vld-hud .lv-8,
-    .vld-hud .lv-9,
-    .vld-hud .lv-10        { --tone: var(--good); }
+    .vld-hud.pv-steel .bar          { --tone: var(--crit); }
+    .vld-hud.pv-steel .lv-3,
+    .vld-hud.pv-steel .lv-4         { --tone: var(--low); }
+    .vld-hud.pv-steel .lv-5,
+    .vld-hud.pv-steel .lv-6,
+    .vld-hud.pv-steel .lv-7         { --tone: var(--mid); }
+    .vld-hud.pv-steel .lv-8,
+    .vld-hud.pv-steel .lv-9,
+    .vld-hud.pv-steel .lv-10        { --tone: var(--good); }
 
     /* На исходе — видно, даже если не читать. */
-    .vld-hud .lv-1,
-    .vld-hud .lv-2 {
+    .vld-hud.pv-steel .lv-1,
+    .vld-hud.pv-steel .lv-2 {
       animation: vld-alert 2.6s ease-in-out infinite;
     }
 
@@ -1569,11 +2440,11 @@
 
     /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
        пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .name {
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .name {
       animation: vld-adrenaline .5s ease-in-out infinite alternate;
     }
 
-    .vld-hud .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+    .vld-hud.pv-steel .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
       animation: vld-unease 1.5s ease-in-out infinite alternate;
     }
 
@@ -1587,7 +2458,7 @@
 
     /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
        секунды: должно цеплять краем глаза, а не мельтешить. */
-    .vld-hud .panel:has(.lv-1, .lv-2) .bars {
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .bars {
       animation: vld-tear 4.1s steps(1, end) infinite;
     }
 
@@ -1598,7 +2469,7 @@
       95%, 100% { transform: none; }
     }
 
-    .vld-hud .row {
+    .vld-hud.pv-steel .row {
       position: relative;
       display: flex;
       align-items: center;
@@ -1607,7 +2478,7 @@
       padding: 0 11px;
     }
 
-    .vld-hud .lbl {
+    .vld-hud.pv-steel .lbl {
       flex: 1;
       min-width: 0;
       overflow: hidden;
@@ -1616,23 +2487,23 @@
       font: 500 12px/1 var(--mono);
     }
 
-    .vld-hud .num {
+    .vld-hud.pv-steel .num {
       flex: 0 0 auto;
       font: 500 12px/1 var(--mono);
       font-variant-numeric: tabular-nums;
     }
 
-    .vld-hud .num::after {
+    .vld-hud.pv-steel .num::after {
       content: "/10";
       opacity: .42;
     }
 
-    .vld-hud .pack {
+    .vld-hud.pv-steel .pack {
       border-top: 1px solid var(--hair);
       padding-top: 10px;
     }
 
-    .vld-hud summary {
+    .vld-hud.pv-steel summary {
       display: flex;
       align-items: center;
       gap: 7px;
@@ -1640,11 +2511,11 @@
       cursor: pointer;
     }
 
-    .vld-hud summary::-webkit-details-marker {
+    .vld-hud.pv-steel summary::-webkit-details-marker {
       display: none;
     }
 
-    .vld-hud .chev {
+    .vld-hud.pv-steel .chev {
       width: 0;
       height: 0;
       border-left: 4px solid var(--dim);
@@ -1653,42 +2524,42 @@
       transition: transform .18s ease;
     }
 
-    .vld-hud .pack[open] .chev {
+    .vld-hud.pv-steel .pack[open] .chev {
       transform: rotate(90deg);
     }
 
-    .vld-hud summary:hover .k {
+    .vld-hud.pv-steel summary:hover .k {
       color: var(--ink);
     }
 
-    .vld-hud .pack .v {
+    .vld-hud.pv-steel .pack .v {
       padding-top: 6px;
     }
 
     /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
     @supports (interpolate-size: allow-keywords) {
-      .vld-hud {
+      .vld-hud.pv-steel {
         interpolate-size: allow-keywords;
       }
 
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-steel .pack::details-content {
         block-size: 0;
         overflow: hidden;
         transition: block-size .28s ease, content-visibility .28s allow-discrete;
       }
 
-      .vld-hud .pack[open]::details-content {
+      .vld-hud.pv-steel .pack[open]::details-content {
         block-size: auto;
       }
     }
 
-    .vld-hud .entry {
+    .vld-hud.pv-steel .entry {
       display: grid;
       gap: 3px;
       padding-top: 10px;
     }
 
-    .vld-hud .k {
+    .vld-hud.pv-steel .k {
       font: 400 9px/1.2 var(--mono);
       text-transform: uppercase;
       letter-spacing: .15em;
@@ -1696,42 +2567,42 @@
       transition: color .18s ease;
     }
 
-    .vld-hud .v {
+    .vld-hud.pv-steel .v {
       font: 400 12.5px/1.45 var(--mono);
       color: var(--ink);
     }
 
     /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
        Шкала без названия бессмысленна, шкала без значения — тоже. */
-    .vld-hud .bar:has(.lbl:empty),
-    .vld-hud .bar:has(.num:empty),
-    .vld-hud .entry:has(.v:empty),
-    .vld-hud .pack:has(.v:empty) {
+    .vld-hud.pv-steel .bar:has(.lbl:empty),
+    .vld-hud.pv-steel .bar:has(.num:empty),
+    .vld-hud.pv-steel .entry:has(.v:empty),
+    .vld-hud.pv-steel .pack:has(.v:empty) {
       display: none;
     }
 
     /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
-    .vld-hud .panel:has(.name:empty) {
+    .vld-hud.pv-steel .panel:has(.name:empty) {
       display: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .vld-hud .panel,
-      .vld-hud .panel::after,
-      .vld-hud .bars,
-      .vld-hud .cells,
-      .vld-hud .lv-1,
-      .vld-hud .lv-2,
-      .vld-hud .name {
+      .vld-hud.pv-steel .panel,
+      .vld-hud.pv-steel .panel::after,
+      .vld-hud.pv-steel .bars,
+      .vld-hud.pv-steel .cells,
+      .vld-hud.pv-steel .lv-1,
+      .vld-hud.pv-steel .lv-2,
+      .vld-hud.pv-steel .name {
         animation: none;
       }
 
-      .vld-hud .panel::after {
+      .vld-hud.pv-steel .panel::after {
         display: none;
       }
 
-      .vld-hud .chev,
-      .vld-hud .pack::details-content {
+      .vld-hud.pv-steel .chev,
+      .vld-hud.pv-steel .pack::details-content {
         transition: none;
       }
     }
@@ -1739,7 +2610,887 @@
   <script>
     (function () {
       var root = (document.currentScript && document.currentScript.parentElement)
-        || document.querySelector('.vld-hud:not([data-vld-init])');
+        || document.querySelector('.vld-hud pv-steel:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
+      // может: маркеры вырезаются из контекста на глубине 3, так что и сама модель
+      // не помнит прошлых значений. Всё, что здесь происходит, выводится из одного
+      // снимка.
+      //
+      // CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
+      // заливкой, а не стояла готовой над растущей полоской.
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.querySelectorAll('.bar').forEach(function (bar, index) {
+          var num = bar.querySelector('.num');
+          var target = parseInt(num.textContent, 10);
+          if (isNaN(target)) return;
+
+          num.textContent = '0';
+          countUp(num, target, index * 70);
+        });
+      }
+
+      /** Те же 70 мс лесенкой и та же длительность, что у vld-grow в стилях. */
+      function countUp(el, target, delay) {
+        setTimeout(function () {
+          var started = null;
+
+          requestAnimationFrame(function step(now) {
+            if (started === null) started = now;
+            var t = Math.min(1, (now - started) / 580);
+
+            el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) requestAnimationFrame(step);
+          });
+        }, delay);
+      }
+    })();
+  </script>
+</div></div>
+    <div class="stage dark"><div class="vld-w vld-hud pv-steel">
+  <div class="panel">
+    <div class="ident">
+      <b class="name">Влад Косцов</b>
+      <span class="metrics">32 · 178 см</span>
+    </div>
+
+    <div class="bars">
+      <div class="bar lv-9"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Здоровье</span><span class="num">9</span></span></div>
+      <div class="bar lv-6"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Силы</span><span class="num">6</span></span></div>
+      <div class="bar lv-3"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Тепло</span><span class="num">3</span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+    </div>
+
+    <details class="pack">
+      <summary><span class="chev"></span><span class="k">При себе</span></summary>
+      <div class="v">нож, моток верёвки, фляга, спички, чужой паспорт</div>
+    </details>
+
+    <div class="entry">
+      <span class="k">Одет</span>
+      <span class="v">промокшая парка, свитер на голое тело, берцы</span>
+    </div>
+
+    <div class="entry">
+      <span class="k">Вид</span>
+      <span class="v">разбитые костяшки, мокрый до нитки, голос сел</span>
+    </div>
+  </div>
+  <style>
+    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
+
+       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
+       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+
+    .vld-hud.pv-steel {
+      --panel: #17181c;
+      --track: rgba(230, 227, 220, .05);
+      --ink: #e6e3dc;
+      --dim: #83858d;
+      --hair: rgba(230, 227, 220, .12);
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
+
+      --serif: "Georgia", "Times New Roman", serif;
+      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+      width: min(100%, 384px);
+      margin: 14px auto;
+      color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+    }
+
+    .vld-hud.pv-steel * {
+      box-sizing: border-box;
+    }
+
+    .vld-hud.pv-steel .panel {
+      position: relative;
+      overflow: hidden;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
+      color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
+      background:
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
+        var(--panel);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
+      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes vld-rise {
+      from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud.pv-steel .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
+    }
+
+    .vld-hud.pv-steel .ident {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hair);
+    }
+
+    .vld-hud.pv-steel .name {
+      font: 400 19px/1.1 var(--serif);
+      letter-spacing: -.015em;
+    }
+
+    .vld-hud.pv-steel .metrics {
+      flex: 0 0 auto;
+      font: 400 11px/1 var(--mono);
+      letter-spacing: .04em;
+      color: var(--dim);
+    }
+
+    .vld-hud.pv-steel .bars {
+      display: grid;
+      gap: 4px;
+      padding: 12px 0;
+    }
+
+    .vld-hud.pv-steel .bar {
+      position: relative;
+      overflow: hidden;
+      height: 26px;
+      border-radius: 2px;
+    }
+
+    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
+       цифру можно не искать. */
+    .vld-hud.pv-steel .cells {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 2px;
+      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+    }
+
+    .vld-hud.pv-steel .cells i {
+      flex: 1;
+      border-radius: 1px;
+      background: var(--track);
+      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
+    }
+
+    /* Развёртка слева направо одним движением, а не десятью анимациями. */
+    @keyframes vld-grow {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-steel .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
+
+    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
+       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(-n+10) {
+      background: rgba(var(--tone), .26);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
+    }
+
+    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(10) {
+      background: rgba(var(--tone), .62);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
+    }
+
+    .vld-hud.pv-steel .bar          { --tone: var(--crit); }
+    .vld-hud.pv-steel .lv-3,
+    .vld-hud.pv-steel .lv-4         { --tone: var(--low); }
+    .vld-hud.pv-steel .lv-5,
+    .vld-hud.pv-steel .lv-6,
+    .vld-hud.pv-steel .lv-7         { --tone: var(--mid); }
+    .vld-hud.pv-steel .lv-8,
+    .vld-hud.pv-steel .lv-9,
+    .vld-hud.pv-steel .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
+    .vld-hud.pv-steel .lv-1,
+    .vld-hud.pv-steel .lv-2 {
+      animation: vld-alert 2.6s ease-in-out infinite;
+    }
+
+    @keyframes vld-alert {
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-steel .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
+    }
+
+    .vld-hud.pv-steel .row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      padding: 0 11px;
+    }
+
+    .vld-hud.pv-steel .lbl {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font: 500 12px/1 var(--mono);
+    }
+
+    .vld-hud.pv-steel .num {
+      flex: 0 0 auto;
+      font: 500 12px/1 var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vld-hud.pv-steel .num::after {
+      content: "/10";
+      opacity: .42;
+    }
+
+    .vld-hud.pv-steel .pack {
+      border-top: 1px solid var(--hair);
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel summary {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .vld-hud.pv-steel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .vld-hud.pv-steel .chev {
+      width: 0;
+      height: 0;
+      border-left: 4px solid var(--dim);
+      border-top: 3.5px solid transparent;
+      border-bottom: 3.5px solid transparent;
+      transition: transform .18s ease;
+    }
+
+    .vld-hud.pv-steel .pack[open] .chev {
+      transform: rotate(90deg);
+    }
+
+    .vld-hud.pv-steel summary:hover .k {
+      color: var(--ink);
+    }
+
+    .vld-hud.pv-steel .pack .v {
+      padding-top: 6px;
+    }
+
+    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
+    @supports (interpolate-size: allow-keywords) {
+      .vld-hud.pv-steel {
+        interpolate-size: allow-keywords;
+      }
+
+      .vld-hud.pv-steel .pack::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition: block-size .28s ease, content-visibility .28s allow-discrete;
+      }
+
+      .vld-hud.pv-steel .pack[open]::details-content {
+        block-size: auto;
+      }
+    }
+
+    .vld-hud.pv-steel .entry {
+      display: grid;
+      gap: 3px;
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel .k {
+      font: 400 9px/1.2 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--dim);
+      transition: color .18s ease;
+    }
+
+    .vld-hud.pv-steel .v {
+      font: 400 12.5px/1.45 var(--mono);
+      color: var(--ink);
+    }
+
+    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
+       Шкала без названия бессмысленна, шкала без значения — тоже. */
+    .vld-hud.pv-steel .bar:has(.lbl:empty),
+    .vld-hud.pv-steel .bar:has(.num:empty),
+    .vld-hud.pv-steel .entry:has(.v:empty),
+    .vld-hud.pv-steel .pack:has(.v:empty) {
+      display: none;
+    }
+
+    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
+    .vld-hud.pv-steel .panel:has(.name:empty) {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vld-hud.pv-steel .panel,
+      .vld-hud.pv-steel .panel::after,
+      .vld-hud.pv-steel .bars,
+      .vld-hud.pv-steel .cells,
+      .vld-hud.pv-steel .lv-1,
+      .vld-hud.pv-steel .lv-2,
+      .vld-hud.pv-steel .name {
+        animation: none;
+      }
+
+      .vld-hud.pv-steel .panel::after {
+        display: none;
+      }
+
+      .vld-hud.pv-steel .chev,
+      .vld-hud.pv-steel .pack::details-content {
+        transition: none;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-hud pv-steel:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не
+      // может: маркеры вырезаются из контекста на глубине 3, так что и сама модель
+      // не помнит прошлых значений. Всё, что здесь происходит, выводится из одного
+      // снимка.
+      //
+      // CSS наливает шкалы от нуля. Задача скрипта — чтобы цифра ехала вместе с
+      // заливкой, а не стояла готовой над растущей полоской.
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.querySelectorAll('.bar').forEach(function (bar, index) {
+          var num = bar.querySelector('.num');
+          var target = parseInt(num.textContent, 10);
+          if (isNaN(target)) return;
+
+          num.textContent = '0';
+          countUp(num, target, index * 70);
+        });
+      }
+
+      /** Те же 70 мс лесенкой и та же длительность, что у vld-grow в стилях. */
+      function countUp(el, target, delay) {
+        setTimeout(function () {
+          var started = null;
+
+          requestAnimationFrame(function step(now) {
+            if (started === null) started = now;
+            var t = Math.min(1, (now - started) / 580);
+
+            el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+            if (t < 1) requestAnimationFrame(step);
+          });
+        }, delay);
+      }
+    })();
+  </script>
+</div>
+<div class="vld-w vld-hud pv-steel">
+  <div class="panel">
+    <div class="ident">
+      <b class="name">Влад Косцов</b>
+      <span class="metrics">32 · 178 см</span>
+    </div>
+
+    <div class="bars">
+      <div class="bar lv-4"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Целостность скафандра</span><span class="num">4</span></span></div>
+      <div class="bar lv-1"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl">Кислород</span><span class="num">1</span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+      <div class="bar lv-"><span class="cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="row"><span class="lbl"></span><span class="num"></span></span></div>
+    </div>
+
+    <details class="pack">
+      <summary><span class="chev"></span><span class="k">При себе</span></summary>
+      <div class="v">резак, аварийный маяк</div>
+    </details>
+
+    <div class="entry">
+      <span class="k">Одет</span>
+      <span class="v">лётный комбинезон, магнитные боты</span>
+    </div>
+
+    <div class="entry">
+      <span class="k">Вид</span>
+      <span class="v">ожог на скуле, кашляет</span>
+    </div>
+  </div>
+  <style>
+    /* Панель обязана работать и в фэнтези, и на космической станции, поэтому цвет
+       тут не называет саму шкалу: красное здоровье и синяя мана выбрали бы сеттинг
+       за пользователя. Цвет называет только состояние — красный на исходе, зелёный
+       в порядке. Это читается в любом мире.
+
+       Корпус держится на материале: тёмный анодированный металл, зерно, срезанный
+       угол, заклёпки. Шкалы набраны делениями — последнее занятое горит ярче. */
+
+    .vld-hud.pv-steel {
+      --panel: #17181c;
+      --track: rgba(230, 227, 220, .05);
+      --ink: #e6e3dc;
+      --dim: #83858d;
+      --hair: rgba(230, 227, 220, .12);
+
+      /* Ступени состояния. Шкала красит себя сама — читается боковым зрением,
+         цифру можно не искать. */
+      --crit: 204, 90, 100;
+      --low: 214, 128, 64;
+      --mid: 214, 180, 74;
+      --good: 127, 174, 99;
+
+      --serif: "Georgia", "Times New Roman", serif;
+      --mono: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+
+      width: min(100%, 384px);
+      margin: 14px auto;
+      color: var(--ink);
+
+      /* Тень навешена сюда, а не на панель: срезанный угол делается clip-path,
+         а он обрезал бы и box-shadow. drop-shadow повторяет форму после обрезки. */
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, .5));
+    }
+
+    .vld-hud.pv-steel * {
+      box-sizing: border-box;
+    }
+
+    .vld-hud.pv-steel .panel {
+      position: relative;
+      overflow: hidden;
+      padding: 15px 15px 13px;
+      border-radius: 4px;
+      color: var(--ink);
+
+      /* Срезанный угол — самое дешёвое, что отличает деталь снаряжения от
+         карточки на сайте. */
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+
+      background:
+        /* зерно: настоящий шум, а не полосы */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"),
+        /* две заклёпки внизу */
+        radial-gradient(circle 2.5px at 11px calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        radial-gradient(circle 2.5px at calc(100% - 11px) calc(100% - 11px), rgba(255, 255, 255, .16) 0 60%, transparent 61%),
+        /* блик сверху и продольная шлифовка */
+        linear-gradient(180deg, rgba(255, 255, 255, .055), transparent 38%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .013) 0 1px, transparent 1px 3px),
+        var(--panel);
+      background-blend-mode: overlay, normal, normal, normal, normal, normal;
+
+      box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 0 rgba(255, 255, 255, .07);
+      animation: vld-rise .34s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes vld-rise {
+      from { opacity: 0; transform: translateY(7px); }
+    }
+
+    /* Одиночный проблеск по корпусу при появлении — панель как будто включается. */
+    .vld-hud.pv-steel .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .07) 50%, transparent 58%);
+      animation: vld-scan 1.05s ease-out .12s both;
+    }
+
+    @keyframes vld-scan {
+      from { transform: translateX(-115%); }
+      to   { transform: translateX(115%); }
+    }
+
+    .vld-hud.pv-steel .ident {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hair);
+    }
+
+    .vld-hud.pv-steel .name {
+      font: 400 19px/1.1 var(--serif);
+      letter-spacing: -.015em;
+    }
+
+    .vld-hud.pv-steel .metrics {
+      flex: 0 0 auto;
+      font: 400 11px/1 var(--mono);
+      letter-spacing: .04em;
+      color: var(--dim);
+    }
+
+    .vld-hud.pv-steel .bars {
+      display: grid;
+      gap: 4px;
+      padding: 12px 0;
+    }
+
+    .vld-hud.pv-steel .bar {
+      position: relative;
+      overflow: hidden;
+      height: 26px;
+      border-radius: 2px;
+    }
+
+    /* Десять делений вместо сплошной полосы: значение считывается по клеткам,
+       цифру можно не искать. */
+    .vld-hud.pv-steel .cells {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 2px;
+      animation: vld-grow .58s cubic-bezier(.2, .85, .25, 1) both;
+    }
+
+    .vld-hud.pv-steel .cells i {
+      flex: 1;
+      border-radius: 1px;
+      background: var(--track);
+      box-shadow: inset 0 0 0 1px rgba(230, 227, 220, .035);
+    }
+
+    /* Развёртка слева направо одним движением, а не десятью анимациями. */
+    @keyframes vld-grow {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    .vld-hud.pv-steel .bars .bar:nth-child(2) .cells { animation-delay: .07s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(3) .cells { animation-delay: .14s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(4) .cells { animation-delay: .21s; }
+    .vld-hud.pv-steel .bars .bar:nth-child(5) .cells { animation-delay: .28s; }
+
+    /* Значение приезжает классом lv-N, поэтому шкала заполнена и без скриптов.
+       Мусор вместо числа не совпадёт ни с чем — шкала пустая, вёрстка целая. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(-n+1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(-n+2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(-n+3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(-n+4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(-n+5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(-n+6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(-n+7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(-n+8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(-n+9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(-n+10) {
+      background: rgba(var(--tone), .26);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .4);
+    }
+
+    /* Последняя занятая клетка горит ярче — видно, где сейчас уровень. */
+    .vld-hud.pv-steel .lv-1  i:nth-child(1),
+    .vld-hud.pv-steel .lv-2  i:nth-child(2),
+    .vld-hud.pv-steel .lv-3  i:nth-child(3),
+    .vld-hud.pv-steel .lv-4  i:nth-child(4),
+    .vld-hud.pv-steel .lv-5  i:nth-child(5),
+    .vld-hud.pv-steel .lv-6  i:nth-child(6),
+    .vld-hud.pv-steel .lv-7  i:nth-child(7),
+    .vld-hud.pv-steel .lv-8  i:nth-child(8),
+    .vld-hud.pv-steel .lv-9  i:nth-child(9),
+    .vld-hud.pv-steel .lv-10 i:nth-child(10) {
+      background: rgba(var(--tone), .62);
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .8), 0 0 10px rgba(var(--tone), .45);
+    }
+
+    .vld-hud.pv-steel .bar          { --tone: var(--crit); }
+    .vld-hud.pv-steel .lv-3,
+    .vld-hud.pv-steel .lv-4         { --tone: var(--low); }
+    .vld-hud.pv-steel .lv-5,
+    .vld-hud.pv-steel .lv-6,
+    .vld-hud.pv-steel .lv-7         { --tone: var(--mid); }
+    .vld-hud.pv-steel .lv-8,
+    .vld-hud.pv-steel .lv-9,
+    .vld-hud.pv-steel .lv-10        { --tone: var(--good); }
+
+    /* На исходе — видно, даже если не читать. */
+    .vld-hud.pv-steel .lv-1,
+    .vld-hud.pv-steel .lv-2 {
+      animation: vld-alert 2.6s ease-in-out infinite;
+    }
+
+    @keyframes vld-alert {
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(var(--crit), 0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(var(--crit), .5); }
+    }
+
+    /* Имя ловит не настроение игрока, а обстановку: пока что-то на исходе, оно
+       пульсирует. Считается из самих шкал через :has(), без единой строчки JS. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .name {
+      animation: vld-adrenaline .5s ease-in-out infinite alternate;
+    }
+
+    .vld-hud.pv-steel .panel:has(.lv-3, .lv-4):not(:has(.lv-1, .lv-2)) .name {
+      animation: vld-unease 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes vld-adrenaline {
+      to { color: rgb(255, 122, 130); text-shadow: 0 0 14px rgba(var(--crit), .55); }
+    }
+
+    @keyframes vld-unease {
+      to { color: rgb(226, 158, 96); text-shadow: 0 0 12px rgba(var(--low), .4); }
+    }
+
+    /* Пока что-то на исходе, показания изредка срывает. Один кадр раз в четыре
+       секунды: должно цеплять краем глаза, а не мельтешить. */
+    .vld-hud.pv-steel .panel:has(.lv-1, .lv-2) .bars {
+      animation: vld-tear 4.1s steps(1, end) infinite;
+    }
+
+    @keyframes vld-tear {
+      0%, 92%   { transform: none; }
+      93%       { transform: translateX(-2px) skewX(-.6deg); }
+      94%       { transform: translateX(3px); }
+      95%, 100% { transform: none; }
+    }
+
+    .vld-hud.pv-steel .row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      padding: 0 11px;
+    }
+
+    .vld-hud.pv-steel .lbl {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font: 500 12px/1 var(--mono);
+    }
+
+    .vld-hud.pv-steel .num {
+      flex: 0 0 auto;
+      font: 500 12px/1 var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vld-hud.pv-steel .num::after {
+      content: "/10";
+      opacity: .42;
+    }
+
+    .vld-hud.pv-steel .pack {
+      border-top: 1px solid var(--hair);
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel summary {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .vld-hud.pv-steel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .vld-hud.pv-steel .chev {
+      width: 0;
+      height: 0;
+      border-left: 4px solid var(--dim);
+      border-top: 3.5px solid transparent;
+      border-bottom: 3.5px solid transparent;
+      transition: transform .18s ease;
+    }
+
+    .vld-hud.pv-steel .pack[open] .chev {
+      transform: rotate(90deg);
+    }
+
+    .vld-hud.pv-steel summary:hover .k {
+      color: var(--ink);
+    }
+
+    .vld-hud.pv-steel .pack .v {
+      padding-top: 6px;
+    }
+
+    /* Плавное раскрытие там, где браузер это умеет; где нет — просто мгновенно. */
+    @supports (interpolate-size: allow-keywords) {
+      .vld-hud.pv-steel {
+        interpolate-size: allow-keywords;
+      }
+
+      .vld-hud.pv-steel .pack::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition: block-size .28s ease, content-visibility .28s allow-discrete;
+      }
+
+      .vld-hud.pv-steel .pack[open]::details-content {
+        block-size: auto;
+      }
+    }
+
+    .vld-hud.pv-steel .entry {
+      display: grid;
+      gap: 3px;
+      padding-top: 10px;
+    }
+
+    .vld-hud.pv-steel .k {
+      font: 400 9px/1.2 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--dim);
+      transition: color .18s ease;
+    }
+
+    .vld-hud.pv-steel .v {
+      font: 400 12.5px/1.45 var(--mono);
+      color: var(--ink);
+    }
+
+    /* Модель не заполнила слот — он исчезает целиком, а не висит пустой строкой.
+       Шкала без названия бессмысленна, шкала без значения — тоже. */
+    .vld-hud.pv-steel .bar:has(.lbl:empty),
+    .vld-hud.pv-steel .bar:has(.num:empty),
+    .vld-hud.pv-steel .entry:has(.v:empty),
+    .vld-hud.pv-steel .pack:has(.v:empty) {
+      display: none;
+    }
+
+    /* Без имени сводка ни о ком. Пустой маркер не оставляет пустую панель. */
+    .vld-hud.pv-steel .panel:has(.name:empty) {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vld-hud.pv-steel .panel,
+      .vld-hud.pv-steel .panel::after,
+      .vld-hud.pv-steel .bars,
+      .vld-hud.pv-steel .cells,
+      .vld-hud.pv-steel .lv-1,
+      .vld-hud.pv-steel .lv-2,
+      .vld-hud.pv-steel .name {
+        animation: none;
+      }
+
+      .vld-hud.pv-steel .panel::after {
+        display: none;
+      }
+
+      .vld-hud.pv-steel .chev,
+      .vld-hud.pv-steel .pack::details-content {
+        transition: none;
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-hud pv-steel:not([data-vld-init])');
       if (!root || root.dataset.vldInit === '1') return;
       root.dataset.vldInit = '1';
       // Виджет одноразовый. Он не знает, что было в прошлом сообщении, и знать не

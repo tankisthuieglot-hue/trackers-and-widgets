@@ -1,0 +1,17 @@
+{
+ "id": "57e0eeb2-f0da-5532-8a57-b4da98a16204",
+ "scriptName": "🎚️ VLD RPG HUD · clean",
+ "findRegex": "/\\[\\[VLD_HUD(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}
