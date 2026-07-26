@@ -9,7 +9,9 @@
     "build": "node tools/build.mjs",
     "check": "node tools/check.mjs",
     "preview": "node tools/serve.mjs",
-    "all": "node tools/check.mjs && node tools/build.mjs"
+    "shots": "node tools/shot.mjs && node tools/shot.mjs --sheet",
+    "test": "node tools/adversarial.mjs ru && node tools/adversarial.mjs en",
+    "all": "node tools/check.mjs && node tools/build.mjs && npm test"
   },
   "devDependencies": {
     "gifenc": "^1.0.3",
