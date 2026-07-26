@@ -12,6 +12,6 @@
  "promptOnly": true,
  "runOnEdit": false,
  "substituteRegex": 0,
- "minDepth": 5,
+ "minDepth": 3,
  "maxDepth": null
 }

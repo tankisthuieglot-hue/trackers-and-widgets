@@ -22,18 +22,29 @@ export const NS = 'VLD';
  *
  * `[^\]]` never crosses `]`, which keeps the scan inside its own marker.
  */
-export const fieldLookahead = (key) =>
-  `(?=[^\\]]*\\|\\s*${key}\\s*=[ \\t]*([^|\\]]*)|)`;
+export const fieldLookahead = (field) => {
+  // A field bound for an HTML attribute is declared numeric, and then only
+  // digits can reach the attribute. `SV=высокое` captures nothing instead of
+  // spilling arbitrary text into the markup.
+  const capture = field.type === 'num' ? '([0-9]{0,3})' : '([^|\\]]*)';
+  return `(?=[^\\]]*\\|\\s*${field.key}\\s*=[ \\t]*${capture}|)`;
+};
 
-/** Full marker pattern for a tag, as a bare source string (no delimiters). */
-export const markerSource = (tag, keys) =>
-  `\\[\\[${tag}${keys.map(fieldLookahead).join('')}[^\\]]*\\]\\]`;
+/**
+ * Full marker pattern for a tag, as a bare source string (no delimiters).
+ *
+ * The negative lookahead after the tag stops a shorter tag from swallowing a
+ * longer one: without it `VLD_HUD` matches the front of `VLD_HUDD` and renders
+ * a hollow widget instead of letting the fallback hide the typo.
+ */
+export const markerSource = (tag, fields) =>
+  `\\[\\[${tag}(?![A-Z0-9_])${fields.map(fieldLookahead).join('')}[^\\]]*\\]\\]`;
 
 /** The same pattern in SillyTavern's stored form: `/.../g`. */
-export const markerLiteral = (tag, keys) => `/${markerSource(tag, keys)}/g`;
+export const markerLiteral = (tag, fields) => `/${markerSource(tag, fields)}/g`;
 
-export const markerRegExp = (tag, keys) =>
-  new RegExp(markerSource(tag, keys), 'g');
+export const markerRegExp = (tag, fields) =>
+  new RegExp(markerSource(tag, fields), 'g');
 
 /** Render a marker the way the model is asked to write it. */
 export const renderMarker = (tag, fields, values) =>
@@ -98,7 +109,6 @@ export function loadTracker(name) {
     ...meta,
     name,
     dir,
-    keys: meta.fields.map((f) => f.key),
     html: read('widget.html').trimEnd(),
     css: read('widget.css').trimEnd(),
     js: read('widget.js').trimEnd(),

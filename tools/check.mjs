@@ -72,6 +72,16 @@ function checkPlaceholders(t, at) {
   for (const n of extra) {
     fail(at, `widget.html ссылается на $${n}, а полей всего ${t.fields.length}`);
   }
+
+  // Inside a text node any character is harmless. Inside an attribute a quote
+  // ends the attribute and whatever follows becomes markup, so only fields
+  // declared numeric — capped to digits by the grammar — are allowed there.
+  for (const m of t.html.matchAll(/=\s*"[^"]*?\$(\d+)/g)) {
+    const field = t.fields[Number(m[1]) - 1];
+    if (field && field.type !== 'num') {
+      fail(at, `$${m[1]} (${field.key}) подставляется в HTML-атрибут — объяви поле как "type": "num"`);
+    }
+  }
 }
 
 /**
@@ -97,7 +107,7 @@ function checkExample(t, at) {
 
   const marker = renderMarker(t.tag, t.fields, t.example);
   const template = t.fields.map((_, i) => `${SEP}$${i + 1}`).join('');
-  const parsed = marker.replace(markerRegExp(t.tag, t.keys), template);
+  const parsed = marker.replace(markerRegExp(t.tag, t.fields), template);
 
   if (!parsed.startsWith(SEP)) {
     fail(at, `собранный из example маркер не матчится своим же регексом:\n      ${marker}`);

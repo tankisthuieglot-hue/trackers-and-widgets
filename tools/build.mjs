@@ -43,7 +43,7 @@ for (const { file, script } of serviceScripts) {
 for (const t of trackers) {
   const script = regexScript({
     name: t.title,
-    find: markerLiteral(t.tag, t.keys),
+    find: markerLiteral(t.tag, t.fields),
     replace: renderWidget(t),
     display: true,
   });

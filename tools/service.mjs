@@ -6,10 +6,14 @@ import { regexScript, NS } from './lib.mjs';
 /**
  * How many recent messages keep their markers in the outgoing prompt.
  * Below this depth the markers are stripped, so old widget data stops paying
- * rent in the context window. Raise it if the model loses track of state it
- * should still remember.
+ * rent in the context window.
+ *
+ * Three is deliberately short. Most widgets are one-offs — a receipt, a post,
+ * a notification — and a persistent panel is re-emitted every turn anyway, so
+ * older copies are noise. The format itself is anchored by the example in each
+ * tracker's prompt, not by the model reading back its own history.
  */
-export const FORGET_DEPTH = 5;
+export const FORGET_DEPTH = 3;
 
 /** Any marker of ours, however malformed — missing brackets included. */
 const ANY_MARKER = `/\\[\\[${NS}_[A-Z0-9_]*[^\\]\\n]*\\]{0,2}/g`;
