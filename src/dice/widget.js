@@ -21,7 +21,7 @@ if (!isNaN(finalResult)) {
   if (reduced) {
     settle();
   } else {
-    runThrow();
+    queueAutomaticThrow();
     die.addEventListener('click', function (event) {
       event.preventDefault();
       runThrow();
@@ -42,6 +42,49 @@ root.vldDiceSeek = function (ms) {
 };
 
 root.vldDiceReplay = runThrow;
+
+/**
+ * During streaming the widget can exist before SillyTavern has finished the
+ * message. Starting immediately spends the whole throw behind incoming text.
+ * The host already exposes generation lifecycle events, so wait for the real
+ * end instead of guessing with a timeout.
+ */
+function queueAutomaticThrow() {
+  var context = null;
+
+  try {
+    if (window.SillyTavern && typeof window.SillyTavern.getContext === 'function') {
+      context = window.SillyTavern.getContext();
+    }
+  } catch (error) {
+    context = null;
+  }
+
+  if (!context || !context.streamingProcessor || !context.eventSource ||
+    !context.eventTypes || !context.eventTypes.GENERATION_ENDED) {
+    runThrow();
+    return;
+  }
+
+  var source = context.eventSource;
+  var ended = context.eventTypes.GENERATION_ENDED;
+  var stopped = context.eventTypes.GENERATION_STOPPED;
+
+  root.dataset.diceAwaitingStream = '1';
+
+  function onGenerationDone() {
+    source.removeListener(ended, onGenerationDone);
+    if (stopped) source.removeListener(stopped, onGenerationDone);
+    delete root.dataset.diceAwaitingStream;
+
+    requestAnimationFrame(function () {
+      if (root.isConnected) runThrow();
+    });
+  }
+
+  source.on(ended, onGenerationDone);
+  if (stopped) source.on(stopped, onGenerationDone);
+}
 
 /**
  * The result is immutable. A replay generates a new visual trajectory, while
