@@ -76,6 +76,47 @@ const HUD_FILM = {
 };
 
 /**
+ * Dice has five genuinely different visual outcomes. The generic recorder
+ * would only see the language example, so the English showcase deliberately
+ * rolls each outcome once and ends on the gold critical state.
+ */
+const DICE_FILM_EN = {
+  states: [
+    {
+      A: 'pick the archive lock before the patrol returns',
+      R: '16', D: '13', O: 'pass',
+      C: 'the lock opens without a sound',
+    },
+    {
+      A: 'clear the alley in one jump',
+      R: '13', D: '15', O: 'edge',
+      C: 'you make it, but the ledge tears away behind you',
+    },
+    {
+      A: 'bluff your way past the checkpoint',
+      R: '7', D: '12', O: 'fail',
+      C: 'the guard reaches for the alarm',
+    },
+    {
+      A: 'cross the rotten beam without looking down',
+      R: '1', D: '10', O: 'fumble',
+      C: 'the beam gives way under both feet',
+    },
+    {
+      A: 'hit the chain holding the chandelier',
+      R: '20', D: '18', O: 'crit',
+      C: 'it drops exactly between you and them',
+    },
+  ],
+  script: Array.from({ length: 5 }, (_, i) => ({
+    hold: 1.9,
+    label: `dice outcome ${i + 1}`,
+    act: `show-${i}`,
+    poster: i === 4,
+  })),
+};
+
+/**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
  * entrance, and whatever the widget does on its own — a shine, an alarm, a
@@ -100,7 +141,10 @@ function autoFilm(t, l) {
   };
 }
 
-const { states: STATES, script } = NAME === 'hud' ? HUD_FILM : autoFilm(tracker, lang);
+const film = NAME === 'hud'
+  ? HUD_FILM
+  : (NAME === 'dice' && LANG === 'en' ? DICE_FILM_EN : autoFilm(tracker, lang));
+const { states: STATES, script } = film;
 
 const fill = (values) =>
   renderWidget(tracker, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
