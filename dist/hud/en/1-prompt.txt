@@ -18,5 +18,5 @@ E + EF only while {{user}} cannot read their own state. Drop both once it passes
   Not for a wound that merely hurts.
 Write every value in the language the roleplay is played in.
 
-→ [[VLD_HUD|N=Vlad Kostsov|A=32|H=178 cm|B1=Health|V1=6|B2=Stamina|V2=3|B3=Warmth|V3=2|C=soaked parka, sweater on bare skin, combat boots|I=knife, coil of rope, flask, matches, someone else's passport|S=split knuckles, wet through, voice gone]]
+Example: [[VLD_HUD|N=Vlad Kostsov|A=32|H=178 cm|B1=Health|V1=6|B2=Stamina|V2=3|B3=Warmth|V3=2|C=soaked parka, sweater on bare skin, combat boots|I=knife, coil of rope, flask, matches, someone else's passport|S=split knuckles, wet through, voice gone]]
 </vld:hud>

@@ -14,5 +14,5 @@ C one line: what this wins or what it costs. Consequence, not narration.
   On edge and fumble the cost is the point — name it.
 Write every value in the language the roleplay is played in.
 
-→ [[VLD_DICE|A=get over the fence before the dog rounds the corner|R=7|D=12|O=fail|C=one boot stays on the wrong side]]
+Example: [[VLD_DICE|A=get over the fence before the dog rounds the corner|R=7|D=12|O=fail|C=one boot stays on the wrong side]]
 </vld:dice>

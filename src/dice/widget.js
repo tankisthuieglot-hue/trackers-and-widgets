@@ -16,6 +16,8 @@ var frameId = 0;
 var runId = 0;
 var startedAt = 0;
 var timeline = null;
+var autoTimer = 0;
+var autoObserver = null;
 
 if (!isNaN(finalResult)) {
   if (reduced) {
@@ -24,6 +26,7 @@ if (!isNaN(finalResult)) {
     queueAutomaticThrow();
     die.addEventListener('click', function (event) {
       event.preventDefault();
+      cancelAutomaticStart();
       runThrow();
     });
   }
@@ -44,46 +47,41 @@ root.vldDiceSeek = function (ms) {
 root.vldDiceReplay = runThrow;
 
 /**
- * During streaming the widget can exist before SillyTavern has finished the
- * message. Starting immediately spends the whole throw behind incoming text.
- * The host already exposes generation lifecycle events, so wait for the real
- * end instead of guessing with a timeout.
+ * JS-support revives inline scripts after SillyTavern's generation event, and
+ * the final message can still be morphed around that moment. Wait until the
+ * containing message stops changing before spending the one-shot animation.
  */
 function queueAutomaticThrow() {
-  var context = null;
-
-  try {
-    if (window.SillyTavern && typeof window.SillyTavern.getContext === 'function') {
-      context = window.SillyTavern.getContext();
-    }
-  } catch (error) {
-    context = null;
-  }
-
-  if (!context || !context.streamingProcessor || !context.eventSource ||
-    !context.eventTypes || !context.eventTypes.GENERATION_ENDED) {
+  var message = root.closest('.mes_text');
+  if (!message || typeof MutationObserver !== 'function') {
     runThrow();
     return;
   }
 
-  var source = context.eventSource;
-  var ended = context.eventTypes.GENERATION_ENDED;
-  var stopped = context.eventTypes.GENERATION_STOPPED;
-
-  root.dataset.diceAwaitingStream = '1';
-
-  function onGenerationDone() {
-    source.removeListener(ended, onGenerationDone);
-    if (stopped) source.removeListener(stopped, onGenerationDone);
-    delete root.dataset.diceAwaitingStream;
-
-    requestAnimationFrame(function () {
+  function armAfterQuiet() {
+    if (autoTimer) clearTimeout(autoTimer);
+    root.dataset.diceAwaitingSettle = '1';
+    autoTimer = setTimeout(function () {
+      cancelAutomaticStart();
       if (root.isConnected) runThrow();
-    });
+    }, 180);
   }
 
-  source.on(ended, onGenerationDone);
-  if (stopped) source.on(stopped, onGenerationDone);
+  autoObserver = new MutationObserver(armAfterQuiet);
+  autoObserver.observe(message, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+  armAfterQuiet();
+}
+
+function cancelAutomaticStart() {
+  if (autoTimer) clearTimeout(autoTimer);
+  autoTimer = 0;
+  if (autoObserver) autoObserver.disconnect();
+  autoObserver = null;
+  delete root.dataset.diceAwaitingSettle;
 }
 
 /**

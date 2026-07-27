@@ -80,8 +80,8 @@ try {
   assert.equal(replay.run, 2, 'replay starts one new run');
   assert.equal(replay.final, values.R, 'replay cannot change the model-provided result');
 
-  const streaming = await browser.newPage();
-  await streaming.evaluateOnNewDocument(() => {
+  const lateRevival = await browser.newPage();
+  await lateRevival.evaluateOnNewDocument(() => {
     const listeners = {};
     const eventSource = {
       on(name, listener) {
@@ -109,35 +109,43 @@ try {
       },
     };
   });
-  await streaming.goto('about:blank');
-  await streaming.setContent(`<!doctype html><meta charset="utf-8">${widget}`, { waitUntil: 'load' });
+  await lateRevival.goto('about:blank');
+  await lateRevival.setContent(
+    `<!doctype html><meta charset="utf-8"><div class="mes_text">${widget}</div>`,
+    { waitUntil: 'load' },
+  );
 
-  await new Promise((resolve) => setTimeout(resolve, 1250));
-  const duringStream = await streaming.evaluate(() => {
+  // JS-support revives the inline script after GENERATION_ENDED has already
+  // fired. The final message can still morph a few times around that revival.
+  for (let i = 0; i < 3; i += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 70));
+    await lateRevival.evaluate((token) => {
+      const pulse = document.createElement('i');
+      pulse.textContent = token;
+      document.querySelector('.mes_text').appendChild(pulse);
+    }, String(i));
+  }
+
+  const whileMorphing = await lateRevival.evaluate(() => {
     const root = document.querySelector('.vld-dice');
     return {
       run: Number(root.dataset.diceRun || 0),
-      awaiting: root.dataset.diceAwaitingStream,
     };
   });
 
-  assert.equal(duringStream.run, 0, 'streaming keeps the automatic throw queued');
-  assert.equal(duringStream.awaiting, '1', 'the widget records that it is waiting for generation end');
+  assert.equal(whileMorphing.run, 0, 'final message morphs do not spend the automatic throw');
 
-  await streaming.evaluate(() => window.__vldTestEvents.emit('generation_ended'));
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  const afterStream = await streaming.evaluate(() => {
+  await new Promise((resolve) => setTimeout(resolve, 260));
+  const afterSettling = await lateRevival.evaluate(() => {
     const root = document.querySelector('.vld-dice');
     return {
       run: Number(root.dataset.diceRun || 0),
       rolling: root.querySelector('.throw').classList.contains('is-rolling'),
-      awaiting: root.dataset.diceAwaitingStream,
     };
   });
 
-  assert.equal(afterStream.run, 1, 'generation end starts exactly one automatic throw');
-  assert.equal(afterStream.rolling, true, 'the post-stream throw is visible after the answer completes');
-  assert.equal(afterStream.awaiting, undefined, 'the stream wait marker is cleared');
+  assert.equal(afterSettling.run, 1, 'a late-revived widget throws after its message settles');
+  assert.equal(afterSettling.rolling, true, 'the post-stream throw is visible after the answer completes');
 
   const reduced = await browser.newPage();
   await reduced.emulateMediaFeatures([

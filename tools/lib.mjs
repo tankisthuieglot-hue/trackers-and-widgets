@@ -122,6 +122,7 @@ export const TOKEN_BUDGET = 600;
  */
 export function promptBlock(t, lang) {
   const legend = lang.legend ?? t.fields.map((f) => `${f.key} ${f.desc}`).join(' · ');
+  const example = renderMarker(t.tag, t.fields, lang.example ?? {}, { trim: true });
 
   return [
     `<vld:${t.name}>`,
@@ -132,7 +133,7 @@ export function promptBlock(t, lang) {
     '',
     legend.trim(),
     '',
-    `→ ${renderMarker(t.tag, t.fields, lang.example ?? {}, { trim: true })}`,
+    lang.exampleLabel ? `${lang.exampleLabel}: ${example}` : `→ ${example}`,
     `</vld:${t.name}>`,
     '',
   ].join('\n');

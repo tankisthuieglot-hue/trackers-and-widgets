@@ -30,6 +30,7 @@
   ],
   "lang": {
     "en": {
+      "exampleLabel": "Example",
       "chrome": { "carrying": "Carrying", "wearing": "Wearing", "look": "Look", "peek": "tap to read" },
       "when": "{{user}}'s condition has visibly moved: a wound, exhaustion, hunger, cold, an item taken or lost, a change of clothes",
       "dont": "every turn. This is a summary, not a signature. Nothing moved — do not emit it",
@@ -50,6 +51,7 @@
       }
     },
     "ru": {
+      "exampleLabel": "Пример",
       "chrome": { "carrying": "При себе", "wearing": "Одет", "look": "Вид", "peek": "нажми, чтобы прочесть" },
       "when": "состояние {{user}} заметно сдвинулось: рана, усталость, голод, холод, взятая или потерянная вещь, смена одежды",
       "dont": "каждый ход. Это сводка, а не подпись. Ничего не изменилось — не выводи",

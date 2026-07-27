@@ -16,6 +16,7 @@
   ],
   "lang": {
     "en": {
+      "exampleLabel": "Example",
       "chrome": { "vs": "needs", "crit": "critical", "pass": "success", "edge": "by a hair", "fail": "failure", "fumble": "disaster", "replay": "Throw again" },
       "when": "{{user}} tries something that could plausibly fail and the answer is not obvious",
       "dont": "anything {{user}} would simply manage: walking, talking, opening an unlocked door",
@@ -29,6 +30,7 @@
       }
     },
     "ru": {
+      "exampleLabel": "Пример",
       "chrome": { "vs": "нужно", "crit": "критический успех", "pass": "успех", "edge": "на волоске", "fail": "провал", "fumble": "катастрофа", "replay": "Бросить снова" },
       "when": "{{user}} берётся за то, что реально может не выйти, и исход не очевиден",
       "dont": "то, что {{user}} сделает и так: пройти, сказать, открыть незапертую дверь",
