@@ -15,6 +15,7 @@
   ],
   "lang": {
     "en": {
+      "exampleLabel": "Example",
       "chrome": { "unlocked": "achievement unlocked", "have": "of players have this" },
       "when": "{{user}} does something stupid, memorable or unrepeatable — and it deserves mocking, not praise",
       "dont": "anything {{user}} did competently or on purpose. Competence is not an achievement",
@@ -27,6 +28,7 @@
       }
     },
     "ru": {
+      "exampleLabel": "Пример",
       "chrome": { "unlocked": "достижение получено", "have": "игроков получили" },
       "when": "{{user}} сделал что-то глупое, памятное или неповторимое — и это стоит подколоть, а не похвалить",
       "dont": "то, что {{user}} сделал умело и намеренно. Компетентность — не достижение",

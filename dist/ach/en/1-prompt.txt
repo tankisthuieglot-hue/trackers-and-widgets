@@ -15,5 +15,5 @@ Fire at most once a scene. An achievement every message is not an
   achievement, it is a status bar.
 Write every value in the language the roleplay is played in.
 
-→ [[VLD_ACH|T=Second Opinion|D=asked the same guard twice and got a different answer|P=12|G=mask]]
+Example: [[VLD_ACH|T=Second Opinion|D=asked the same guard twice and got a different answer|P=12|G=mask]]
 </vld:ach>

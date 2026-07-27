@@ -117,6 +117,72 @@ const DICE_FILM_EN = {
 };
 
 /**
+ * Achievement has ten icon variants and four rarity color bands. The normal
+ * preview only needs two examples, but the public English GIF is a catalogue:
+ * every icon appears once and the percentages cross every visual threshold.
+ */
+const ACH_FILM_EN = {
+  states: [
+    {
+      T: 'Second Opinion',
+      D: 'asked the same guard twice and got a different answer',
+      P: '12', G: 'mask',
+    },
+    {
+      T: 'Load-Bearing Research',
+      D: 'identified the important wall from the inside',
+      P: '1', G: 'skull',
+    },
+    {
+      T: 'Emotional Support Damage',
+      D: 'made the rescue attempt require a second rescue attempt',
+      P: '4', G: 'heart',
+    },
+    {
+      T: 'Indoor Barbecue',
+      D: 'proved that the smoke alarm was operational',
+      P: '8', G: 'fire',
+    },
+    {
+      T: 'Financial Planning',
+      D: 'spent the emergency fund on a more interesting emergency',
+      P: '22', G: 'coin',
+    },
+    {
+      T: 'Door Specialist',
+      D: 'kicked the door that was already open',
+      P: '39', G: 'boot',
+    },
+    {
+      T: 'Read the Manual',
+      D: 'consulted the instructions after completing the disaster',
+      P: '67', G: 'book',
+    },
+    {
+      T: 'Surgical Precision',
+      D: 'cut exactly the wire everyone had agreed not to touch',
+      P: '3', G: 'knife',
+    },
+    {
+      T: 'Hydration Strategy',
+      D: 'brought a bottle to a problem that required a key',
+      P: '14', G: 'bottle',
+    },
+    {
+      T: 'Social Awareness',
+      D: 'noticed the room had gone silent and continued anyway',
+      P: '87', G: 'clown',
+    },
+  ],
+  script: Array.from({ length: 10 }, (_, i) => ({
+    hold: 1.8,
+    label: `achievement variant ${i + 1}`,
+    act: `show-${i}`,
+    poster: i === 1,
+  })),
+};
+
+/**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
  * entrance, and whatever the widget does on its own — a shine, an alarm, a
@@ -143,7 +209,9 @@ function autoFilm(t, l) {
 
 const film = NAME === 'hud'
   ? HUD_FILM
-  : (NAME === 'dice' && LANG === 'en' ? DICE_FILM_EN : autoFilm(tracker, lang));
+  : (NAME === 'dice' && LANG === 'en'
+      ? DICE_FILM_EN
+      : (NAME === 'ach' && LANG === 'en' ? ACH_FILM_EN : autoFilm(tracker, lang)));
 const { states: STATES, script } = film;
 
 const fill = (values) =>
@@ -278,6 +346,9 @@ function stage() {
     if (dice && typeof dice.vldDiceSeek === 'function') {
       dice.vldDiceSeek(local);
     }
+    slot.querySelectorAll('.vld-w').forEach((widget) => {
+      if (typeof widget.vldSeek === 'function') widget.vldSeek(local);
+    });
 
     document.getAnimations().forEach((a) => {
       a.pause();
