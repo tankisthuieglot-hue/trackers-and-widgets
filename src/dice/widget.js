@@ -4,11 +4,18 @@ var die = root.querySelector('.die');
 var shadow = root.querySelector('.die-shadow');
 var facets = root.querySelector('.facets');
 var roll = root.querySelector('.roll');
-var read = root.querySelector('.read');
+var verdict = root.querySelector('.verdict');
+var cost = root.querySelector('.cost');
 var finalResult = parseInt(roll.dataset.final, 10);
 var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var FIRST_IMPACT = 390;
+var SECOND_IMPACT = 790;
+var DURATION = 1080;
 var frameId = 0;
 var runId = 0;
+var startedAt = 0;
+var timeline = null;
 
 if (!isNaN(finalResult)) {
   if (reduced) {
@@ -23,103 +30,135 @@ if (!isNaN(finalResult)) {
 }
 
 /**
- * Physics is transient presentation only. The model has already rolled and put
- * the immutable result in data-final; every replay changes the path, never it.
+ * Recording uses the same clock as the live widget. In SillyTavern nobody calls
+ * this method; record.mjs uses it to seek the physics instead of hoping that a
+ * real-time requestAnimationFrame happens between two screenshots.
+ */
+root.vldDiceSeek = function (ms) {
+  if (!timeline || reduced) return;
+  if (frameId) cancelAnimationFrame(frameId);
+  frameId = 0;
+  renderAt(Math.max(0, Number(ms) || 0));
+};
+
+root.vldDiceReplay = runThrow;
+
+/**
+ * The result is immutable. A replay generates a new visual trajectory, while
+ * data-final — the model's roll — stays untouched.
  */
 function runThrow() {
+  if (reduced || isNaN(finalResult)) return;
   if (frameId) cancelAnimationFrame(frameId);
 
   runId += 1;
   root.dataset.diceRun = String(runId);
-  arena.dataset.bounces = '0';
-  throwEl.classList.add('is-rolling');
-  throwEl.classList.remove('is-settled');
-  read.setAttribute('aria-hidden', 'true');
-
-  var x = 165 + Math.random() * 28;
-  var y = -58 - Math.random() * 18;
-  var vx = -278 - Math.random() * 34;
-  var vy = -58 - Math.random() * 42;
-  var angle = -130 + Math.random() * 260;
-  var spin = (Math.random() < .5 ? -1 : 1) * (760 + Math.random() * 310);
-  var gravity = 1120;
-  var bounces = 0;
-  var grounded = false;
-  var started = 0;
-  var previous = 0;
-  var lastFaceAt = 0;
-  var impactAt = -1000;
-
-  showFalseFace();
-  paint(x, y, angle, 0, impactAt);
+  timeline = makeTimeline();
+  startedAt = performance.now();
+  prepare();
+  renderAt(0);
   frameId = requestAnimationFrame(step);
+}
 
-  function step(now) {
-    if (!started) {
-      started = now;
-      previous = now;
-    }
+function step(now) {
+  if (!root.isConnected) {
+    frameId = 0;
+    return;
+  }
 
-    var dt = Math.min(.032, Math.max(.001, (now - previous) / 1000));
-    var elapsed = (now - started) / 1000;
-    previous = now;
+  var elapsed = now - startedAt;
+  renderAt(elapsed);
 
-    if (!grounded) {
-      vy += gravity * dt;
-      x += vx * dt;
-      y += vy * dt;
-      angle += spin * dt;
-
-      if (y >= 0 && vy > 0) {
-        y = 0;
-        bounces += 1;
-        arena.dataset.bounces = String(bounces);
-        impactAt = now;
-
-        if (bounces === 1) {
-          vy = -vy * .42;
-          vx *= .69;
-          spin *= .72;
-        } else {
-          vy = 0;
-          grounded = true;
-        }
-      }
-    } else {
-      var settleRate = Math.min(1, dt * 9);
-      x += (0 - x) * settleRate;
-      angle += spin * dt;
-      spin *= Math.exp(-8 * dt);
-    }
-
-    if (now - lastFaceAt > 58 && !grounded) {
-      showFalseFace();
-      lastFaceAt = now;
-    }
-
-    paint(x, y, angle, elapsed, impactAt);
-
-    if (grounded && elapsed > 1.02 && Math.abs(x) < 1.2 && Math.abs(spin) < 16) {
-      settle();
-      return;
-    }
-
-    // A throttled background tab must not leave the result hidden forever.
-    if (elapsed > 1.45) {
-      settle();
-      return;
-    }
-
+  if (elapsed < DURATION) {
     frameId = requestAnimationFrame(step);
+  } else {
+    frameId = 0;
   }
 }
 
-function paint(x, y, angle, elapsed, impactAt) {
-  var now = performance.now();
-  var impact = Math.max(0, 1 - (now - impactAt) / 105);
+function makeTimeline() {
+  var direction = Math.random() < .5 ? -1 : 1;
+  var turns = 2 + Math.floor(Math.random() * 2);
+
+  return {
+    direction: direction,
+    startAngle: direction * (55 + Math.random() * 90),
+    endAngle: direction * turns * 360,
+    sway: 5 + Math.random() * 4,
+    seed: Math.floor(Math.random() * 997),
+  };
+}
+
+function prepare() {
+  arena.dataset.bounces = '0';
+  throwEl.classList.add('is-rolling');
+  throwEl.classList.remove('is-revealing', 'is-settled');
+  verdict.setAttribute('aria-hidden', 'true');
+  cost.setAttribute('aria-hidden', 'true');
+}
+
+function renderAt(ms) {
+  var t = Math.min(ms, DURATION);
+  var x;
+  var y;
+
+  if (t < FIRST_IMPACT) {
+    var fall = t / FIRST_IMPACT;
+    // The die is already inside its slot: it falls a short distance while
+    // tumbling, rather than crossing the entire card from off-screen.
+    x = Math.sin(fall * Math.PI * 2 + .5) * timeline.sway * (1 - fall * .35);
+    y = -24 * (1 - fall * fall);
+    arena.dataset.bounces = '0';
+  } else if (t < SECOND_IMPACT) {
+    var hop = (t - FIRST_IMPACT) / (SECOND_IMPACT - FIRST_IMPACT);
+    x = Math.sin(hop * Math.PI * 2) * timeline.sway * .48 * (1 - hop);
+    y = -Math.sin(hop * Math.PI) * 12;
+    arena.dataset.bounces = '1';
+  } else {
+    var rest = (t - SECOND_IMPACT) / (DURATION - SECOND_IMPACT);
+    x = Math.sin(rest * Math.PI * 4) * 2.4 * (1 - rest);
+    y = 0;
+    arena.dataset.bounces = '2';
+  }
+
+  var spinProgress = Math.min(1, t / SECOND_IMPACT);
+  var easedSpin = 1 - Math.pow(1 - spinProgress, 3);
+  var angle = timeline.startAngle +
+    (timeline.endAngle - timeline.startAngle) * easedSpin;
+
+  if (t >= SECOND_IMPACT) {
+    var settleProgress = (t - SECOND_IMPACT) / (DURATION - SECOND_IMPACT);
+    angle += Math.sin(settleProgress * Math.PI * 5) * 7 * (1 - settleProgress);
+  }
+
+  var impact = Math.max(
+    impactPulse(t, FIRST_IMPACT),
+    impactPulse(t, SECOND_IMPACT),
+  );
+
+  paint(x, y, angle, impact);
+
+  if (t < SECOND_IMPACT) {
+    showFalseFace(Math.floor(t / 58));
+  } else {
+    roll.textContent = String(finalResult);
+    throwEl.classList.add('is-revealing');
+    verdict.setAttribute('aria-hidden', 'false');
+    cost.setAttribute('aria-hidden', 'false');
+  }
+
+  if (t >= DURATION) settle();
+}
+
+function impactPulse(ms, at) {
+  if (ms < at || ms > at + 105) return 0;
+  return 1 - (ms - at) / 105;
+}
+
+function paint(x, y, angle, impact) {
   var sx = 1 + impact * .17;
   var sy = 1 - impact * .14;
-  var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 88);
+  var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 26);
   var light = 1 + Math.sin(angle * Math.PI / 180) * .14;
 
   die.style.transform =
@@ -132,20 +171,15 @@ function paint(x, y, angle, elapsed, impactAt) {
 
   shadow.style.transform =
     'translateX(' + x.toFixed(2) + 'px)' +
-    ' scale(' + (.96 - altitude * .47).toFixed(3) + ',' +
-    (.78 - altitude * .25).toFixed(3) + ')';
-  shadow.style.opacity = String(.17 + (1 - altitude) * .36);
-  shadow.style.filter = 'blur(' + (2 + altitude * 7).toFixed(2) + 'px)';
+    ' scale(' + (.96 - altitude * .42).toFixed(3) + ',' +
+    (.78 - altitude * .22).toFixed(3) + ')';
+  shadow.style.opacity = String(.18 + (1 - altitude) * .35);
+  shadow.style.filter = 'blur(' + (2 + altitude * 5).toFixed(2) + 'px)';
 }
 
-function showFalseFace() {
-  var current = parseInt(roll.textContent, 10);
-  var next;
-
-  do {
-    next = 1 + Math.floor(Math.random() * 20);
-  } while (next === finalResult || next === current);
-
+function showFalseFace(index) {
+  var next = ((index * 7 + timeline.seed) % 20) + 1;
+  if (next === finalResult) next = (next % 20) + 1;
   roll.textContent = String(next);
 }
 
@@ -162,7 +196,9 @@ function settle() {
   shadow.style.opacity = '';
   shadow.style.filter = '';
 
-  throwEl.classList.remove('is-rolling');
+  throwEl.classList.remove('is-rolling', 'is-revealing');
   throwEl.classList.add('is-settled');
-  read.setAttribute('aria-hidden', 'false');
+  arena.dataset.bounces = '2';
+  verdict.setAttribute('aria-hidden', 'false');
+  cost.setAttribute('aria-hidden', 'false');
 }

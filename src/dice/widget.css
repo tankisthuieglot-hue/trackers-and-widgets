@@ -149,13 +149,18 @@
   opacity: 1;
   transform: none;
   filter: none;
+}
+
+.vld-dice .verdict,
+.vld-dice .cost {
   transition:
     opacity .26s ease,
     transform .34s cubic-bezier(.2, .85, .25, 1),
     filter .3s ease;
 }
 
-.vld-dice .throw.is-rolling .read {
+.vld-dice .throw.is-rolling:not(.is-revealing) .verdict,
+.vld-dice .throw.is-rolling:not(.is-revealing) .cost {
   opacity: 0;
   transform: translateY(5px);
   filter: blur(5px);
@@ -241,7 +246,8 @@
     transition: none;
   }
 
-  .vld-dice .read {
+  .vld-dice .verdict,
+  .vld-dice .cost {
     transition: none;
   }
 }

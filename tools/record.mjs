@@ -183,6 +183,8 @@ function stage() {
 <script>
   const STATES = [${STATES.map(embed).join(', ')}];
   const slot = document.getElementById('slot');
+  let clock = 0;
+  let mountedAt = 0;
 
   function mount(html) {
     slot.innerHTML = html;
@@ -199,7 +201,10 @@ function stage() {
 
   window.act = (what) => {
     const shown = /^show-(\\d+)$/.exec(what);
-    if (shown) mount(STATES[Number(shown[1])]);
+    if (shown) {
+      mountedAt = clock;
+      mount(STATES[Number(shown[1])]);
+    }
     // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
     // разметке нет, поэтому обращения к ним и не случится.
     if (what === 'open-pack') slot.querySelector('details').open = true;
@@ -223,10 +228,17 @@ function stage() {
   };
 
   window.seek = (ms) => {
+    clock = ms;
+    const local = Math.max(0, ms - mountedAt);
+    const dice = slot.querySelector('.vld-dice');
+    if (dice && typeof dice.vldDiceSeek === 'function') {
+      dice.vldDiceSeek(local);
+    }
+
     document.getAnimations().forEach((a) => {
       a.pause();
       const end = a.effect && a.effect.getComputedTiming().endTime;
-      a.currentTime = end && end !== Infinity ? Math.min(ms, end) : ms;
+      a.currentTime = end && end !== Infinity ? Math.min(local, end) : local;
     });
   };
 </script>`;

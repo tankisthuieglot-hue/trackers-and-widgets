@@ -32,14 +32,19 @@ try {
       run: Number(root.dataset.diceRun || 0),
       final: root.querySelector('.roll').dataset.final,
       current: root.querySelector('.roll').textContent,
-      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+      transform: root.querySelector('.die').style.transform,
+      readOpacity: getComputedStyle(root.querySelector('.read')).opacity,
+      verdictOpacity: getComputedStyle(root.querySelector('.verdict')).opacity,
     };
   });
 
   assert.equal(start.rolling, true, 'the first throw starts when the widget mounts');
   assert.equal(start.run, 1, 'mount starts exactly one throw');
   assert.equal(start.final, values.R, 'the model-provided result is preserved separately');
-  assert.equal(start.readHidden, 'true', 'the verdict waits for the landing');
+  const startX = Number(/translate3d\(([-\d.]+)px/.exec(start.transform)?.[1]);
+  assert.ok(Math.abs(startX) <= 10, 'the die tumbles inside its slot instead of entering from the side');
+  assert.equal(start.readOpacity, '1', 'the action stays visible during the throw');
+  assert.equal(start.verdictOpacity, '0', 'only the unresolved verdict waits for the landing');
 
   await new Promise((resolve) => setTimeout(resolve, 1800));
 
@@ -51,7 +56,7 @@ try {
       rolling: root.querySelector('.throw').classList.contains('is-rolling'),
       result: root.querySelector('.roll').textContent,
       bounces: Number(stage.dataset.bounces || 0),
-      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+      verdictOpacity: getComputedStyle(root.querySelector('.verdict')).opacity,
     };
   });
 
@@ -59,7 +64,7 @@ try {
   assert.equal(landed.rolling, false, 'rolling state is cleared on landing');
   assert.equal(landed.result, values.R, 'landing restores the model-provided result');
   assert.equal(landed.bounces, 2, 'the visual physics performs two impacts');
-  assert.equal(landed.readHidden, 'false', 'the verdict is revealed only after landing');
+  assert.equal(landed.verdictOpacity, '1', 'the verdict is revealed after landing');
 
   await page.click('.vld-dice .die');
   const replay = await page.evaluate(() => {
@@ -87,14 +92,14 @@ try {
       rolling: root.querySelector('.throw').classList.contains('is-rolling'),
       settled: root.querySelector('.throw').classList.contains('is-settled'),
       result: root.querySelector('.roll').textContent,
-      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+      verdictOpacity: getComputedStyle(root.querySelector('.verdict')).opacity,
     };
   });
 
   assert.equal(still.rolling, false, 'reduced motion does not start the throw');
   assert.equal(still.settled, true, 'reduced motion starts at the resting state');
   assert.equal(still.result, values.R, 'reduced motion keeps the final result');
-  assert.equal(still.readHidden, 'false', 'reduced motion keeps the verdict readable');
+  assert.equal(still.verdictOpacity, '1', 'reduced motion keeps the verdict readable');
 
   console.log('✓ dice motion: throw, two impacts, final result, replay');
 } finally {
