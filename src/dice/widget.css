@@ -34,10 +34,12 @@
   --tone: var(--fail);
 
   display: grid;
-  grid-template-columns: 74px 1fr;
-  gap: 13px;
+  grid-template-columns: 86px 1fr;
+  gap: 10px;
   align-items: center;
+  min-height: 104px;
   padding: 13px 14px;
+  overflow: hidden;
   border-radius: 3px;
   background: var(--plate);
   box-shadow: inset 0 0 0 1px var(--hair);
@@ -49,24 +51,55 @@
 .vld-dice .o-fail   { --tone: var(--fail); }
 .vld-dice .o-fumble { --tone: var(--fumble); }
 
-/* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
-   а не нарисован кружком с цифрой. */
-.vld-dice .die {
+.vld-dice .arena {
   position: relative;
+  width: 86px;
+  height: 82px;
+  align-self: center;
+  overflow: visible;
+}
+
+.vld-dice .die-shadow {
+  position: absolute;
+  left: 13px;
+  bottom: 2px;
+  width: 60px;
+  height: 13px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 70%);
+  transform: scale(.82);
+  opacity: .48;
+  filter: blur(2px);
+  will-change: transform, opacity, filter;
+}
+
+/* Двадцатигранник остаётся узнаваемым силуэтом, но его положение, поворот,
+   сжатие при ударе и свет на гранях теперь рассчитывает JavaScript. */
+.vld-dice .die {
+  position: absolute;
+  left: 6px;
+  bottom: 10px;
   width: 74px;
   height: 68px;
   display: grid;
   place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  cursor: pointer;
+  color: inherit;
   clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
   background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
   box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
-  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+  transform-origin: 50% 54%;
+  will-change: transform, filter, background;
 }
 
-/* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
-   место. Крутиться дальше ему незачем — результат известен. */
-@keyframes vld-dice-land {
-  from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+.vld-dice .die:focus-visible {
+  outline: 2px solid rgba(var(--tone), .85);
+  outline-offset: 3px;
 }
 
 /* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
@@ -77,6 +110,8 @@
     linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
     linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
     linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+  transform: rotate(var(--facet-turn, 0deg)) scale(1.06);
+  transition: opacity .08s linear;
 }
 
 .vld-dice .roll {
@@ -91,8 +126,7 @@
    который стоит отпраздновать. Единица дрожит. */
 .vld-dice .o-crit .die {
   box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
-  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-             vld-dice-glow 2.2s ease-in-out .5s infinite;
+  animation: vld-dice-glow 2.2s ease-in-out .25s infinite;
 }
 
 @keyframes vld-dice-glow {
@@ -100,8 +134,7 @@
 }
 
 .vld-dice .o-fumble .die {
-  animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-             vld-dice-shake 3.3s steps(1, end) .5s infinite;
+  animation: vld-dice-shake 3.3s steps(1, end) .25s infinite;
 }
 
 @keyframes vld-dice-shake {
@@ -113,6 +146,27 @@
 
 .vld-dice .read {
   min-width: 0;
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    opacity .26s ease,
+    transform .34s cubic-bezier(.2, .85, .25, 1),
+    filter .3s ease;
+}
+
+.vld-dice .throw.is-rolling .read {
+  opacity: 0;
+  transform: translateY(5px);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+/* Пока куб летит, критический glow и редкая дрожь единицы ещё не имеют права
+   раскрывать исход. Они включаются только после settle. */
+.vld-dice .throw.is-rolling .die {
+  animation: none;
+  box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
 }
 
 .vld-dice .act {
@@ -184,5 +238,10 @@
   .vld-dice .o-crit .die,
   .vld-dice .o-fumble .die {
     animation: none;
+    transition: none;
+  }
+
+  .vld-dice .read {
+    transition: none;
   }
 }

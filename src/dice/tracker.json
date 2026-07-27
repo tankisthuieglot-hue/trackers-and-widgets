@@ -16,7 +16,7 @@
   ],
   "lang": {
     "en": {
-      "chrome": { "vs": "needs", "crit": "critical", "pass": "success", "edge": "by a hair", "fail": "failure", "fumble": "disaster" },
+      "chrome": { "vs": "needs", "crit": "critical", "pass": "success", "edge": "by a hair", "fail": "failure", "fumble": "disaster", "replay": "Throw again" },
       "when": "{{user}} tries something that could plausibly fail and the answer is not obvious",
       "dont": "anything {{user}} would simply manage: walking, talking, opening an unlocked door",
       "legend": "A what is being attempted, short: \"pick the padlock\", \"lie to the sergeant\".\nR what came up on a d20, 1–20. Roll it honestly — do not pick the number\n  the story wants. D what it had to beat, 5 easy · 10 fair · 15 hard · 18 brutal.\nO the outcome, one word from this list and nothing else:\n  crit (R is 20) · pass (R ≥ D) · edge (R is 1 or 2 under D — it works, badly)\n  · fail (R < D) · fumble (R is 1)\nC one line: what this wins or what it costs. Consequence, not narration.\n  On edge and fumble the cost is the point — name it.\nWrite every value in the language the roleplay is played in.",
@@ -29,7 +29,7 @@
       }
     },
     "ru": {
-      "chrome": { "vs": "нужно", "crit": "критический успех", "pass": "успех", "edge": "на волоске", "fail": "провал", "fumble": "катастрофа" },
+      "chrome": { "vs": "нужно", "crit": "критический успех", "pass": "успех", "edge": "на волоске", "fail": "провал", "fumble": "катастрофа", "replay": "Бросить снова" },
       "when": "{{user}} берётся за то, что реально может не выйти, и исход не очевиден",
       "dont": "то, что {{user}} сделает и так: пройти, сказать, открыть незапертую дверь",
       "legend": "A что именно пробует, коротко: «вскрыть замок», «соврать сержанту».\nR что выпало на d20, 1–20. Бросай честно — не подбирай число под сюжет.\n  D сколько надо было: 5 легко · 10 средне · 15 трудно · 18 зверски.\nO исход, одно слово строго из списка:\n  crit (R = 20) · pass (R ≥ D) · edge (R на 1–2 меньше D — вышло, но плохо)\n  · fail (R < D) · fumble (R = 1)\nC одна строка: что это даёт или чего стоит. Последствие, а не пересказ.\n  На edge и fumble цена — самое главное, назови её.\nЗначения пиши на языке ролевой.",

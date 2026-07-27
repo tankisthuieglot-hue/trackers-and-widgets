@@ -10,7 +10,7 @@
     "check": "node tools/check.mjs",
     "preview": "node tools/serve.mjs",
     "shots": "node tools/shot.mjs && node tools/shot.mjs --sheet",
-    "test": "node tools/adversarial.mjs ru && node tools/adversarial.mjs en",
+    "test": "node tools/adversarial.mjs ru && node tools/adversarial.mjs en && node tools/dice-motion-test.mjs",
     "all": "node tools/check.mjs && node tools/build.mjs && npm test"
   },
   "devDependencies": {

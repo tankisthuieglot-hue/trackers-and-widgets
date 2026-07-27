@@ -4465,12 +4465,15 @@
   <div class="stages">
     <div class="stage light"><div class="vld-w vld-dice">
   <div class="throw o-fail">
-    <div class="die">
-      <span class="facets"></span>
-      <b class="roll">7</b>
+    <div class="arena" data-bounces="0">
+      <span class="die-shadow"></span>
+      <button class="die" type="button" aria-label="Бросить снова">
+        <span class="facets"></span>
+        <b class="roll" data-final="7">7</b>
+      </button>
     </div>
 
-    <div class="read">
+    <div class="read" aria-hidden="false">
       <div class="act">перелезть забор, пока пёс не вышел из-за угла</div>
 
       <div class="verdict">
@@ -4524,10 +4527,12 @@
       --tone: var(--fail);
 
       display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: 13px;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
       align-items: center;
+      min-height: 104px;
       padding: 13px 14px;
+      overflow: hidden;
       border-radius: 3px;
       background: var(--plate);
       box-shadow: inset 0 0 0 1px var(--hair);
@@ -4539,24 +4544,55 @@
     .vld-dice .o-fail   { --tone: var(--fail); }
     .vld-dice .o-fumble { --tone: var(--fumble); }
 
-    /* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
-       а не нарисован кружком с цифрой. */
-    .vld-dice .die {
+    .vld-dice .arena {
       position: relative;
+      width: 86px;
+      height: 82px;
+      align-self: center;
+      overflow: visible;
+    }
+
+    .vld-dice .die-shadow {
+      position: absolute;
+      left: 13px;
+      bottom: 2px;
+      width: 60px;
+      height: 13px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 70%);
+      transform: scale(.82);
+      opacity: .48;
+      filter: blur(2px);
+      will-change: transform, opacity, filter;
+    }
+
+    /* Двадцатигранник остаётся узнаваемым силуэтом, но его положение, поворот,
+       сжатие при ударе и свет на гранях теперь рассчитывает JavaScript. */
+    .vld-dice .die {
+      position: absolute;
+      left: 6px;
+      bottom: 10px;
       width: 74px;
       height: 68px;
       display: grid;
       place-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      appearance: none;
+      cursor: pointer;
+      color: inherit;
       clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
       background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+      transform-origin: 50% 54%;
+      will-change: transform, filter, background;
     }
 
-    /* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
-       место. Крутиться дальше ему незачем — результат известен. */
-    @keyframes vld-dice-land {
-      from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+    .vld-dice .die:focus-visible {
+      outline: 2px solid rgba(var(--tone), .85);
+      outline-offset: 3px;
     }
 
     /* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
@@ -4567,6 +4603,8 @@
         linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+      transform: rotate(var(--facet-turn, 0deg)) scale(1.06);
+      transition: opacity .08s linear;
     }
 
     .vld-dice .roll {
@@ -4581,8 +4619,7 @@
        который стоит отпраздновать. Единица дрожит. */
     .vld-dice .o-crit .die {
       box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-glow 2.2s ease-in-out .5s infinite;
+      animation: vld-dice-glow 2.2s ease-in-out .25s infinite;
     }
 
     @keyframes vld-dice-glow {
@@ -4590,8 +4627,7 @@
     }
 
     .vld-dice .o-fumble .die {
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-shake 3.3s steps(1, end) .5s infinite;
+      animation: vld-dice-shake 3.3s steps(1, end) .25s infinite;
     }
 
     @keyframes vld-dice-shake {
@@ -4603,6 +4639,27 @@
 
     .vld-dice .read {
       min-width: 0;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition:
+        opacity .26s ease,
+        transform .34s cubic-bezier(.2, .85, .25, 1),
+        filter .3s ease;
+    }
+
+    .vld-dice .throw.is-rolling .read {
+      opacity: 0;
+      transform: translateY(5px);
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    /* Пока куб летит, критический glow и редкая дрожь единицы ещё не имеют права
+       раскрывать исход. Они включаются только после settle. */
+    .vld-dice .throw.is-rolling .die {
+      animation: none;
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
     }
 
     .vld-dice .act {
@@ -4674,18 +4731,202 @@
       .vld-dice .o-crit .die,
       .vld-dice .o-fumble .die {
         animation: none;
+        transition: none;
+      }
+
+      .vld-dice .read {
+        transition: none;
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-dice:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var throwEl = root.querySelector('.throw');
+      var arena = root.querySelector('.arena');
+      var die = root.querySelector('.die');
+      var shadow = root.querySelector('.die-shadow');
+      var facets = root.querySelector('.facets');
+      var roll = root.querySelector('.roll');
+      var read = root.querySelector('.read');
+      var finalResult = parseInt(roll.dataset.final, 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var frameId = 0;
+      var runId = 0;
+
+      if (!isNaN(finalResult)) {
+        if (reduced) {
+          settle();
+        } else {
+          runThrow();
+          die.addEventListener('click', function (event) {
+            event.preventDefault();
+            runThrow();
+          });
+        }
+      }
+
+      /**
+       * Physics is transient presentation only. The model has already rolled and put
+       * the immutable result in data-final; every replay changes the path, never it.
+       */
+      function runThrow() {
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.diceRun = String(runId);
+        arena.dataset.bounces = '0';
+        throwEl.classList.add('is-rolling');
+        throwEl.classList.remove('is-settled');
+        read.setAttribute('aria-hidden', 'true');
+
+        var x = 165 + Math.random() * 28;
+        var y = -58 - Math.random() * 18;
+        var vx = -278 - Math.random() * 34;
+        var vy = -58 - Math.random() * 42;
+        var angle = -130 + Math.random() * 260;
+        var spin = (Math.random() < .5 ? -1 : 1) * (760 + Math.random() * 310);
+        var gravity = 1120;
+        var bounces = 0;
+        var grounded = false;
+        var started = 0;
+        var previous = 0;
+        var lastFaceAt = 0;
+        var impactAt = -1000;
+
+        showFalseFace();
+        paint(x, y, angle, 0, impactAt);
+        frameId = requestAnimationFrame(step);
+
+        function step(now) {
+          if (!started) {
+            started = now;
+            previous = now;
+          }
+
+          var dt = Math.min(.032, Math.max(.001, (now - previous) / 1000));
+          var elapsed = (now - started) / 1000;
+          previous = now;
+
+          if (!grounded) {
+            vy += gravity * dt;
+            x += vx * dt;
+            y += vy * dt;
+            angle += spin * dt;
+
+            if (y >= 0 && vy > 0) {
+              y = 0;
+              bounces += 1;
+              arena.dataset.bounces = String(bounces);
+              impactAt = now;
+
+              if (bounces === 1) {
+                vy = -vy * .42;
+                vx *= .69;
+                spin *= .72;
+              } else {
+                vy = 0;
+                grounded = true;
+              }
+            }
+          } else {
+            var settleRate = Math.min(1, dt * 9);
+            x += (0 - x) * settleRate;
+            angle += spin * dt;
+            spin *= Math.exp(-8 * dt);
+          }
+
+          if (now - lastFaceAt > 58 && !grounded) {
+            showFalseFace();
+            lastFaceAt = now;
+          }
+
+          paint(x, y, angle, elapsed, impactAt);
+
+          if (grounded && elapsed > 1.02 && Math.abs(x) < 1.2 && Math.abs(spin) < 16) {
+            settle();
+            return;
+          }
+
+          // A throttled background tab must not leave the result hidden forever.
+          if (elapsed > 1.45) {
+            settle();
+            return;
+          }
+
+          frameId = requestAnimationFrame(step);
+        }
+      }
+
+      function paint(x, y, angle, elapsed, impactAt) {
+        var now = performance.now();
+        var impact = Math.max(0, 1 - (now - impactAt) / 105);
+        var sx = 1 + impact * .17;
+        var sy = 1 - impact * .14;
+        var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 88);
+        var light = 1 + Math.sin(angle * Math.PI / 180) * .14;
+
+        die.style.transform =
+          'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)' +
+          ' rotate(' + angle.toFixed(2) + 'deg)' +
+          ' scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+        die.style.filter = 'brightness(' + light.toFixed(3) + ')';
+        facets.style.setProperty('--facet-turn', (-angle * .34).toFixed(2) + 'deg');
+        facets.style.opacity = String(.7 + Math.cos(angle * Math.PI / 90) * .22);
+
+        shadow.style.transform =
+          'translateX(' + x.toFixed(2) + 'px)' +
+          ' scale(' + (.96 - altitude * .47).toFixed(3) + ',' +
+          (.78 - altitude * .25).toFixed(3) + ')';
+        shadow.style.opacity = String(.17 + (1 - altitude) * .36);
+        shadow.style.filter = 'blur(' + (2 + altitude * 7).toFixed(2) + 'px)';
+      }
+
+      function showFalseFace() {
+        var current = parseInt(roll.textContent, 10);
+        var next;
+
+        do {
+          next = 1 + Math.floor(Math.random() * 20);
+        } while (next === finalResult || next === current);
+
+        roll.textContent = String(next);
+      }
+
+      function settle() {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        roll.textContent = String(finalResult);
+        die.style.transform = '';
+        die.style.filter = '';
+        facets.style.removeProperty('--facet-turn');
+        facets.style.opacity = '';
+        shadow.style.transform = '';
+        shadow.style.opacity = '';
+        shadow.style.filter = '';
+
+        throwEl.classList.remove('is-rolling');
+        throwEl.classList.add('is-settled');
+        read.setAttribute('aria-hidden', 'false');
+      }
+    })();
+  </script>
 </div>
 <div class="vld-w vld-dice">
   <div class="throw o-crit">
-    <div class="die">
-      <span class="facets"></span>
-      <b class="roll">20</b>
+    <div class="arena" data-bounces="0">
+      <span class="die-shadow"></span>
+      <button class="die" type="button" aria-label="Бросить снова">
+        <span class="facets"></span>
+        <b class="roll" data-final="20">20</b>
+      </button>
     </div>
 
-    <div class="read">
+    <div class="read" aria-hidden="false">
       <div class="act">убедить каптёра, что накладная настоящая</div>
 
       <div class="verdict">
@@ -4739,10 +4980,12 @@
       --tone: var(--fail);
 
       display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: 13px;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
       align-items: center;
+      min-height: 104px;
       padding: 13px 14px;
+      overflow: hidden;
       border-radius: 3px;
       background: var(--plate);
       box-shadow: inset 0 0 0 1px var(--hair);
@@ -4754,24 +4997,55 @@
     .vld-dice .o-fail   { --tone: var(--fail); }
     .vld-dice .o-fumble { --tone: var(--fumble); }
 
-    /* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
-       а не нарисован кружком с цифрой. */
-    .vld-dice .die {
+    .vld-dice .arena {
       position: relative;
+      width: 86px;
+      height: 82px;
+      align-self: center;
+      overflow: visible;
+    }
+
+    .vld-dice .die-shadow {
+      position: absolute;
+      left: 13px;
+      bottom: 2px;
+      width: 60px;
+      height: 13px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 70%);
+      transform: scale(.82);
+      opacity: .48;
+      filter: blur(2px);
+      will-change: transform, opacity, filter;
+    }
+
+    /* Двадцатигранник остаётся узнаваемым силуэтом, но его положение, поворот,
+       сжатие при ударе и свет на гранях теперь рассчитывает JavaScript. */
+    .vld-dice .die {
+      position: absolute;
+      left: 6px;
+      bottom: 10px;
       width: 74px;
       height: 68px;
       display: grid;
       place-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      appearance: none;
+      cursor: pointer;
+      color: inherit;
       clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
       background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+      transform-origin: 50% 54%;
+      will-change: transform, filter, background;
     }
 
-    /* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
-       место. Крутиться дальше ему незачем — результат известен. */
-    @keyframes vld-dice-land {
-      from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+    .vld-dice .die:focus-visible {
+      outline: 2px solid rgba(var(--tone), .85);
+      outline-offset: 3px;
     }
 
     /* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
@@ -4782,6 +5056,8 @@
         linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+      transform: rotate(var(--facet-turn, 0deg)) scale(1.06);
+      transition: opacity .08s linear;
     }
 
     .vld-dice .roll {
@@ -4796,8 +5072,7 @@
        который стоит отпраздновать. Единица дрожит. */
     .vld-dice .o-crit .die {
       box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-glow 2.2s ease-in-out .5s infinite;
+      animation: vld-dice-glow 2.2s ease-in-out .25s infinite;
     }
 
     @keyframes vld-dice-glow {
@@ -4805,8 +5080,7 @@
     }
 
     .vld-dice .o-fumble .die {
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-shake 3.3s steps(1, end) .5s infinite;
+      animation: vld-dice-shake 3.3s steps(1, end) .25s infinite;
     }
 
     @keyframes vld-dice-shake {
@@ -4818,6 +5092,27 @@
 
     .vld-dice .read {
       min-width: 0;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition:
+        opacity .26s ease,
+        transform .34s cubic-bezier(.2, .85, .25, 1),
+        filter .3s ease;
+    }
+
+    .vld-dice .throw.is-rolling .read {
+      opacity: 0;
+      transform: translateY(5px);
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    /* Пока куб летит, критический glow и редкая дрожь единицы ещё не имеют права
+       раскрывать исход. Они включаются только после settle. */
+    .vld-dice .throw.is-rolling .die {
+      animation: none;
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
     }
 
     .vld-dice .act {
@@ -4889,18 +5184,202 @@
       .vld-dice .o-crit .die,
       .vld-dice .o-fumble .die {
         animation: none;
+        transition: none;
+      }
+
+      .vld-dice .read {
+        transition: none;
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-dice:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var throwEl = root.querySelector('.throw');
+      var arena = root.querySelector('.arena');
+      var die = root.querySelector('.die');
+      var shadow = root.querySelector('.die-shadow');
+      var facets = root.querySelector('.facets');
+      var roll = root.querySelector('.roll');
+      var read = root.querySelector('.read');
+      var finalResult = parseInt(roll.dataset.final, 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var frameId = 0;
+      var runId = 0;
+
+      if (!isNaN(finalResult)) {
+        if (reduced) {
+          settle();
+        } else {
+          runThrow();
+          die.addEventListener('click', function (event) {
+            event.preventDefault();
+            runThrow();
+          });
+        }
+      }
+
+      /**
+       * Physics is transient presentation only. The model has already rolled and put
+       * the immutable result in data-final; every replay changes the path, never it.
+       */
+      function runThrow() {
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.diceRun = String(runId);
+        arena.dataset.bounces = '0';
+        throwEl.classList.add('is-rolling');
+        throwEl.classList.remove('is-settled');
+        read.setAttribute('aria-hidden', 'true');
+
+        var x = 165 + Math.random() * 28;
+        var y = -58 - Math.random() * 18;
+        var vx = -278 - Math.random() * 34;
+        var vy = -58 - Math.random() * 42;
+        var angle = -130 + Math.random() * 260;
+        var spin = (Math.random() < .5 ? -1 : 1) * (760 + Math.random() * 310);
+        var gravity = 1120;
+        var bounces = 0;
+        var grounded = false;
+        var started = 0;
+        var previous = 0;
+        var lastFaceAt = 0;
+        var impactAt = -1000;
+
+        showFalseFace();
+        paint(x, y, angle, 0, impactAt);
+        frameId = requestAnimationFrame(step);
+
+        function step(now) {
+          if (!started) {
+            started = now;
+            previous = now;
+          }
+
+          var dt = Math.min(.032, Math.max(.001, (now - previous) / 1000));
+          var elapsed = (now - started) / 1000;
+          previous = now;
+
+          if (!grounded) {
+            vy += gravity * dt;
+            x += vx * dt;
+            y += vy * dt;
+            angle += spin * dt;
+
+            if (y >= 0 && vy > 0) {
+              y = 0;
+              bounces += 1;
+              arena.dataset.bounces = String(bounces);
+              impactAt = now;
+
+              if (bounces === 1) {
+                vy = -vy * .42;
+                vx *= .69;
+                spin *= .72;
+              } else {
+                vy = 0;
+                grounded = true;
+              }
+            }
+          } else {
+            var settleRate = Math.min(1, dt * 9);
+            x += (0 - x) * settleRate;
+            angle += spin * dt;
+            spin *= Math.exp(-8 * dt);
+          }
+
+          if (now - lastFaceAt > 58 && !grounded) {
+            showFalseFace();
+            lastFaceAt = now;
+          }
+
+          paint(x, y, angle, elapsed, impactAt);
+
+          if (grounded && elapsed > 1.02 && Math.abs(x) < 1.2 && Math.abs(spin) < 16) {
+            settle();
+            return;
+          }
+
+          // A throttled background tab must not leave the result hidden forever.
+          if (elapsed > 1.45) {
+            settle();
+            return;
+          }
+
+          frameId = requestAnimationFrame(step);
+        }
+      }
+
+      function paint(x, y, angle, elapsed, impactAt) {
+        var now = performance.now();
+        var impact = Math.max(0, 1 - (now - impactAt) / 105);
+        var sx = 1 + impact * .17;
+        var sy = 1 - impact * .14;
+        var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 88);
+        var light = 1 + Math.sin(angle * Math.PI / 180) * .14;
+
+        die.style.transform =
+          'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)' +
+          ' rotate(' + angle.toFixed(2) + 'deg)' +
+          ' scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+        die.style.filter = 'brightness(' + light.toFixed(3) + ')';
+        facets.style.setProperty('--facet-turn', (-angle * .34).toFixed(2) + 'deg');
+        facets.style.opacity = String(.7 + Math.cos(angle * Math.PI / 90) * .22);
+
+        shadow.style.transform =
+          'translateX(' + x.toFixed(2) + 'px)' +
+          ' scale(' + (.96 - altitude * .47).toFixed(3) + ',' +
+          (.78 - altitude * .25).toFixed(3) + ')';
+        shadow.style.opacity = String(.17 + (1 - altitude) * .36);
+        shadow.style.filter = 'blur(' + (2 + altitude * 7).toFixed(2) + 'px)';
+      }
+
+      function showFalseFace() {
+        var current = parseInt(roll.textContent, 10);
+        var next;
+
+        do {
+          next = 1 + Math.floor(Math.random() * 20);
+        } while (next === finalResult || next === current);
+
+        roll.textContent = String(next);
+      }
+
+      function settle() {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        roll.textContent = String(finalResult);
+        die.style.transform = '';
+        die.style.filter = '';
+        facets.style.removeProperty('--facet-turn');
+        facets.style.opacity = '';
+        shadow.style.transform = '';
+        shadow.style.opacity = '';
+        shadow.style.filter = '';
+
+        throwEl.classList.remove('is-rolling');
+        throwEl.classList.add('is-settled');
+        read.setAttribute('aria-hidden', 'false');
+      }
+    })();
+  </script>
 </div></div>
     <div class="stage dark"><div class="vld-w vld-dice">
   <div class="throw o-fail">
-    <div class="die">
-      <span class="facets"></span>
-      <b class="roll">7</b>
+    <div class="arena" data-bounces="0">
+      <span class="die-shadow"></span>
+      <button class="die" type="button" aria-label="Бросить снова">
+        <span class="facets"></span>
+        <b class="roll" data-final="7">7</b>
+      </button>
     </div>
 
-    <div class="read">
+    <div class="read" aria-hidden="false">
       <div class="act">перелезть забор, пока пёс не вышел из-за угла</div>
 
       <div class="verdict">
@@ -4954,10 +5433,12 @@
       --tone: var(--fail);
 
       display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: 13px;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
       align-items: center;
+      min-height: 104px;
       padding: 13px 14px;
+      overflow: hidden;
       border-radius: 3px;
       background: var(--plate);
       box-shadow: inset 0 0 0 1px var(--hair);
@@ -4969,24 +5450,55 @@
     .vld-dice .o-fail   { --tone: var(--fail); }
     .vld-dice .o-fumble { --tone: var(--fumble); }
 
-    /* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
-       а не нарисован кружком с цифрой. */
-    .vld-dice .die {
+    .vld-dice .arena {
       position: relative;
+      width: 86px;
+      height: 82px;
+      align-self: center;
+      overflow: visible;
+    }
+
+    .vld-dice .die-shadow {
+      position: absolute;
+      left: 13px;
+      bottom: 2px;
+      width: 60px;
+      height: 13px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 70%);
+      transform: scale(.82);
+      opacity: .48;
+      filter: blur(2px);
+      will-change: transform, opacity, filter;
+    }
+
+    /* Двадцатигранник остаётся узнаваемым силуэтом, но его положение, поворот,
+       сжатие при ударе и свет на гранях теперь рассчитывает JavaScript. */
+    .vld-dice .die {
+      position: absolute;
+      left: 6px;
+      bottom: 10px;
       width: 74px;
       height: 68px;
       display: grid;
       place-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      appearance: none;
+      cursor: pointer;
+      color: inherit;
       clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
       background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+      transform-origin: 50% 54%;
+      will-change: transform, filter, background;
     }
 
-    /* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
-       место. Крутиться дальше ему незачем — результат известен. */
-    @keyframes vld-dice-land {
-      from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+    .vld-dice .die:focus-visible {
+      outline: 2px solid rgba(var(--tone), .85);
+      outline-offset: 3px;
     }
 
     /* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
@@ -4997,6 +5509,8 @@
         linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+      transform: rotate(var(--facet-turn, 0deg)) scale(1.06);
+      transition: opacity .08s linear;
     }
 
     .vld-dice .roll {
@@ -5011,8 +5525,7 @@
        который стоит отпраздновать. Единица дрожит. */
     .vld-dice .o-crit .die {
       box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-glow 2.2s ease-in-out .5s infinite;
+      animation: vld-dice-glow 2.2s ease-in-out .25s infinite;
     }
 
     @keyframes vld-dice-glow {
@@ -5020,8 +5533,7 @@
     }
 
     .vld-dice .o-fumble .die {
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-shake 3.3s steps(1, end) .5s infinite;
+      animation: vld-dice-shake 3.3s steps(1, end) .25s infinite;
     }
 
     @keyframes vld-dice-shake {
@@ -5033,6 +5545,27 @@
 
     .vld-dice .read {
       min-width: 0;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition:
+        opacity .26s ease,
+        transform .34s cubic-bezier(.2, .85, .25, 1),
+        filter .3s ease;
+    }
+
+    .vld-dice .throw.is-rolling .read {
+      opacity: 0;
+      transform: translateY(5px);
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    /* Пока куб летит, критический glow и редкая дрожь единицы ещё не имеют права
+       раскрывать исход. Они включаются только после settle. */
+    .vld-dice .throw.is-rolling .die {
+      animation: none;
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
     }
 
     .vld-dice .act {
@@ -5104,18 +5637,202 @@
       .vld-dice .o-crit .die,
       .vld-dice .o-fumble .die {
         animation: none;
+        transition: none;
+      }
+
+      .vld-dice .read {
+        transition: none;
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-dice:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var throwEl = root.querySelector('.throw');
+      var arena = root.querySelector('.arena');
+      var die = root.querySelector('.die');
+      var shadow = root.querySelector('.die-shadow');
+      var facets = root.querySelector('.facets');
+      var roll = root.querySelector('.roll');
+      var read = root.querySelector('.read');
+      var finalResult = parseInt(roll.dataset.final, 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var frameId = 0;
+      var runId = 0;
+
+      if (!isNaN(finalResult)) {
+        if (reduced) {
+          settle();
+        } else {
+          runThrow();
+          die.addEventListener('click', function (event) {
+            event.preventDefault();
+            runThrow();
+          });
+        }
+      }
+
+      /**
+       * Physics is transient presentation only. The model has already rolled and put
+       * the immutable result in data-final; every replay changes the path, never it.
+       */
+      function runThrow() {
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.diceRun = String(runId);
+        arena.dataset.bounces = '0';
+        throwEl.classList.add('is-rolling');
+        throwEl.classList.remove('is-settled');
+        read.setAttribute('aria-hidden', 'true');
+
+        var x = 165 + Math.random() * 28;
+        var y = -58 - Math.random() * 18;
+        var vx = -278 - Math.random() * 34;
+        var vy = -58 - Math.random() * 42;
+        var angle = -130 + Math.random() * 260;
+        var spin = (Math.random() < .5 ? -1 : 1) * (760 + Math.random() * 310);
+        var gravity = 1120;
+        var bounces = 0;
+        var grounded = false;
+        var started = 0;
+        var previous = 0;
+        var lastFaceAt = 0;
+        var impactAt = -1000;
+
+        showFalseFace();
+        paint(x, y, angle, 0, impactAt);
+        frameId = requestAnimationFrame(step);
+
+        function step(now) {
+          if (!started) {
+            started = now;
+            previous = now;
+          }
+
+          var dt = Math.min(.032, Math.max(.001, (now - previous) / 1000));
+          var elapsed = (now - started) / 1000;
+          previous = now;
+
+          if (!grounded) {
+            vy += gravity * dt;
+            x += vx * dt;
+            y += vy * dt;
+            angle += spin * dt;
+
+            if (y >= 0 && vy > 0) {
+              y = 0;
+              bounces += 1;
+              arena.dataset.bounces = String(bounces);
+              impactAt = now;
+
+              if (bounces === 1) {
+                vy = -vy * .42;
+                vx *= .69;
+                spin *= .72;
+              } else {
+                vy = 0;
+                grounded = true;
+              }
+            }
+          } else {
+            var settleRate = Math.min(1, dt * 9);
+            x += (0 - x) * settleRate;
+            angle += spin * dt;
+            spin *= Math.exp(-8 * dt);
+          }
+
+          if (now - lastFaceAt > 58 && !grounded) {
+            showFalseFace();
+            lastFaceAt = now;
+          }
+
+          paint(x, y, angle, elapsed, impactAt);
+
+          if (grounded && elapsed > 1.02 && Math.abs(x) < 1.2 && Math.abs(spin) < 16) {
+            settle();
+            return;
+          }
+
+          // A throttled background tab must not leave the result hidden forever.
+          if (elapsed > 1.45) {
+            settle();
+            return;
+          }
+
+          frameId = requestAnimationFrame(step);
+        }
+      }
+
+      function paint(x, y, angle, elapsed, impactAt) {
+        var now = performance.now();
+        var impact = Math.max(0, 1 - (now - impactAt) / 105);
+        var sx = 1 + impact * .17;
+        var sy = 1 - impact * .14;
+        var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 88);
+        var light = 1 + Math.sin(angle * Math.PI / 180) * .14;
+
+        die.style.transform =
+          'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)' +
+          ' rotate(' + angle.toFixed(2) + 'deg)' +
+          ' scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+        die.style.filter = 'brightness(' + light.toFixed(3) + ')';
+        facets.style.setProperty('--facet-turn', (-angle * .34).toFixed(2) + 'deg');
+        facets.style.opacity = String(.7 + Math.cos(angle * Math.PI / 90) * .22);
+
+        shadow.style.transform =
+          'translateX(' + x.toFixed(2) + 'px)' +
+          ' scale(' + (.96 - altitude * .47).toFixed(3) + ',' +
+          (.78 - altitude * .25).toFixed(3) + ')';
+        shadow.style.opacity = String(.17 + (1 - altitude) * .36);
+        shadow.style.filter = 'blur(' + (2 + altitude * 7).toFixed(2) + 'px)';
+      }
+
+      function showFalseFace() {
+        var current = parseInt(roll.textContent, 10);
+        var next;
+
+        do {
+          next = 1 + Math.floor(Math.random() * 20);
+        } while (next === finalResult || next === current);
+
+        roll.textContent = String(next);
+      }
+
+      function settle() {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        roll.textContent = String(finalResult);
+        die.style.transform = '';
+        die.style.filter = '';
+        facets.style.removeProperty('--facet-turn');
+        facets.style.opacity = '';
+        shadow.style.transform = '';
+        shadow.style.opacity = '';
+        shadow.style.filter = '';
+
+        throwEl.classList.remove('is-rolling');
+        throwEl.classList.add('is-settled');
+        read.setAttribute('aria-hidden', 'false');
+      }
+    })();
+  </script>
 </div>
 <div class="vld-w vld-dice">
   <div class="throw o-crit">
-    <div class="die">
-      <span class="facets"></span>
-      <b class="roll">20</b>
+    <div class="arena" data-bounces="0">
+      <span class="die-shadow"></span>
+      <button class="die" type="button" aria-label="Бросить снова">
+        <span class="facets"></span>
+        <b class="roll" data-final="20">20</b>
+      </button>
     </div>
 
-    <div class="read">
+    <div class="read" aria-hidden="false">
       <div class="act">убедить каптёра, что накладная настоящая</div>
 
       <div class="verdict">
@@ -5169,10 +5886,12 @@
       --tone: var(--fail);
 
       display: grid;
-      grid-template-columns: 74px 1fr;
-      gap: 13px;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
       align-items: center;
+      min-height: 104px;
       padding: 13px 14px;
+      overflow: hidden;
       border-radius: 3px;
       background: var(--plate);
       box-shadow: inset 0 0 0 1px var(--hair);
@@ -5184,24 +5903,55 @@
     .vld-dice .o-fail   { --tone: var(--fail); }
     .vld-dice .o-fumble { --tone: var(--fumble); }
 
-    /* Двадцатигранник узнаётся силуэтом, поэтому он и вырезан многоугольником,
-       а не нарисован кружком с цифрой. */
-    .vld-dice .die {
+    .vld-dice .arena {
       position: relative;
+      width: 86px;
+      height: 82px;
+      align-self: center;
+      overflow: visible;
+    }
+
+    .vld-dice .die-shadow {
+      position: absolute;
+      left: 13px;
+      bottom: 2px;
+      width: 60px;
+      height: 13px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, .72), rgba(0, 0, 0, 0) 70%);
+      transform: scale(.82);
+      opacity: .48;
+      filter: blur(2px);
+      will-change: transform, opacity, filter;
+    }
+
+    /* Двадцатигранник остаётся узнаваемым силуэтом, но его положение, поворот,
+       сжатие при ударе и свет на гранях теперь рассчитывает JavaScript. */
+    .vld-dice .die {
+      position: absolute;
+      left: 6px;
+      bottom: 10px;
       width: 74px;
       height: 68px;
       display: grid;
       place-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      appearance: none;
+      cursor: pointer;
+      color: inherit;
       clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
       background: linear-gradient(160deg, rgba(var(--tone), .3), rgba(var(--tone), .1));
       box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both;
+      transform-origin: 50% 54%;
+      will-change: transform, filter, background;
     }
 
-    /* Кубик прилетает уже брошенным: приходит крупным, довёрнутым и садится на
-       место. Крутиться дальше ему незачем — результат известен. */
-    @keyframes vld-dice-land {
-      from { opacity: 0; transform: scale(1.7) rotate(-38deg); }
+    .vld-dice .die:focus-visible {
+      outline: 2px solid rgba(var(--tone), .85);
+      outline-offset: 3px;
     }
 
     /* Грани: три линии от вершин к центру превращают шестиугольник в объём. */
@@ -5212,6 +5962,8 @@
         linear-gradient(150deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(210deg, transparent calc(50% - .5px), rgba(255, 255, 255, .12) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
         linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .22));
+      transform: rotate(var(--facet-turn, 0deg)) scale(1.06);
+      transition: opacity .08s linear;
     }
 
     .vld-dice .roll {
@@ -5226,8 +5978,7 @@
        который стоит отпраздновать. Единица дрожит. */
     .vld-dice .o-crit .die {
       box-shadow: inset 0 0 0 1px rgba(var(--crit), .8), 0 0 26px rgba(var(--crit), .38);
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-glow 2.2s ease-in-out .5s infinite;
+      animation: vld-dice-glow 2.2s ease-in-out .25s infinite;
     }
 
     @keyframes vld-dice-glow {
@@ -5235,8 +5986,7 @@
     }
 
     .vld-dice .o-fumble .die {
-      animation: vld-dice-land .46s cubic-bezier(.16, .9, .3, 1) both,
-                 vld-dice-shake 3.3s steps(1, end) .5s infinite;
+      animation: vld-dice-shake 3.3s steps(1, end) .25s infinite;
     }
 
     @keyframes vld-dice-shake {
@@ -5248,6 +5998,27 @@
 
     .vld-dice .read {
       min-width: 0;
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition:
+        opacity .26s ease,
+        transform .34s cubic-bezier(.2, .85, .25, 1),
+        filter .3s ease;
+    }
+
+    .vld-dice .throw.is-rolling .read {
+      opacity: 0;
+      transform: translateY(5px);
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    /* Пока куб летит, критический glow и редкая дрожь единицы ещё не имеют права
+       раскрывать исход. Они включаются только после settle. */
+    .vld-dice .throw.is-rolling .die {
+      animation: none;
+      box-shadow: inset 0 0 0 1px rgba(var(--tone), .45);
     }
 
     .vld-dice .act {
@@ -5319,9 +6090,190 @@
       .vld-dice .o-crit .die,
       .vld-dice .o-fumble .die {
         animation: none;
+        transition: none;
+      }
+
+      .vld-dice .read {
+        transition: none;
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-dice:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var throwEl = root.querySelector('.throw');
+      var arena = root.querySelector('.arena');
+      var die = root.querySelector('.die');
+      var shadow = root.querySelector('.die-shadow');
+      var facets = root.querySelector('.facets');
+      var roll = root.querySelector('.roll');
+      var read = root.querySelector('.read');
+      var finalResult = parseInt(roll.dataset.final, 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var frameId = 0;
+      var runId = 0;
+
+      if (!isNaN(finalResult)) {
+        if (reduced) {
+          settle();
+        } else {
+          runThrow();
+          die.addEventListener('click', function (event) {
+            event.preventDefault();
+            runThrow();
+          });
+        }
+      }
+
+      /**
+       * Physics is transient presentation only. The model has already rolled and put
+       * the immutable result in data-final; every replay changes the path, never it.
+       */
+      function runThrow() {
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.diceRun = String(runId);
+        arena.dataset.bounces = '0';
+        throwEl.classList.add('is-rolling');
+        throwEl.classList.remove('is-settled');
+        read.setAttribute('aria-hidden', 'true');
+
+        var x = 165 + Math.random() * 28;
+        var y = -58 - Math.random() * 18;
+        var vx = -278 - Math.random() * 34;
+        var vy = -58 - Math.random() * 42;
+        var angle = -130 + Math.random() * 260;
+        var spin = (Math.random() < .5 ? -1 : 1) * (760 + Math.random() * 310);
+        var gravity = 1120;
+        var bounces = 0;
+        var grounded = false;
+        var started = 0;
+        var previous = 0;
+        var lastFaceAt = 0;
+        var impactAt = -1000;
+
+        showFalseFace();
+        paint(x, y, angle, 0, impactAt);
+        frameId = requestAnimationFrame(step);
+
+        function step(now) {
+          if (!started) {
+            started = now;
+            previous = now;
+          }
+
+          var dt = Math.min(.032, Math.max(.001, (now - previous) / 1000));
+          var elapsed = (now - started) / 1000;
+          previous = now;
+
+          if (!grounded) {
+            vy += gravity * dt;
+            x += vx * dt;
+            y += vy * dt;
+            angle += spin * dt;
+
+            if (y >= 0 && vy > 0) {
+              y = 0;
+              bounces += 1;
+              arena.dataset.bounces = String(bounces);
+              impactAt = now;
+
+              if (bounces === 1) {
+                vy = -vy * .42;
+                vx *= .69;
+                spin *= .72;
+              } else {
+                vy = 0;
+                grounded = true;
+              }
+            }
+          } else {
+            var settleRate = Math.min(1, dt * 9);
+            x += (0 - x) * settleRate;
+            angle += spin * dt;
+            spin *= Math.exp(-8 * dt);
+          }
+
+          if (now - lastFaceAt > 58 && !grounded) {
+            showFalseFace();
+            lastFaceAt = now;
+          }
+
+          paint(x, y, angle, elapsed, impactAt);
+
+          if (grounded && elapsed > 1.02 && Math.abs(x) < 1.2 && Math.abs(spin) < 16) {
+            settle();
+            return;
+          }
+
+          // A throttled background tab must not leave the result hidden forever.
+          if (elapsed > 1.45) {
+            settle();
+            return;
+          }
+
+          frameId = requestAnimationFrame(step);
+        }
+      }
+
+      function paint(x, y, angle, elapsed, impactAt) {
+        var now = performance.now();
+        var impact = Math.max(0, 1 - (now - impactAt) / 105);
+        var sx = 1 + impact * .17;
+        var sy = 1 - impact * .14;
+        var altitude = Math.min(1, Math.abs(Math.min(0, y)) / 88);
+        var light = 1 + Math.sin(angle * Math.PI / 180) * .14;
+
+        die.style.transform =
+          'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)' +
+          ' rotate(' + angle.toFixed(2) + 'deg)' +
+          ' scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+        die.style.filter = 'brightness(' + light.toFixed(3) + ')';
+        facets.style.setProperty('--facet-turn', (-angle * .34).toFixed(2) + 'deg');
+        facets.style.opacity = String(.7 + Math.cos(angle * Math.PI / 90) * .22);
+
+        shadow.style.transform =
+          'translateX(' + x.toFixed(2) + 'px)' +
+          ' scale(' + (.96 - altitude * .47).toFixed(3) + ',' +
+          (.78 - altitude * .25).toFixed(3) + ')';
+        shadow.style.opacity = String(.17 + (1 - altitude) * .36);
+        shadow.style.filter = 'blur(' + (2 + altitude * 7).toFixed(2) + 'px)';
+      }
+
+      function showFalseFace() {
+        var current = parseInt(roll.textContent, 10);
+        var next;
+
+        do {
+          next = 1 + Math.floor(Math.random() * 20);
+        } while (next === finalResult || next === current);
+
+        roll.textContent = String(next);
+      }
+
+      function settle() {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        roll.textContent = String(finalResult);
+        die.style.transform = '';
+        die.style.filter = '';
+        facets.style.removeProperty('--facet-turn');
+        facets.style.opacity = '';
+        shadow.style.transform = '';
+        shadow.style.opacity = '';
+        shadow.style.filter = '';
+
+        throwEl.classList.remove('is-rolling');
+        throwEl.classList.add('is-settled');
+        read.setAttribute('aria-hidden', 'false');
+      }
+    })();
+  </script>
 </div></div>
   </div>
 </section>

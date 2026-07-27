@@ -1,0 +1,102 @@
+import assert from 'node:assert/strict';
+import puppeteer from 'puppeteer-core';
+import { loadTrackers, renderWidget } from './lib.mjs';
+
+const BROWSER = process.env.VLD_BROWSER
+  ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+
+const dice = loadTrackers().find((t) => t.name === 'dice');
+const lang = dice.lang.en;
+const values = lang.example;
+
+const widget = renderWidget(dice, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
+  const field = dice.fields[Number(n) - 1];
+  return field ? String(values[field.key] ?? '') : '';
+});
+
+const browser = await puppeteer.launch({
+  executablePath: BROWSER,
+  headless: true,
+  args: ['--hide-scrollbars'],
+});
+
+try {
+  const page = await browser.newPage();
+  await page.setViewport({ width: 460, height: 340 });
+  await page.setContent(`<!doctype html><meta charset="utf-8">${widget}`, { waitUntil: 'load' });
+
+  const start = await page.evaluate(() => {
+    const root = document.querySelector('.vld-dice');
+    return {
+      rolling: root.querySelector('.throw').classList.contains('is-rolling'),
+      run: Number(root.dataset.diceRun || 0),
+      final: root.querySelector('.roll').dataset.final,
+      current: root.querySelector('.roll').textContent,
+      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+    };
+  });
+
+  assert.equal(start.rolling, true, 'the first throw starts when the widget mounts');
+  assert.equal(start.run, 1, 'mount starts exactly one throw');
+  assert.equal(start.final, values.R, 'the model-provided result is preserved separately');
+  assert.equal(start.readHidden, 'true', 'the verdict waits for the landing');
+
+  await new Promise((resolve) => setTimeout(resolve, 1800));
+
+  const landed = await page.evaluate(() => {
+    const root = document.querySelector('.vld-dice');
+    const stage = root.querySelector('.arena');
+    return {
+      settled: root.querySelector('.throw').classList.contains('is-settled'),
+      rolling: root.querySelector('.throw').classList.contains('is-rolling'),
+      result: root.querySelector('.roll').textContent,
+      bounces: Number(stage.dataset.bounces || 0),
+      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+    };
+  });
+
+  assert.equal(landed.settled, true, 'the die reaches a settled state');
+  assert.equal(landed.rolling, false, 'rolling state is cleared on landing');
+  assert.equal(landed.result, values.R, 'landing restores the model-provided result');
+  assert.equal(landed.bounces, 2, 'the visual physics performs two impacts');
+  assert.equal(landed.readHidden, 'false', 'the verdict is revealed only after landing');
+
+  await page.click('.vld-dice .die');
+  const replay = await page.evaluate(() => {
+    const root = document.querySelector('.vld-dice');
+    return {
+      rolling: root.querySelector('.throw').classList.contains('is-rolling'),
+      run: Number(root.dataset.diceRun || 0),
+      final: root.querySelector('.roll').dataset.final,
+    };
+  });
+
+  assert.equal(replay.rolling, true, 'clicking the die replays the throw');
+  assert.equal(replay.run, 2, 'replay starts one new run');
+  assert.equal(replay.final, values.R, 'replay cannot change the model-provided result');
+
+  const reduced = await browser.newPage();
+  await reduced.emulateMediaFeatures([
+    { name: 'prefers-reduced-motion', value: 'reduce' },
+  ]);
+  await reduced.setContent(`<!doctype html><meta charset="utf-8">${widget}`, { waitUntil: 'load' });
+
+  const still = await reduced.evaluate(() => {
+    const root = document.querySelector('.vld-dice');
+    return {
+      rolling: root.querySelector('.throw').classList.contains('is-rolling'),
+      settled: root.querySelector('.throw').classList.contains('is-settled'),
+      result: root.querySelector('.roll').textContent,
+      readHidden: root.querySelector('.read').getAttribute('aria-hidden'),
+    };
+  });
+
+  assert.equal(still.rolling, false, 'reduced motion does not start the throw');
+  assert.equal(still.settled, true, 'reduced motion starts at the resting state');
+  assert.equal(still.result, values.R, 'reduced motion keeps the final result');
+  assert.equal(still.readHidden, 'false', 'reduced motion keeps the verdict readable');
+
+  console.log('✓ dice motion: throw, two impacts, final result, replay');
+} finally {
+  await browser.close();
+}
