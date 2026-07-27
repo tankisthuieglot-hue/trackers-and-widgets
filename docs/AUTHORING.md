@@ -1,30 +1,36 @@
-# Как сделать трекер
+# Authoring a tracker
 
-Скопируй `src/hud/`, переименуй папку — имя папки становится CSS-классом
-(`src/wallet/` → `.vld-wallet`).
+Copy an existing folder from `src/` and rename it. The folder name becomes the
+widget's required CSS scope:
 
-```
+```text
 src/wallet/
-  tracker.json    что модель пишет и на каких языках
-  widget.html     что видит читатель
-  widget.css      как это выглядит
-  widget.js       необязательно
+├── tracker.json    marker contract, languages, and examples
+├── widget.html     inner widget markup
+├── widget.css      scoped visual design
+└── widget.js       optional interaction or motion
 ```
 
-Дальше `npm run check && npm run build`, и `npm run preview` чтобы посмотреть.
+Run:
 
-Сборка кладёт в `dist/wallet/<язык>/` три файла: промпт для пресета,
-регекс и чистилку. Промпт и регекс берутся из одного описания полей, поэтому
-обещать поле, которого регекс не ловит, физически невозможно.
+```bash
+npm run check
+npm run build
+npm run preview
+```
 
-## tracker.json
+The build writes three installable files per language to
+`dist/wallet/<language>/`. Prompt and regex are generated from the same field
+contract, so they cannot silently drift apart.
+
+## `tracker.json`
 
 ```json
 {
   "tag": "VLD_WALLET",
   "title": "💳 VLD WALLET",
   "order": 12,
-  "previewLang": "ru",
+  "previewLang": "en",
   "fields": [
     { "key": "T", "desc": "card or app name" },
     { "key": "B", "desc": "balance" }
@@ -34,106 +40,83 @@ src/wallet/
       "chrome": { "balance": "Balance" },
       "when": "money changes hands and it matters",
       "dont": "every small purchase",
-      "example": { "T": "Chase Sapphire", "B": "$184.20" }
-    },
-    "ru": {
-      "chrome": { "balance": "Баланс" },
-      "when": "деньги переходят из рук в руки и это важно",
-      "dont": "каждая мелкая трата",
-      "example": { "T": "Т-Банк Black", "B": "18 742 ₽" }
+      "example": { "T": "Sapphire", "B": "$184.20" }
     }
   }
 }
 ```
 
-| Поле | Зачем |
+### Tracker properties
+
+| Property | Meaning |
 |---|---|
-| `tag` | `VLD_` + заглавные. Уникален в паке. |
-| `order` | 10–98. 00–03 и 99 заняты служебными скриптами. |
-| `previewLang` | какой язык показывает превью. По умолчанию первый. |
-| `fields` | порядок задаёт номера `$1`, `$2`, … в разметке |
-| `preview` | необязательно: список состояний для превью вместо одного примера |
+| `tag` | Unique `VLD_` marker written in uppercase |
+| `order` | Unique number from 10 to 98; service scripts reserve 00–03 and 99 |
+| `previewLang` | Language used by screenshots and previews |
+| `fields` | Field order determines `$1`, `$2`, and later replacement slots |
+| `preview` | Optional list of preview states instead of one language example |
 
-У поля:
+### Field properties
 
-| Ключ | Зачем |
+| Property | Meaning |
 |---|---|
-| `desc` | описание для промпта, если не задан `legend` |
-| `type` | `"num"` — только цифры. `"level"` — целое 0–10. |
-| `of` | закрытый список слов; всё остальное captures пустым |
-| `optional` | слот можно не заполнять; тогда и в `example` он не нужен |
+| `desc` | Prompt description used when a language has no custom `legend` |
+| `type: "num"` | Accept digits only |
+| `type: "level"` | Accept an integer from 0 to 10 |
+| `of` | Closed lowercase enum; every other value captures as empty |
+| `optional` | The language example does not have to populate this field |
 
-`of` — способ пустить решение модели прямо в CSS-класс. Список попадает в
-регулярку как `(blur|poison|bleed)`, поэтому выдуманное слово не совпадёт
-вообще и виджет останется в обычном виде:
+An enum can safely become a CSS class:
 
 ```json
 { "key": "EF", "optional": true, "of": ["blur", "poison", "bleed"] }
 ```
 
-```css
-.vld-hud .fx-blur .bars { filter: blur(3.4px); }
+```html
+<div class="panel fx-$3">
 ```
 
-Такое поле безопасно в атрибуте: проверка требует, чтобы в списке были только
-строчные слова, поэтому кавычке взяться неоткуда. Проверяй классы **поимённо** —
-при пустом поле класс становится буквально `fx-`, и `[class*="fx-"]` примет это
-за эффект.
+```css
+.vld-wallet .fx-blur .value { filter: blur(3px); }
+```
 
-У языка:
+Check effect classes by exact name. An empty enum becomes the literal class
+`fx-`, so `[class*="fx-"]` would incorrectly treat an absent effect as active.
 
-| Ключ | Зачем |
+### Language properties
+
+| Property | Meaning |
 |---|---|
-| `when` | попадает в промпт как `FIRE:` — когда маркер уместен |
-| `dont` | попадает как `SKIP:` — когда нет |
-| `chrome` | значения подстановок `%имя%` из разметки |
-| `example` | эталон для модели, должен быть заполнен целиком |
-| `legend` | необязательно: своё описание полей вместо собранного из `desc` |
+| `when` | Becomes the prompt's `FIRE:` rule |
+| `dont` | Becomes the prompt's `SKIP:` rule |
+| `chrome` | Fixed UI labels replacing `%name%` placeholders |
+| `example` | Complete model-facing marker example |
+| `exampleLabel` | Optional localized “Example” label |
+| `legend` | Optional hand-written field rules |
 
-### Потолок в 600 токенов
+Every generated prompt has a hard 600-token ceiling. This limit covers the
+entire block: fire and skip rules, empty marker template, field legend, and
+filled example. If a prompt grows too large, remove unnecessary fields and
+shorten the example before weakening important constraints.
 
-Виджет бесплатный, промпт — нет, и платится он каждым запросом до конца
-переписки. Поэтому на трекер отведено 600 токенов, и проверка считает не
-`legend`, а весь блок целиком, ровно как он ляжет в файл: `FIRE`, `SKIP`,
-пустой шаблон маркера, легенда и пример.
+The model may emit fields in any order and omit any field. The generated marker
+grammar handles both.
 
-Русский влезает труднее английского — кириллица дороже почти вдвое. Если не
-хватает, режь не пояснения, а сам список: поле, про которое приходится писать
-абзац, обычно лишнее. Второй по эффективности приём — укоротить `example`:
-он считается дважды, шаблоном и заполненным.
+## `widget.html`
 
-Порядок полей в `fields` определяет только нумерацию `$n`. Модель может
-выводить поля в любом порядке и пропускать любые — грамматика это переживёт.
+Write only the widget's inner markup. The build adds the root
+`<div class="vld-w vld-wallet">`.
 
-## Языки
+Use `$1`, `$2`, and later slots according to field order. Every declared field
+must appear at least once; asking the model for an unused field wastes tokens
+and fails validation.
 
-Трекер собирается по разу на каждый язык из `lang`. Грамматика, разметка и
-стили общие; промпт и подписи виджета — нет.
+### Values inside attributes
 
-Подписи, которые модель не пишет («При себе», «Одет»), ставятся в разметке как
-`%carrying%` и берутся из `chrome`. Проверка не даст собрать пак, если для
-какого-то языка перевода нет или наоборот в `chrome` лежит лишнее.
-
-Значения внутри маркера модель пишет на языке ролевой — это указано в самом
-промпте, менять ничего не нужно.
-
-## widget.html
-
-Только внутренности. Корневой `<div class="vld-w vld-wallet">` добавляет сборка —
-так гарантируется, что виджет попадёт под наблюдение скрипта производительности
-и под свои же стили.
-
-Поля подставляются как `$1`, `$2` по порядку из `fields`. Каждое должно быть
-использовано хотя бы раз: поле, которое просят у модели и выбрасывают, — это
-оплаченные токены в никуда, и проверка на это ругается.
-
-### Значение в атрибуте
-
-Число можно превратить в класс и рисовать по нему без единой строчки
-JavaScript:
+Only `num`, `level`, or enum fields may be interpolated into HTML attributes:
 
 ```html
-<span class="bar lv-$4"><span class="fill"></span></span>
+<span class="bar lv-$2"><span class="fill"></span></span>
 ```
 
 ```css
@@ -141,81 +124,46 @@ JavaScript:
 .vld-wallet .lv-2 .fill { width: 20%; }
 ```
 
-Модель прислала `2` — заливка на 20%. Прислала чушь — не совпадёт ни одно
-правило, шкала останется пустой, вёрстка целой.
+Free text in an attribute is unsafe because a quote supplied by the model could
+close the attribute. The validator rejects it.
 
-Поле, которое так используется, обязано быть `"type": "num"` или `"level"`.
-Иначе кавычка в значении закроет атрибут и всё, что дальше, станет разметкой.
-`npm run check` не даст собрать пак без этого.
+`level` is intentionally forgiving: a model using `87` on a 0–100 scale is
+read as 8, and `100` is read as 10.
 
-`level` заодно прощает модели чужую шкалу: из `87` возьмёт `8`, из `100` — `10`.
-Иначе виджет, посчитанный по стобалльной, молча остался бы пустым.
+### Missing or malformed fields
 
-### Угловая скобка
-
-Подстановка — это склейка строк: экранировать значение негде, SillyTavern не
-даёт такого места. Поэтому текстовые поля грамматика обрывает на `<`.
-
-```
-[[VLD_HUD|N=<script>alert(1)</script>|B1=Здоровье|V1=6]]
-```
-
-Раньше это доезжало до читателя настоящим тегом. Теперь `N` захватится пустым,
-строка с именем исчезнет, остальной маркер разберётся как обычно. `>` разрешён:
-сам по себе он обычный текст.
-
-Значит, `<` не должно быть и в `example` — иначе модель училась бы по обрубку.
-Проверка на это ругается отдельно, не дожидаясь провала разбора.
-
-### Модель что-то пропустила
-
-Пустое поле даёт пустую строку — прячь её через `:has()`:
+Text captures stop before `<`, preventing model-written tags from becoming
+markup. Empty values should hide their own row:
 
 ```css
-.vld-wallet .entry:has(.v:empty) { display: none; }
+.vld-wallet .entry:has(.value:empty) { display: none; }
 ```
 
-Тем же приёмом виджет читает собственное состояние: `.panel:has(.lv-1, .lv-2)`
-верно ровно тогда, когда хоть одна шкала на исходе.
+Unknown fields are ignored. For unbounded content such as an inventory, prefer
+one comma-separated text field over a fixed number of item slots.
 
-Лишние поля, которых нет в контракте, грамматика игнорирует молча. Если модель
-выдаст четыре предмета там, где ты ждал три, — четвёртый не отрисуется, а не
-сломает вёрстку. Когда количество принципиально не ограничено (инвентарь,
-список треков), бери одно поле с перечислением через запятую вместо слотов.
+## `widget.css`
 
-## widget.css
-
-Каждый селектор обязан содержать `.vld-<имя>`. Проверяется автоматически.
+Every selector must contain `.vld-<folder-name>`:
 
 ```css
-.vld-wallet { }            /* да */
-.vld-wallet .card { }      /* да — самая безопасная форма */
-.vld-wallet.compact { }    /* да */
-.card { }                  /* нет: заденет чужую разметку в чате */
+.vld-wallet { }             /* valid */
+.vld-wallet .card { }       /* valid and preferred */
+.card { }                   /* invalid: leaks into the chat page */
 ```
 
-Внутренние элементы называй коротко (`.card`, `.head`) и доставай через потомка.
-Префиксовать их не надо — предок уже всё ограничил.
+Use fixed colors that remain readable on both light and dark chat backgrounds.
+Animations are welcome, but `prefers-reduced-motion` must disable them.
+`00-perf.json` pauses off-screen Vladislav widgets.
 
-Единственное, что проверка не ловит: `.vld-wallet + div` заденет соседа виджета.
-Соседские комбинаторы применяй только внутри виджета.
+## `widget.js`
 
-Цвета фиксированные. Виджет — предмет, лежащий на странице, а не элемент
-интерфейса: тему SillyTavern он всё равно не видит. Отсюда требование —
-читаться на любой подложке. Превью показывает его сразу на светлом и тёмном
-фоне.
+JavaScript is optional and depends on
+[SillyTavern-JS-support](https://github.com/MiNtorikaSoul/SillyTavern-JS-support).
+Prefer CSS when it can provide the same result.
 
-Анимации можно и нужно: `00 PERF` глушит их за пределами экрана, ради этого он
-и написан. Но `prefers-reduced-motion` обязан отключать всё движение.
-
-## widget.js
-
-Необязателен, и чем меньше на нём держится, тем лучше: без расширения
-[SillyTavern-JS-support](https://github.com/MiNtorikaSoul/SillyTavern-JS-support)
-он не выполнится. Всё, что можно сделать на CSS, делай на CSS.
-
-Тело функции, в котором уже есть `root` — корневой элемент виджета. Сборка сама
-оборачивает его и защищает от повторного запуска.
+The build wraps `widget.js` in a function where `root` already points to this
+widget instance:
 
 ```js
 root.querySelectorAll('.item').forEach(function (item) {
@@ -225,51 +173,47 @@ root.querySelectorAll('.item').forEach(function (item) {
 });
 ```
 
-Скрипт выполняется один раз на каждый виджет, а в длинной переписке их
-накапливается много. Разовые `setTimeout` нормальны, постоянные `setInterval` —
-нет. За пределы `root` не выходи.
+Keep all queries and mutations inside `root`. One-shot timeouts are fine;
+permanent intervals are not. Long chats can contain many widget instances.
 
-Виджет **не должен зависеть от прошлых сообщений**. Маркеры вырезаются из
-контекста на глубине 3, так что модель не помнит, что выводила раньше, и
-следующее значение поставит заново. Всё, что показывает виджет, должно
-выводиться из одного маркера.
+A widget must not depend on markers from old messages. Markers are removed from
+model context after depth 3, so everything needed to render a widget must be
+present in its own marker.
 
-## Что проверяет `npm run check`
+For a one-shot animation in a streamed response, do not subscribe to a
+generation event from inside the widget: JS-support may revive the script after
+that event has already fired. Instead, wait for the containing `.mes_text` DOM
+to stop changing. See `src/dice/widget.js`.
 
-- тег уникален и подходит под `VLD_[A-Z0-9_]+`
-- `order` уникален и лежит в 10–98
-- ключи полей уникальны и записаны как `T`, `D`, `I1`
-- каждое поле описано — через `desc` или через `legend` своего языка
-- каждое поле использовано в разметке, и разметка не ссылается на несуществующее
-- нечисловое поле не подставляется в HTML-атрибут
-- у каждой подстановки `%имя%` есть перевод на каждый язык, и лишних нет
-- в примерах нет `|`, `]` и переносов строки
-- маркер, собранный из примера каждого языка, разбирается собственным регексом
-  обратно в те же значения — единственная проверка, доказывающая, что промпт и
-  регекс сходятся
-- промпт целиком укладывается в 600 токенов
-- каждый селектор содержит класс трекера
+## Validation
 
-## Чем ещё посмотреть
+`npm run check` verifies:
+
+- unique tags matching `VLD_[A-Z0-9_]+`
+- unique order values from 10 to 98
+- valid and unique field keys
+- descriptions or legends for every field
+- exact agreement between field slots and widget markup
+- attribute-safe interpolations
+- complete and non-redundant `%chrome%` translations
+- examples without marker delimiters, newlines, or `<`
+- round-trip parsing of every language example through the real regex
+- the complete prompt under 600 tokens
+- tracker CSS scope in every selector
+
+`npm test` then runs malformed markers through the built regex files in English
+and Russian. It checks reordered and missing fields, numeric garbage, invalid
+enums, quotes, tag injection, unclosed markers, and tag typos.
+
+## Visual tooling
 
 ```bash
-node tools/shot.mjs            картинка каждого трекера в docs/media/shots/
-node tools/shot.mjs --sheet    все на одном листе, для README
-node tools/adversarial.mjs ru  кривые маркеры через собранный пак
-node tools/record.mjs ru clock гифка трекера, зацикленная
+node tools/shot.mjs
+node tools/shot.mjs --sheet
+node tools/adversarial.mjs en
+node tools/record.mjs en dice
 ```
 
-`record` листает состояния из `preview` — по одному на кадр-беат, и каждый
-переход заново проигрывает появление. HUD снимается по написанному вручную
-сценарию: он единственный, с кем можно что-то сделать — раскрыть инвентарь,
-нажать на замутнённые показания, — и общий цикл этого не покажет.
-
-Состояния `preview` написаны на языке из `previewLang`; для другого языка
-снимается его `example`, иначе в кадре окажется русский текст под английскими
-подписями.
-
-`adversarial` строит случаи из полей самого трекера, поэтому новый трекер
-попадает под обстрел без единой строчки в тесте: переставленные поля, мусор в
-числах, чужое слово вместо списка, кавычка, `<script>`, незакрытые скобки,
-опечатка в теге. Утечка сырого текста или побег из атрибута — ненулевой код
-возврата.
+`shot.mjs` writes individual tracker images to `docs/media/shots/` and can build
+the collection sheet used by the README. `record.mjs` uses preview states to
+create a deterministic looping GIF.
