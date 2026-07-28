@@ -1,0 +1,130 @@
+{
+  "tag": "VLD_REL",
+  "title": "💗 VLD RELATIONSHIP",
+  "order": 22,
+  "previewLang": "en",
+  "fields": [
+    { "key": "N", "desc": "NPC name" },
+    { "key": "Q", "desc": "short narrator comment about this NPC's attitude toward user" },
+    { "key": "S", "desc": "NPC relationship status toward user" },
+    { "key": "C", "desc": "NPC current clothing" },
+    { "key": "E1", "of": ["friendship", "love", "trust", "respect", "interest", "fear", "jealousy", "hostility"], "desc": "first relevant feeling toward user" },
+    { "key": "V1", "type": "num", "desc": "first feeling strength, 0 to 100" },
+    { "key": "E2", "of": ["friendship", "love", "trust", "respect", "interest", "fear", "jealousy", "hostility"], "optional": true, "desc": "second relevant feeling toward user" },
+    { "key": "V2", "type": "num", "optional": true, "desc": "second feeling strength, 0 to 100" },
+    { "key": "E3", "of": ["friendship", "love", "trust", "respect", "interest", "fear", "jealousy", "hostility"], "optional": true, "desc": "third relevant feeling toward user" },
+    { "key": "V3", "type": "num", "optional": true, "desc": "third feeling strength, 0 to 100" }
+  ],
+  "lang": {
+    "en": {
+      "exampleLabel": "Example",
+      "chrome": {
+        "wearing": "wearing",
+        "percent": "%",
+        "friendship": "friendship",
+        "love": "love",
+        "trust": "trust",
+        "respect": "respect",
+        "interest": "interest",
+        "fear": "fear",
+        "jealousy": "jealousy",
+        "hostility": "hostility"
+      },
+      "when": "a named NPC is present and their relationship toward {{user}} is relevant to the scene",
+      "dont": "no named NPC is present, or the values would describe {{user}} instead of the NPC",
+      "legend": "N the NPC's name. Q a blunt narrator comment, 2–7 words, about this NPC's attitude toward {{user}}.\nS their relationship status toward {{user}}, not their job. C what that NPC is visibly wearing now.\nE1–E3 exactly three relevant feelings or relationship signals toward {{user}}, chosen from:\n  friendship, love, trust, respect, interest, fear, jealousy, hostility.\nV1–V3 their strengths from 0 to 100. These are the NPC's values only.\nUse one marker per relevant NPC, at most three markers. If no NPC qualifies, output nothing.\nNever describe {{user}}'s emotions, clothing, status, wishes or decisions.\nWrite N, Q, S and C in the roleplay language; keep E values as listed.",
+      "example": {
+        "N": "Marisha",
+        "Q": "She still saves you a seat.",
+        "S": "close friend",
+        "C": "black coat, wet gloves",
+        "E1": "friendship",
+        "V1": "38",
+        "E2": "trust",
+        "V2": "21",
+        "E3": "interest",
+        "V3": "12"
+      }
+    },
+    "ru": {
+      "exampleLabel": "Пример",
+      "chrome": {
+        "wearing": "одежда",
+        "percent": "%",
+        "friendship": "дружба",
+        "love": "любовь",
+        "trust": "доверие",
+        "respect": "уважение",
+        "interest": "интерес",
+        "fear": "страх",
+        "jealousy": "ревность",
+        "hostility": "враждебность"
+      },
+      "when": "в сцене присутствует названный NPC и его отношение к {{user}} имеет значение",
+      "dont": "в сцене нет названного NPC или значения описывали бы {{user}}, а не NPC",
+      "legend": "N имя NPC. Q резкий комментарий рассказчика на 2–7 слов об отношении этого NPC к {{user}}.\nS его статус отношений с {{user}}, а не профессия. C во что этот NPC явно одет сейчас.\nE1–E3 ровно три актуальных чувства или показателя отношения к {{user}} из списка:\n  friendship, love, trust, respect, interest, fear, jealousy, hostility.\nV1–V3 их сила от 0 до 100. Это показатели только NPC.\nОдин маркер на значимого NPC, не больше трёх маркеров. Нет подходящих NPC — не пиши ничего.\nНикогда не описывай эмоции, одежду, статус, желания или решения {{user}}.\nN, Q, S и C пиши на языке ролевой; значения E оставляй как в списке.",
+      "example": {
+        "N": "Мариша",
+        "Q": "Она всё ещё оставляет тебе место.",
+        "S": "близкая подруга",
+        "C": "чёрное пальто, мокрые перчатки",
+        "E1": "friendship",
+        "V1": "38",
+        "E2": "trust",
+        "V2": "21",
+        "E3": "interest",
+        "V3": "12"
+      }
+    }
+  },
+  "preview": [
+    {
+      "N": "Marisha",
+      "Q": "She still saves you a seat.",
+      "S": "close friend",
+      "C": "black coat, wet gloves",
+      "E1": "friendship",
+      "V1": "38",
+      "E2": "trust",
+      "V2": "21",
+      "E3": "interest",
+      "V3": "12"
+    },
+    {
+      "N": "Irene",
+      "Q": "She is hopelessly in love with you.",
+      "S": "partner",
+      "C": "white shirt, loosened tie",
+      "E1": "love",
+      "V1": "86",
+      "E2": "trust",
+      "V2": "72",
+      "E3": "friendship",
+      "V3": "64"
+    },
+    {
+      "N": "Quartermaster Vale",
+      "Q": "You terrify him.",
+      "S": "former ally",
+      "C": "uniform coat buttoned to the throat",
+      "E1": "fear",
+      "V1": "91",
+      "E2": "hostility",
+      "V2": "44",
+      "E3": "trust",
+      "V3": "8"
+    },
+    {
+      "N": "Nadia",
+      "Q": "She hates how interesting you are.",
+      "S": "rival",
+      "C": "wine-coloured jacket, silver rings",
+      "E1": "jealousy",
+      "V1": "76",
+      "E2": "respect",
+      "V2": "58",
+      "E3": "interest",
+      "V3": "47"
+    }
+  ]
+}

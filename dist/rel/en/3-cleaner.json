@@ -1,0 +1,17 @@
+{
+ "id": "26e5a18f-3d67-5817-a1f5-a905fbf9a16e",
+ "scriptName": "💗 VLD RELATIONSHIP · clean",
+ "findRegex": "/\\[\\[VLD_REL(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

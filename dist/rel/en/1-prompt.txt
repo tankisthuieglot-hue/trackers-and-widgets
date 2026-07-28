@@ -1,0 +1,17 @@
+<vld:rel>
+FIRE: a named NPC is present and their relationship toward {{user}} is relevant to the scene
+SKIP: no named NPC is present, or the values would describe {{user}} instead of the NPC
+
+[[VLD_REL|N=|Q=|S=|C=|E1=|V1=|E2=|V2=|E3=|V3=]]
+
+N the NPC's name. Q a blunt narrator comment, 2–7 words, about this NPC's attitude toward {{user}}.
+S their relationship status toward {{user}}, not their job. C what that NPC is visibly wearing now.
+E1–E3 exactly three relevant feelings or relationship signals toward {{user}}, chosen from:
+  friendship, love, trust, respect, interest, fear, jealousy, hostility.
+V1–V3 their strengths from 0 to 100. These are the NPC's values only.
+Use one marker per relevant NPC, at most three markers. If no NPC qualifies, output nothing.
+Never describe {{user}}'s emotions, clothing, status, wishes or decisions.
+Write N, Q, S and C in the roleplay language; keep E values as listed.
+
+Example: [[VLD_REL|N=Marisha|Q=She still saves you a seat.|S=close friend|C=black coat, wet gloves|E1=friendship|V1=38|E2=trust|V2=21|E3=interest|V3=12]]
+</vld:rel>

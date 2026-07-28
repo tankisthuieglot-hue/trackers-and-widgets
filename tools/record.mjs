@@ -231,6 +231,20 @@ const CLOCK_FILM_EN = (() => {
   };
 })();
 
+/*
+ * Relationship markers can appear several times in one message. Their scripts
+ * merge the separate cards into one tabbed deck, so the showcase mounts three
+ * NPC markers together and then visits every tab.
+ */
+const REL_FILM_EN = {
+  states: [[...(tracker.preview ?? [lang.example]).slice(0, 3)]],
+  script: [
+    { hold: 2.2, label: 'friendship tab', act: 'show-0' },
+    { hold: 2.0, label: 'love tab', act: 'rel-tab-1' },
+    { hold: 2.3, label: 'fear tab', act: 'rel-tab-2', poster: true },
+  ],
+};
+
 /**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
@@ -264,14 +278,18 @@ const film = NAME === 'hud'
           ? ACH_FILM_EN
           : (NAME === 'clock' && LANG === 'en'
               ? CLOCK_FILM_EN
-              : autoFilm(tracker, lang))));
+              : (NAME === 'rel' && LANG === 'en'
+                  ? REL_FILM_EN
+                  : autoFilm(tracker, lang)))));
 const { states: STATES, script } = film;
 
-const fill = (values) =>
-  renderWidget(tracker, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
+function fill(values) {
+  if (Array.isArray(values)) return values.map(fill).join('');
+  return renderWidget(tracker, lang.chrome).replace(/\$(\d+)/g, (_, n) => {
     const field = tracker.fields[Number(n) - 1];
     return field ? String(values[field.key] ?? '') : '';
   });
+}
 
 const total = script.reduce((n, b) => n + Math.round(b.hold * FPS), 0);
 const page = await open();
@@ -369,6 +387,14 @@ function stage() {
     if (shown) {
       mountedAt = clock;
       mount(STATES[Number(shown[1])]);
+    }
+    const relationshipTab = /^rel-tab-(\\d+)$/.exec(what);
+    if (relationshipTab) {
+      const button = slot.querySelectorAll('.deck-tab')[Number(relationshipTab[1])];
+      if (button) {
+        button.click();
+        mountedAt = clock;
+      }
     }
     // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
     // разметке нет, поэтому обращения к ним и не случится.
