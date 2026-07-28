@@ -7474,6 +7474,8 @@
     <div class="dial">
       <span class="fill"></span>
       <span class="spokes"></span>
+      <span class="impact"></span>
+      <span class="hand"></span>
       <span class="hub"><b>4</b><em>/6</em></span>
     </div>
 
@@ -7526,6 +7528,11 @@
       --turn: 0deg;
       --seg: 60deg;
       --tone: var(--cool);
+      --live-turn: var(--turn);
+      --hand-turn: var(--turn);
+      --impact: 0;
+      --kick-y: 0px;
+      --kick-r: 0deg;
 
       display: grid;
       grid-template-columns: 78px 1fr;
@@ -7549,20 +7556,19 @@
       border-radius: 50%;
       background: rgba(233, 231, 226, .045);
       box-shadow: inset 0 0 0 1px rgba(233, 231, 226, .16);
+      transform: translateY(var(--kick-y)) rotate(var(--kick-r));
+      transform-origin: 50% 56%;
+      will-change: transform;
     }
 
     .vld-clock .fill {
       position: absolute;
       inset: 3px;
       border-radius: 50%;
-      background: conic-gradient(rgba(var(--tone), .82) var(--turn), transparent 0);
-      animation: vld-clock-sweep .8s cubic-bezier(.3, .8, .3, 1) both;
-    }
-
-    /* Сектор набирается от нуля до своего угла — видно, что часы именно
-       заполнились, а не были такими всегда. */
-    @keyframes vld-clock-sweep {
-      from { background: conic-gradient(rgba(var(--tone), .82) 0deg, transparent 0); }
+      z-index: 0;
+      background:
+        radial-gradient(circle at 48% 28%, rgba(255, 255, 255, .13), transparent 38%),
+        conic-gradient(rgba(var(--tone), .86) var(--live-turn), transparent 0);
     }
 
     /* Спицы режут круг на деления. Шаг приезжает переменной, поэтому правило
@@ -7570,6 +7576,7 @@
     .vld-clock .spokes {
       position: absolute;
       inset: 0;
+      z-index: 1;
       border-radius: 50%;
       background: repeating-conic-gradient(
         from 0deg,
@@ -7577,9 +7584,67 @@
         transparent 1.6deg var(--seg));
     }
 
+    .vld-clock .impact {
+      position: absolute;
+      inset: -3px;
+      z-index: 2;
+      border: 1px solid rgba(var(--tone), .9);
+      border-radius: 50%;
+      opacity: var(--impact);
+      transform: scale(calc(1 + var(--impact) * .13));
+      box-shadow: 0 0 18px rgba(var(--tone), calc(var(--impact) * .45));
+      pointer-events: none;
+    }
+
+    /* A full-size rotating carrier keeps the needle's pivot exactly in the centre.
+       Only its upper half is painted, so it reads as a scanner rather than a hand
+       on an ordinary wall clock. */
+    .vld-clock .hand {
+      position: absolute;
+      inset: 7px;
+      z-index: 3;
+      border-radius: 50%;
+      transform: rotate(var(--hand-turn));
+      transform-origin: 50% 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .vld-clock .hand::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 50%;
+      left: 50%;
+      width: 2px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, .76),
+        rgb(var(--tone)) 58%,
+        rgba(var(--tone), .28)
+      );
+      box-shadow: 0 0 7px rgba(var(--tone), .72);
+      transform: translateX(-50%);
+    }
+
+    .vld-clock .hand::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgb(var(--tone));
+      box-shadow: 0 0 8px rgba(var(--tone), .85);
+      transform: translateX(-50%);
+    }
+
     .vld-clock .hub {
       position: absolute;
       inset: 21px;
+      z-index: 4;
       display: grid;
       place-content: center;
       border-radius: 50%;
@@ -7629,9 +7694,9 @@
 
     /* Круг замкнулся — циферблат дышит красным, и это единственное место в
        виджете, где движение не декоративное. */
-    .vld-clock .s-4.f-4 .dial,
-    .vld-clock .s-6.f-6 .dial,
-    .vld-clock .s-8.f-8 .dial {
+    .vld-clock .s-4.f-4.is-settled .dial,
+    .vld-clock .s-6.f-6.is-settled .dial,
+    .vld-clock .s-8.f-8.is-settled .dial {
       animation: vld-clock-alarm 1.4s ease-in-out infinite;
     }
 
@@ -7687,9 +7752,9 @@
       color: rgb(var(--crit));
     }
 
-    .vld-clock .s-4.f-4 .siren,
-    .vld-clock .s-6.f-6 .siren,
-    .vld-clock .s-8.f-8 .siren {
+    .vld-clock .s-4.f-4.is-settled .siren,
+    .vld-clock .s-6.f-6.is-settled .siren,
+    .vld-clock .s-8.f-8.is-settled .siren {
       display: block;
       animation: vld-clock-blink 1.4s steps(1, end) infinite;
     }
@@ -7718,12 +7783,185 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-clock:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var unit = root.querySelector('.unit');
+      var counter = unit.querySelector('.hub b');
+      var finalFilled = parseInt(counter.textContent, 10);
+      var totalSegments = parseInt(unit.className.match(/\bs-(\d+)\b/)?.[1], 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var LEAD = 110;
+      var STEP = 125;
+      var IMPACT = 72;
+      var SETTLE = 110;
+      var duration = LEAD + finalFilled * STEP + SETTLE;
+      var frameId = 0;
+      var startedAt = 0;
+      var runId = 0;
+      var autoTimer = 0;
+      var autoObserver = null;
+
+      var valid = [4, 6, 8].includes(totalSegments)
+        && !isNaN(finalFilled)
+        && finalFilled >= 0
+        && finalFilled <= totalSegments;
+
+      if (valid) {
+        if (reduced || finalFilled === 0) {
+          settle();
+        } else {
+          queueAutomaticRun();
+        }
+      }
+
+      /*
+       * The GIF recorder seeks this same timeline frame by frame. SillyTavern never
+       * calls it; the live widget advances through requestAnimationFrame below.
+       */
+      root.vldSeek = function (ms) {
+        cancelAutomaticStart();
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+        prepare();
+        paintAt(Number(ms) || 0);
+      };
+
+      /*
+       * JS-support can revive the script while the streamed message is still being
+       * morphed. Wait for a short quiet window so the one-shot locks happen after the
+       * final marker has become a stable widget.
+       */
+      function queueAutomaticRun() {
+        var message = root.closest('.mes_text');
+        if (!message || typeof MutationObserver !== 'function') {
+          run();
+          return;
+        }
+
+        function armAfterQuiet() {
+          if (autoTimer) clearTimeout(autoTimer);
+          root.dataset.clockAwaitingSettle = '1';
+          autoTimer = setTimeout(function () {
+            cancelAutomaticStart();
+            if (root.isConnected) run();
+          }, 180);
+        }
+
+        autoObserver = new MutationObserver(armAfterQuiet);
+        autoObserver.observe(message, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
+        armAfterQuiet();
+      }
+
+      function cancelAutomaticStart() {
+        if (autoTimer) clearTimeout(autoTimer);
+        autoTimer = 0;
+        if (autoObserver) autoObserver.disconnect();
+        autoObserver = null;
+        delete root.dataset.clockAwaitingSettle;
+      }
+
+      function run() {
+        if (!valid || reduced || finalFilled === 0) return;
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.clockRun = String(runId);
+        startedAt = performance.now();
+        prepare();
+        paintAt(0);
+        frameId = requestAnimationFrame(step);
+      }
+
+      function step(now) {
+        if (!root.isConnected) {
+          frameId = 0;
+          return;
+        }
+
+        var elapsed = now - startedAt;
+        paintAt(elapsed);
+
+        if (elapsed < duration) {
+          frameId = requestAnimationFrame(step);
+        } else {
+          frameId = 0;
+        }
+      }
+
+      function prepare() {
+        unit.classList.add('is-running');
+        unit.classList.remove('is-settled');
+      }
+
+      function paintAt(ms) {
+        var time = Math.max(0, Math.min(ms, duration));
+        var elapsed = Math.max(0, time - LEAD);
+        var locked = Math.min(finalFilled, Math.floor(elapsed / STEP));
+        var phase = locked < finalFilled
+          ? Math.max(0, Math.min(1, (elapsed - locked * STEP) / STEP))
+          : 0;
+        var eased = 1 - Math.pow(1 - phase, 3);
+        var segmentAngle = 360 / totalSegments;
+        var fillAngle = locked * segmentAngle;
+        var handAngle = locked < finalFilled
+          ? (locked + eased) * segmentAngle
+          : fillAngle;
+
+        var sinceImpact = elapsed - locked * STEP;
+        var impact = locked > 0 && sinceImpact >= 0 && sinceImpact < IMPACT
+          ? 1 - sinceImpact / IMPACT
+          : 0;
+
+        unit.dataset.locked = String(locked);
+        unit.style.setProperty('--live-turn', angle(fillAngle));
+        unit.style.setProperty('--hand-turn', angle(handAngle));
+        unit.style.setProperty('--impact', impact.toFixed(3));
+        unit.style.setProperty('--kick-y', (impact * 1.8).toFixed(2) + 'px');
+        unit.style.setProperty('--kick-r', (impact * -.85).toFixed(2) + 'deg');
+        counter.textContent = String(locked);
+
+        if (time >= duration) settle();
+      }
+
+      function settle() {
+        if (!valid) return;
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        var finalAngle = 360 * finalFilled / totalSegments;
+        unit.dataset.locked = String(finalFilled);
+        unit.style.setProperty('--live-turn', angle(finalAngle));
+        unit.style.setProperty('--hand-turn', angle(finalAngle));
+        unit.style.setProperty('--impact', '0');
+        unit.style.setProperty('--kick-y', '0px');
+        unit.style.setProperty('--kick-r', '0deg');
+        counter.textContent = String(finalFilled);
+        unit.classList.remove('is-running');
+        unit.classList.add('is-settled');
+      }
+
+      function angle(value) {
+        return String(Math.round(value * 1000) / 1000) + 'deg';
+      }
+    })();
+  </script>
 </div>
 <div class="vld-w vld-clock">
   <div class="unit s-4 f-4">
     <div class="dial">
       <span class="fill"></span>
       <span class="spokes"></span>
+      <span class="impact"></span>
+      <span class="hand"></span>
       <span class="hub"><b>4</b><em>/4</em></span>
     </div>
 
@@ -7776,6 +8014,11 @@
       --turn: 0deg;
       --seg: 60deg;
       --tone: var(--cool);
+      --live-turn: var(--turn);
+      --hand-turn: var(--turn);
+      --impact: 0;
+      --kick-y: 0px;
+      --kick-r: 0deg;
 
       display: grid;
       grid-template-columns: 78px 1fr;
@@ -7799,20 +8042,19 @@
       border-radius: 50%;
       background: rgba(233, 231, 226, .045);
       box-shadow: inset 0 0 0 1px rgba(233, 231, 226, .16);
+      transform: translateY(var(--kick-y)) rotate(var(--kick-r));
+      transform-origin: 50% 56%;
+      will-change: transform;
     }
 
     .vld-clock .fill {
       position: absolute;
       inset: 3px;
       border-radius: 50%;
-      background: conic-gradient(rgba(var(--tone), .82) var(--turn), transparent 0);
-      animation: vld-clock-sweep .8s cubic-bezier(.3, .8, .3, 1) both;
-    }
-
-    /* Сектор набирается от нуля до своего угла — видно, что часы именно
-       заполнились, а не были такими всегда. */
-    @keyframes vld-clock-sweep {
-      from { background: conic-gradient(rgba(var(--tone), .82) 0deg, transparent 0); }
+      z-index: 0;
+      background:
+        radial-gradient(circle at 48% 28%, rgba(255, 255, 255, .13), transparent 38%),
+        conic-gradient(rgba(var(--tone), .86) var(--live-turn), transparent 0);
     }
 
     /* Спицы режут круг на деления. Шаг приезжает переменной, поэтому правило
@@ -7820,6 +8062,7 @@
     .vld-clock .spokes {
       position: absolute;
       inset: 0;
+      z-index: 1;
       border-radius: 50%;
       background: repeating-conic-gradient(
         from 0deg,
@@ -7827,9 +8070,67 @@
         transparent 1.6deg var(--seg));
     }
 
+    .vld-clock .impact {
+      position: absolute;
+      inset: -3px;
+      z-index: 2;
+      border: 1px solid rgba(var(--tone), .9);
+      border-radius: 50%;
+      opacity: var(--impact);
+      transform: scale(calc(1 + var(--impact) * .13));
+      box-shadow: 0 0 18px rgba(var(--tone), calc(var(--impact) * .45));
+      pointer-events: none;
+    }
+
+    /* A full-size rotating carrier keeps the needle's pivot exactly in the centre.
+       Only its upper half is painted, so it reads as a scanner rather than a hand
+       on an ordinary wall clock. */
+    .vld-clock .hand {
+      position: absolute;
+      inset: 7px;
+      z-index: 3;
+      border-radius: 50%;
+      transform: rotate(var(--hand-turn));
+      transform-origin: 50% 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .vld-clock .hand::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 50%;
+      left: 50%;
+      width: 2px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, .76),
+        rgb(var(--tone)) 58%,
+        rgba(var(--tone), .28)
+      );
+      box-shadow: 0 0 7px rgba(var(--tone), .72);
+      transform: translateX(-50%);
+    }
+
+    .vld-clock .hand::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgb(var(--tone));
+      box-shadow: 0 0 8px rgba(var(--tone), .85);
+      transform: translateX(-50%);
+    }
+
     .vld-clock .hub {
       position: absolute;
       inset: 21px;
+      z-index: 4;
       display: grid;
       place-content: center;
       border-radius: 50%;
@@ -7879,9 +8180,9 @@
 
     /* Круг замкнулся — циферблат дышит красным, и это единственное место в
        виджете, где движение не декоративное. */
-    .vld-clock .s-4.f-4 .dial,
-    .vld-clock .s-6.f-6 .dial,
-    .vld-clock .s-8.f-8 .dial {
+    .vld-clock .s-4.f-4.is-settled .dial,
+    .vld-clock .s-6.f-6.is-settled .dial,
+    .vld-clock .s-8.f-8.is-settled .dial {
       animation: vld-clock-alarm 1.4s ease-in-out infinite;
     }
 
@@ -7937,9 +8238,9 @@
       color: rgb(var(--crit));
     }
 
-    .vld-clock .s-4.f-4 .siren,
-    .vld-clock .s-6.f-6 .siren,
-    .vld-clock .s-8.f-8 .siren {
+    .vld-clock .s-4.f-4.is-settled .siren,
+    .vld-clock .s-6.f-6.is-settled .siren,
+    .vld-clock .s-8.f-8.is-settled .siren {
       display: block;
       animation: vld-clock-blink 1.4s steps(1, end) infinite;
     }
@@ -7968,12 +8269,185 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-clock:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var unit = root.querySelector('.unit');
+      var counter = unit.querySelector('.hub b');
+      var finalFilled = parseInt(counter.textContent, 10);
+      var totalSegments = parseInt(unit.className.match(/\bs-(\d+)\b/)?.[1], 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var LEAD = 110;
+      var STEP = 125;
+      var IMPACT = 72;
+      var SETTLE = 110;
+      var duration = LEAD + finalFilled * STEP + SETTLE;
+      var frameId = 0;
+      var startedAt = 0;
+      var runId = 0;
+      var autoTimer = 0;
+      var autoObserver = null;
+
+      var valid = [4, 6, 8].includes(totalSegments)
+        && !isNaN(finalFilled)
+        && finalFilled >= 0
+        && finalFilled <= totalSegments;
+
+      if (valid) {
+        if (reduced || finalFilled === 0) {
+          settle();
+        } else {
+          queueAutomaticRun();
+        }
+      }
+
+      /*
+       * The GIF recorder seeks this same timeline frame by frame. SillyTavern never
+       * calls it; the live widget advances through requestAnimationFrame below.
+       */
+      root.vldSeek = function (ms) {
+        cancelAutomaticStart();
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+        prepare();
+        paintAt(Number(ms) || 0);
+      };
+
+      /*
+       * JS-support can revive the script while the streamed message is still being
+       * morphed. Wait for a short quiet window so the one-shot locks happen after the
+       * final marker has become a stable widget.
+       */
+      function queueAutomaticRun() {
+        var message = root.closest('.mes_text');
+        if (!message || typeof MutationObserver !== 'function') {
+          run();
+          return;
+        }
+
+        function armAfterQuiet() {
+          if (autoTimer) clearTimeout(autoTimer);
+          root.dataset.clockAwaitingSettle = '1';
+          autoTimer = setTimeout(function () {
+            cancelAutomaticStart();
+            if (root.isConnected) run();
+          }, 180);
+        }
+
+        autoObserver = new MutationObserver(armAfterQuiet);
+        autoObserver.observe(message, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
+        armAfterQuiet();
+      }
+
+      function cancelAutomaticStart() {
+        if (autoTimer) clearTimeout(autoTimer);
+        autoTimer = 0;
+        if (autoObserver) autoObserver.disconnect();
+        autoObserver = null;
+        delete root.dataset.clockAwaitingSettle;
+      }
+
+      function run() {
+        if (!valid || reduced || finalFilled === 0) return;
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.clockRun = String(runId);
+        startedAt = performance.now();
+        prepare();
+        paintAt(0);
+        frameId = requestAnimationFrame(step);
+      }
+
+      function step(now) {
+        if (!root.isConnected) {
+          frameId = 0;
+          return;
+        }
+
+        var elapsed = now - startedAt;
+        paintAt(elapsed);
+
+        if (elapsed < duration) {
+          frameId = requestAnimationFrame(step);
+        } else {
+          frameId = 0;
+        }
+      }
+
+      function prepare() {
+        unit.classList.add('is-running');
+        unit.classList.remove('is-settled');
+      }
+
+      function paintAt(ms) {
+        var time = Math.max(0, Math.min(ms, duration));
+        var elapsed = Math.max(0, time - LEAD);
+        var locked = Math.min(finalFilled, Math.floor(elapsed / STEP));
+        var phase = locked < finalFilled
+          ? Math.max(0, Math.min(1, (elapsed - locked * STEP) / STEP))
+          : 0;
+        var eased = 1 - Math.pow(1 - phase, 3);
+        var segmentAngle = 360 / totalSegments;
+        var fillAngle = locked * segmentAngle;
+        var handAngle = locked < finalFilled
+          ? (locked + eased) * segmentAngle
+          : fillAngle;
+
+        var sinceImpact = elapsed - locked * STEP;
+        var impact = locked > 0 && sinceImpact >= 0 && sinceImpact < IMPACT
+          ? 1 - sinceImpact / IMPACT
+          : 0;
+
+        unit.dataset.locked = String(locked);
+        unit.style.setProperty('--live-turn', angle(fillAngle));
+        unit.style.setProperty('--hand-turn', angle(handAngle));
+        unit.style.setProperty('--impact', impact.toFixed(3));
+        unit.style.setProperty('--kick-y', (impact * 1.8).toFixed(2) + 'px');
+        unit.style.setProperty('--kick-r', (impact * -.85).toFixed(2) + 'deg');
+        counter.textContent = String(locked);
+
+        if (time >= duration) settle();
+      }
+
+      function settle() {
+        if (!valid) return;
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        var finalAngle = 360 * finalFilled / totalSegments;
+        unit.dataset.locked = String(finalFilled);
+        unit.style.setProperty('--live-turn', angle(finalAngle));
+        unit.style.setProperty('--hand-turn', angle(finalAngle));
+        unit.style.setProperty('--impact', '0');
+        unit.style.setProperty('--kick-y', '0px');
+        unit.style.setProperty('--kick-r', '0deg');
+        counter.textContent = String(finalFilled);
+        unit.classList.remove('is-running');
+        unit.classList.add('is-settled');
+      }
+
+      function angle(value) {
+        return String(Math.round(value * 1000) / 1000) + 'deg';
+      }
+    })();
+  </script>
 </div></div>
     <div class="stage dark"><div class="vld-w vld-clock">
   <div class="unit s-6 f-4">
     <div class="dial">
       <span class="fill"></span>
       <span class="spokes"></span>
+      <span class="impact"></span>
+      <span class="hand"></span>
       <span class="hub"><b>4</b><em>/6</em></span>
     </div>
 
@@ -8026,6 +8500,11 @@
       --turn: 0deg;
       --seg: 60deg;
       --tone: var(--cool);
+      --live-turn: var(--turn);
+      --hand-turn: var(--turn);
+      --impact: 0;
+      --kick-y: 0px;
+      --kick-r: 0deg;
 
       display: grid;
       grid-template-columns: 78px 1fr;
@@ -8049,20 +8528,19 @@
       border-radius: 50%;
       background: rgba(233, 231, 226, .045);
       box-shadow: inset 0 0 0 1px rgba(233, 231, 226, .16);
+      transform: translateY(var(--kick-y)) rotate(var(--kick-r));
+      transform-origin: 50% 56%;
+      will-change: transform;
     }
 
     .vld-clock .fill {
       position: absolute;
       inset: 3px;
       border-radius: 50%;
-      background: conic-gradient(rgba(var(--tone), .82) var(--turn), transparent 0);
-      animation: vld-clock-sweep .8s cubic-bezier(.3, .8, .3, 1) both;
-    }
-
-    /* Сектор набирается от нуля до своего угла — видно, что часы именно
-       заполнились, а не были такими всегда. */
-    @keyframes vld-clock-sweep {
-      from { background: conic-gradient(rgba(var(--tone), .82) 0deg, transparent 0); }
+      z-index: 0;
+      background:
+        radial-gradient(circle at 48% 28%, rgba(255, 255, 255, .13), transparent 38%),
+        conic-gradient(rgba(var(--tone), .86) var(--live-turn), transparent 0);
     }
 
     /* Спицы режут круг на деления. Шаг приезжает переменной, поэтому правило
@@ -8070,6 +8548,7 @@
     .vld-clock .spokes {
       position: absolute;
       inset: 0;
+      z-index: 1;
       border-radius: 50%;
       background: repeating-conic-gradient(
         from 0deg,
@@ -8077,9 +8556,67 @@
         transparent 1.6deg var(--seg));
     }
 
+    .vld-clock .impact {
+      position: absolute;
+      inset: -3px;
+      z-index: 2;
+      border: 1px solid rgba(var(--tone), .9);
+      border-radius: 50%;
+      opacity: var(--impact);
+      transform: scale(calc(1 + var(--impact) * .13));
+      box-shadow: 0 0 18px rgba(var(--tone), calc(var(--impact) * .45));
+      pointer-events: none;
+    }
+
+    /* A full-size rotating carrier keeps the needle's pivot exactly in the centre.
+       Only its upper half is painted, so it reads as a scanner rather than a hand
+       on an ordinary wall clock. */
+    .vld-clock .hand {
+      position: absolute;
+      inset: 7px;
+      z-index: 3;
+      border-radius: 50%;
+      transform: rotate(var(--hand-turn));
+      transform-origin: 50% 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .vld-clock .hand::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 50%;
+      left: 50%;
+      width: 2px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, .76),
+        rgb(var(--tone)) 58%,
+        rgba(var(--tone), .28)
+      );
+      box-shadow: 0 0 7px rgba(var(--tone), .72);
+      transform: translateX(-50%);
+    }
+
+    .vld-clock .hand::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgb(var(--tone));
+      box-shadow: 0 0 8px rgba(var(--tone), .85);
+      transform: translateX(-50%);
+    }
+
     .vld-clock .hub {
       position: absolute;
       inset: 21px;
+      z-index: 4;
       display: grid;
       place-content: center;
       border-radius: 50%;
@@ -8129,9 +8666,9 @@
 
     /* Круг замкнулся — циферблат дышит красным, и это единственное место в
        виджете, где движение не декоративное. */
-    .vld-clock .s-4.f-4 .dial,
-    .vld-clock .s-6.f-6 .dial,
-    .vld-clock .s-8.f-8 .dial {
+    .vld-clock .s-4.f-4.is-settled .dial,
+    .vld-clock .s-6.f-6.is-settled .dial,
+    .vld-clock .s-8.f-8.is-settled .dial {
       animation: vld-clock-alarm 1.4s ease-in-out infinite;
     }
 
@@ -8187,9 +8724,9 @@
       color: rgb(var(--crit));
     }
 
-    .vld-clock .s-4.f-4 .siren,
-    .vld-clock .s-6.f-6 .siren,
-    .vld-clock .s-8.f-8 .siren {
+    .vld-clock .s-4.f-4.is-settled .siren,
+    .vld-clock .s-6.f-6.is-settled .siren,
+    .vld-clock .s-8.f-8.is-settled .siren {
       display: block;
       animation: vld-clock-blink 1.4s steps(1, end) infinite;
     }
@@ -8218,12 +8755,185 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-clock:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var unit = root.querySelector('.unit');
+      var counter = unit.querySelector('.hub b');
+      var finalFilled = parseInt(counter.textContent, 10);
+      var totalSegments = parseInt(unit.className.match(/\bs-(\d+)\b/)?.[1], 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var LEAD = 110;
+      var STEP = 125;
+      var IMPACT = 72;
+      var SETTLE = 110;
+      var duration = LEAD + finalFilled * STEP + SETTLE;
+      var frameId = 0;
+      var startedAt = 0;
+      var runId = 0;
+      var autoTimer = 0;
+      var autoObserver = null;
+
+      var valid = [4, 6, 8].includes(totalSegments)
+        && !isNaN(finalFilled)
+        && finalFilled >= 0
+        && finalFilled <= totalSegments;
+
+      if (valid) {
+        if (reduced || finalFilled === 0) {
+          settle();
+        } else {
+          queueAutomaticRun();
+        }
+      }
+
+      /*
+       * The GIF recorder seeks this same timeline frame by frame. SillyTavern never
+       * calls it; the live widget advances through requestAnimationFrame below.
+       */
+      root.vldSeek = function (ms) {
+        cancelAutomaticStart();
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+        prepare();
+        paintAt(Number(ms) || 0);
+      };
+
+      /*
+       * JS-support can revive the script while the streamed message is still being
+       * morphed. Wait for a short quiet window so the one-shot locks happen after the
+       * final marker has become a stable widget.
+       */
+      function queueAutomaticRun() {
+        var message = root.closest('.mes_text');
+        if (!message || typeof MutationObserver !== 'function') {
+          run();
+          return;
+        }
+
+        function armAfterQuiet() {
+          if (autoTimer) clearTimeout(autoTimer);
+          root.dataset.clockAwaitingSettle = '1';
+          autoTimer = setTimeout(function () {
+            cancelAutomaticStart();
+            if (root.isConnected) run();
+          }, 180);
+        }
+
+        autoObserver = new MutationObserver(armAfterQuiet);
+        autoObserver.observe(message, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
+        armAfterQuiet();
+      }
+
+      function cancelAutomaticStart() {
+        if (autoTimer) clearTimeout(autoTimer);
+        autoTimer = 0;
+        if (autoObserver) autoObserver.disconnect();
+        autoObserver = null;
+        delete root.dataset.clockAwaitingSettle;
+      }
+
+      function run() {
+        if (!valid || reduced || finalFilled === 0) return;
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.clockRun = String(runId);
+        startedAt = performance.now();
+        prepare();
+        paintAt(0);
+        frameId = requestAnimationFrame(step);
+      }
+
+      function step(now) {
+        if (!root.isConnected) {
+          frameId = 0;
+          return;
+        }
+
+        var elapsed = now - startedAt;
+        paintAt(elapsed);
+
+        if (elapsed < duration) {
+          frameId = requestAnimationFrame(step);
+        } else {
+          frameId = 0;
+        }
+      }
+
+      function prepare() {
+        unit.classList.add('is-running');
+        unit.classList.remove('is-settled');
+      }
+
+      function paintAt(ms) {
+        var time = Math.max(0, Math.min(ms, duration));
+        var elapsed = Math.max(0, time - LEAD);
+        var locked = Math.min(finalFilled, Math.floor(elapsed / STEP));
+        var phase = locked < finalFilled
+          ? Math.max(0, Math.min(1, (elapsed - locked * STEP) / STEP))
+          : 0;
+        var eased = 1 - Math.pow(1 - phase, 3);
+        var segmentAngle = 360 / totalSegments;
+        var fillAngle = locked * segmentAngle;
+        var handAngle = locked < finalFilled
+          ? (locked + eased) * segmentAngle
+          : fillAngle;
+
+        var sinceImpact = elapsed - locked * STEP;
+        var impact = locked > 0 && sinceImpact >= 0 && sinceImpact < IMPACT
+          ? 1 - sinceImpact / IMPACT
+          : 0;
+
+        unit.dataset.locked = String(locked);
+        unit.style.setProperty('--live-turn', angle(fillAngle));
+        unit.style.setProperty('--hand-turn', angle(handAngle));
+        unit.style.setProperty('--impact', impact.toFixed(3));
+        unit.style.setProperty('--kick-y', (impact * 1.8).toFixed(2) + 'px');
+        unit.style.setProperty('--kick-r', (impact * -.85).toFixed(2) + 'deg');
+        counter.textContent = String(locked);
+
+        if (time >= duration) settle();
+      }
+
+      function settle() {
+        if (!valid) return;
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        var finalAngle = 360 * finalFilled / totalSegments;
+        unit.dataset.locked = String(finalFilled);
+        unit.style.setProperty('--live-turn', angle(finalAngle));
+        unit.style.setProperty('--hand-turn', angle(finalAngle));
+        unit.style.setProperty('--impact', '0');
+        unit.style.setProperty('--kick-y', '0px');
+        unit.style.setProperty('--kick-r', '0deg');
+        counter.textContent = String(finalFilled);
+        unit.classList.remove('is-running');
+        unit.classList.add('is-settled');
+      }
+
+      function angle(value) {
+        return String(Math.round(value * 1000) / 1000) + 'deg';
+      }
+    })();
+  </script>
 </div>
 <div class="vld-w vld-clock">
   <div class="unit s-4 f-4">
     <div class="dial">
       <span class="fill"></span>
       <span class="spokes"></span>
+      <span class="impact"></span>
+      <span class="hand"></span>
       <span class="hub"><b>4</b><em>/4</em></span>
     </div>
 
@@ -8276,6 +8986,11 @@
       --turn: 0deg;
       --seg: 60deg;
       --tone: var(--cool);
+      --live-turn: var(--turn);
+      --hand-turn: var(--turn);
+      --impact: 0;
+      --kick-y: 0px;
+      --kick-r: 0deg;
 
       display: grid;
       grid-template-columns: 78px 1fr;
@@ -8299,20 +9014,19 @@
       border-radius: 50%;
       background: rgba(233, 231, 226, .045);
       box-shadow: inset 0 0 0 1px rgba(233, 231, 226, .16);
+      transform: translateY(var(--kick-y)) rotate(var(--kick-r));
+      transform-origin: 50% 56%;
+      will-change: transform;
     }
 
     .vld-clock .fill {
       position: absolute;
       inset: 3px;
       border-radius: 50%;
-      background: conic-gradient(rgba(var(--tone), .82) var(--turn), transparent 0);
-      animation: vld-clock-sweep .8s cubic-bezier(.3, .8, .3, 1) both;
-    }
-
-    /* Сектор набирается от нуля до своего угла — видно, что часы именно
-       заполнились, а не были такими всегда. */
-    @keyframes vld-clock-sweep {
-      from { background: conic-gradient(rgba(var(--tone), .82) 0deg, transparent 0); }
+      z-index: 0;
+      background:
+        radial-gradient(circle at 48% 28%, rgba(255, 255, 255, .13), transparent 38%),
+        conic-gradient(rgba(var(--tone), .86) var(--live-turn), transparent 0);
     }
 
     /* Спицы режут круг на деления. Шаг приезжает переменной, поэтому правило
@@ -8320,6 +9034,7 @@
     .vld-clock .spokes {
       position: absolute;
       inset: 0;
+      z-index: 1;
       border-radius: 50%;
       background: repeating-conic-gradient(
         from 0deg,
@@ -8327,9 +9042,67 @@
         transparent 1.6deg var(--seg));
     }
 
+    .vld-clock .impact {
+      position: absolute;
+      inset: -3px;
+      z-index: 2;
+      border: 1px solid rgba(var(--tone), .9);
+      border-radius: 50%;
+      opacity: var(--impact);
+      transform: scale(calc(1 + var(--impact) * .13));
+      box-shadow: 0 0 18px rgba(var(--tone), calc(var(--impact) * .45));
+      pointer-events: none;
+    }
+
+    /* A full-size rotating carrier keeps the needle's pivot exactly in the centre.
+       Only its upper half is painted, so it reads as a scanner rather than a hand
+       on an ordinary wall clock. */
+    .vld-clock .hand {
+      position: absolute;
+      inset: 7px;
+      z-index: 3;
+      border-radius: 50%;
+      transform: rotate(var(--hand-turn));
+      transform-origin: 50% 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .vld-clock .hand::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 50%;
+      left: 50%;
+      width: 2px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, .76),
+        rgb(var(--tone)) 58%,
+        rgba(var(--tone), .28)
+      );
+      box-shadow: 0 0 7px rgba(var(--tone), .72);
+      transform: translateX(-50%);
+    }
+
+    .vld-clock .hand::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgb(var(--tone));
+      box-shadow: 0 0 8px rgba(var(--tone), .85);
+      transform: translateX(-50%);
+    }
+
     .vld-clock .hub {
       position: absolute;
       inset: 21px;
+      z-index: 4;
       display: grid;
       place-content: center;
       border-radius: 50%;
@@ -8379,9 +9152,9 @@
 
     /* Круг замкнулся — циферблат дышит красным, и это единственное место в
        виджете, где движение не декоративное. */
-    .vld-clock .s-4.f-4 .dial,
-    .vld-clock .s-6.f-6 .dial,
-    .vld-clock .s-8.f-8 .dial {
+    .vld-clock .s-4.f-4.is-settled .dial,
+    .vld-clock .s-6.f-6.is-settled .dial,
+    .vld-clock .s-8.f-8.is-settled .dial {
       animation: vld-clock-alarm 1.4s ease-in-out infinite;
     }
 
@@ -8437,9 +9210,9 @@
       color: rgb(var(--crit));
     }
 
-    .vld-clock .s-4.f-4 .siren,
-    .vld-clock .s-6.f-6 .siren,
-    .vld-clock .s-8.f-8 .siren {
+    .vld-clock .s-4.f-4.is-settled .siren,
+    .vld-clock .s-6.f-6.is-settled .siren,
+    .vld-clock .s-8.f-8.is-settled .siren {
       display: block;
       animation: vld-clock-blink 1.4s steps(1, end) infinite;
     }
@@ -8468,6 +9241,177 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var root = (document.currentScript && document.currentScript.parentElement)
+        || document.querySelector('.vld-clock:not([data-vld-init])');
+      if (!root || root.dataset.vldInit === '1') return;
+      root.dataset.vldInit = '1';
+      var unit = root.querySelector('.unit');
+      var counter = unit.querySelector('.hub b');
+      var finalFilled = parseInt(counter.textContent, 10);
+      var totalSegments = parseInt(unit.className.match(/\bs-(\d+)\b/)?.[1], 10);
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var LEAD = 110;
+      var STEP = 125;
+      var IMPACT = 72;
+      var SETTLE = 110;
+      var duration = LEAD + finalFilled * STEP + SETTLE;
+      var frameId = 0;
+      var startedAt = 0;
+      var runId = 0;
+      var autoTimer = 0;
+      var autoObserver = null;
+
+      var valid = [4, 6, 8].includes(totalSegments)
+        && !isNaN(finalFilled)
+        && finalFilled >= 0
+        && finalFilled <= totalSegments;
+
+      if (valid) {
+        if (reduced || finalFilled === 0) {
+          settle();
+        } else {
+          queueAutomaticRun();
+        }
+      }
+
+      /*
+       * The GIF recorder seeks this same timeline frame by frame. SillyTavern never
+       * calls it; the live widget advances through requestAnimationFrame below.
+       */
+      root.vldSeek = function (ms) {
+        cancelAutomaticStart();
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+        prepare();
+        paintAt(Number(ms) || 0);
+      };
+
+      /*
+       * JS-support can revive the script while the streamed message is still being
+       * morphed. Wait for a short quiet window so the one-shot locks happen after the
+       * final marker has become a stable widget.
+       */
+      function queueAutomaticRun() {
+        var message = root.closest('.mes_text');
+        if (!message || typeof MutationObserver !== 'function') {
+          run();
+          return;
+        }
+
+        function armAfterQuiet() {
+          if (autoTimer) clearTimeout(autoTimer);
+          root.dataset.clockAwaitingSettle = '1';
+          autoTimer = setTimeout(function () {
+            cancelAutomaticStart();
+            if (root.isConnected) run();
+          }, 180);
+        }
+
+        autoObserver = new MutationObserver(armAfterQuiet);
+        autoObserver.observe(message, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
+        armAfterQuiet();
+      }
+
+      function cancelAutomaticStart() {
+        if (autoTimer) clearTimeout(autoTimer);
+        autoTimer = 0;
+        if (autoObserver) autoObserver.disconnect();
+        autoObserver = null;
+        delete root.dataset.clockAwaitingSettle;
+      }
+
+      function run() {
+        if (!valid || reduced || finalFilled === 0) return;
+        if (frameId) cancelAnimationFrame(frameId);
+
+        runId += 1;
+        root.dataset.clockRun = String(runId);
+        startedAt = performance.now();
+        prepare();
+        paintAt(0);
+        frameId = requestAnimationFrame(step);
+      }
+
+      function step(now) {
+        if (!root.isConnected) {
+          frameId = 0;
+          return;
+        }
+
+        var elapsed = now - startedAt;
+        paintAt(elapsed);
+
+        if (elapsed < duration) {
+          frameId = requestAnimationFrame(step);
+        } else {
+          frameId = 0;
+        }
+      }
+
+      function prepare() {
+        unit.classList.add('is-running');
+        unit.classList.remove('is-settled');
+      }
+
+      function paintAt(ms) {
+        var time = Math.max(0, Math.min(ms, duration));
+        var elapsed = Math.max(0, time - LEAD);
+        var locked = Math.min(finalFilled, Math.floor(elapsed / STEP));
+        var phase = locked < finalFilled
+          ? Math.max(0, Math.min(1, (elapsed - locked * STEP) / STEP))
+          : 0;
+        var eased = 1 - Math.pow(1 - phase, 3);
+        var segmentAngle = 360 / totalSegments;
+        var fillAngle = locked * segmentAngle;
+        var handAngle = locked < finalFilled
+          ? (locked + eased) * segmentAngle
+          : fillAngle;
+
+        var sinceImpact = elapsed - locked * STEP;
+        var impact = locked > 0 && sinceImpact >= 0 && sinceImpact < IMPACT
+          ? 1 - sinceImpact / IMPACT
+          : 0;
+
+        unit.dataset.locked = String(locked);
+        unit.style.setProperty('--live-turn', angle(fillAngle));
+        unit.style.setProperty('--hand-turn', angle(handAngle));
+        unit.style.setProperty('--impact', impact.toFixed(3));
+        unit.style.setProperty('--kick-y', (impact * 1.8).toFixed(2) + 'px');
+        unit.style.setProperty('--kick-r', (impact * -.85).toFixed(2) + 'deg');
+        counter.textContent = String(locked);
+
+        if (time >= duration) settle();
+      }
+
+      function settle() {
+        if (!valid) return;
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+
+        var finalAngle = 360 * finalFilled / totalSegments;
+        unit.dataset.locked = String(finalFilled);
+        unit.style.setProperty('--live-turn', angle(finalAngle));
+        unit.style.setProperty('--hand-turn', angle(finalAngle));
+        unit.style.setProperty('--impact', '0');
+        unit.style.setProperty('--kick-y', '0px');
+        unit.style.setProperty('--kick-r', '0deg');
+        counter.textContent = String(finalFilled);
+        unit.classList.remove('is-running');
+        unit.classList.add('is-settled');
+      }
+
+      function angle(value) {
+        return String(Math.round(value * 1000) / 1000) + 'deg';
+      }
+    })();
+  </script>
 </div></div>
   </div>
 </section>

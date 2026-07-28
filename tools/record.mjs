@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import gifenc from 'gifenc';
 import puppeteer from 'puppeteer-core';
 import UPNG from 'upng-js';
-import { ROOT, languages, loadTrackers, renderWidget } from './lib.mjs';
+import { ROOT, languages, loadTracker, renderWidget } from './lib.mjs';
 
 const { GIFEncoder, quantize, applyPalette } = gifenc;
 
@@ -31,9 +31,11 @@ const FPS = 14;
 const SCALE = 1.5;
 const WIDTH = 420;
 
-const tracker = loadTrackers().find((t) => t.name === NAME);
-if (!tracker) {
-  console.error(`нет трекера «${NAME}» — есть: ${loadTrackers().map((t) => t.name).join(', ')}`);
+let tracker;
+try {
+  tracker = loadTracker(NAME);
+} catch (error) {
+  console.error(`не удалось открыть трекер «${NAME}»: ${error.message}`);
   process.exit(1);
 }
 const lang = languages(tracker).find((l) => l.code === LANG);
@@ -182,6 +184,53 @@ const ACH_FILM_EN = {
   })),
 };
 
+/*
+ * Clock's public film covers every legal fill value, not merely a few visual
+ * milestones: 0–4, 0–6 and 0–8. Each mount replays the mechanical locks from
+ * zero, so the viewer sees both the destination and how the dial gets there.
+ */
+const CLOCK_FILM_EN = (() => {
+  const families = [
+    {
+      S: 4,
+      T: 'the patrol closes in on the safehouse',
+      W: 'the door comes down',
+      L: 'a witness gave them the street',
+    },
+    {
+      S: 6,
+      T: 'the signal triangulates your position',
+      W: 'the drones converge',
+      L: 'the radio stayed open too long',
+    },
+    {
+      S: 8,
+      T: 'the winter closes the mountain pass',
+      W: 'the last road disappears',
+      L: 'the storm moved east overnight',
+    },
+  ];
+
+  const states = families.flatMap((family) =>
+    Array.from({ length: family.S + 1 }, (_, filled) => ({
+      T: family.T,
+      F: String(filled),
+      S: String(family.S),
+      W: family.W,
+      ...(filled ? { L: family.L } : {}),
+    })));
+
+  return {
+    states,
+    script: states.map((state, index) => ({
+      hold: state.F === '0' ? .9 : 1.4,
+      label: `${state.S}-segment clock at ${state.F}`,
+      act: `show-${index}`,
+      poster: index === states.length - 1,
+    })),
+  };
+})();
+
 /**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
@@ -211,7 +260,11 @@ const film = NAME === 'hud'
   ? HUD_FILM
   : (NAME === 'dice' && LANG === 'en'
       ? DICE_FILM_EN
-      : (NAME === 'ach' && LANG === 'en' ? ACH_FILM_EN : autoFilm(tracker, lang)));
+      : (NAME === 'ach' && LANG === 'en'
+          ? ACH_FILM_EN
+          : (NAME === 'clock' && LANG === 'en'
+              ? CLOCK_FILM_EN
+              : autoFilm(tracker, lang))));
 const { states: STATES, script } = film;
 
 const fill = (values) =>

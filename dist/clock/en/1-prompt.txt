@@ -15,5 +15,5 @@ W what happens the moment it fills. Concrete and bad, one line.
 L what just moved it this scene. Nothing moved it? Leave L out.
 Write every value in the language the roleplay is played in.
 
-→ [[VLD_CLOCK|T=the search works its way down the block|F=4|S=6|W=they knock, and it is not a question any more|L=the neighbour gave up the floor number]]
+Example: [[VLD_CLOCK|T=the search works its way down the block|F=4|S=6|W=they knock, and it is not a question any more|L=the neighbour gave up the floor number]]
 </vld:clock>

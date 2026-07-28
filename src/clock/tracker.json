@@ -12,6 +12,7 @@
   ],
   "lang": {
     "en": {
+      "exampleLabel": "Example",
       "chrome": { "then": "then", "full": "out of time" },
       "when": "something is closing in on {{user}} across several scenes: a search, a deadline, a rumour spreading",
       "dont": "anything that resolves inside one scene — that is a roll, not a clock",
@@ -25,6 +26,7 @@
       }
     },
     "ru": {
+      "exampleLabel": "Пример",
       "chrome": { "then": "тогда", "full": "время вышло" },
       "when": "к {{user}} что-то подбирается через несколько сцен: облава, срок, расходящийся слух",
       "dont": "то, что решается внутри одной сцены — это бросок, а не часы",
