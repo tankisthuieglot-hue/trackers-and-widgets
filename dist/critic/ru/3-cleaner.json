@@ -1,0 +1,17 @@
+{
+ "id": "43b99eba-b814-5374-a3f3-992e1f59477d",
+ "scriptName": "📡 VLD UNSOLICITED CRITICS · clean",
+ "findRegex": "/\\[\\[VLD_CRITIC(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

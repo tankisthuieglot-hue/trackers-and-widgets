@@ -1,0 +1,102 @@
+{
+  "tag": "VLD_CRITIC",
+  "title": "📡 VLD UNSOLICITED CRITICS",
+  "order": 23,
+  "previewLang": "en",
+  "fields": [
+    { "key": "N1", "desc": "first critic name" },
+    { "key": "K1", "of": ["public", "anime", "history"], "desc": "first critic origin" },
+    { "key": "T1", "desc": "first critic identifying title" },
+    { "key": "V1", "type": "level", "desc": "first critic score, 0 to 10" },
+    { "key": "C1", "desc": "first critic comment on the action" },
+    { "key": "N2", "desc": "second critic name" },
+    { "key": "K2", "of": ["public", "anime", "history"], "desc": "second critic origin" },
+    { "key": "T2", "desc": "second critic identifying title" },
+    { "key": "V2", "type": "level", "desc": "second critic score, 0 to 10" },
+    { "key": "C2", "desc": "second critic comment on the action" },
+    { "key": "N3", "optional": true, "desc": "optional third critic name" },
+    { "key": "K3", "of": ["public", "anime", "history"], "optional": true, "desc": "optional third critic origin" },
+    { "key": "T3", "optional": true, "desc": "optional third critic identifying title" },
+    { "key": "V3", "type": "level", "optional": true, "desc": "optional third critic score, 0 to 10" },
+    { "key": "C3", "optional": true, "desc": "optional third critic comment on the action" }
+  ],
+  "lang": {
+    "en": {
+      "exampleLabel": "Example",
+      "chrome": {
+        "intrusion": "unsolicited opinions detected",
+        "public": "public figure",
+        "anime": "anime",
+        "history": "history"
+      },
+      "when": "rarely, after {{user}} makes an especially bold, questionable, clever or catastrophic choice worth interrupting the scene for",
+      "dont": "ordinary dialogue, routine actions, or another critic interruption already happened in this scene",
+      "legend": "Create 2 or 3 independent critics. They are random visitors, never a jury: no consensus, winner, average or shared verdict.\nN1–N3 globally recognizable real public figures, anime characters or historical figures. Pick an unpredictable mix; relevance is optional.\nK1–K3 exact origin: public, anime or history. T1–T3 a short identifying title, 2–5 words.\nV1–V3 each critic's personal score from 0 to 10. C1–C3 an original 5–14 word comment on {{user}}'s specific action from that critic's recognizable perspective.\nJudge only the action, not {{user}}'s emotions or identity. Do not present invented text as a real quotation.\nWrite N, T and C in the roleplay language. Keep K exactly as listed. Use the third set only when a third critic improves the interruption.",
+      "example": {
+        "N1": "Gordon Ramsay",
+        "K1": "public",
+        "T1": "chef with no patience left",
+        "V1": "3",
+        "C1": "That plan is raw, and somehow the door is on fire.",
+        "N2": "Lelouch Lamperouge",
+        "K2": "anime",
+        "T2": "exiled prince and strategist",
+        "V2": "8",
+        "C2": "Crude, but every witness chose the outcome you wanted.",
+        "N3": "Diogenes",
+        "K3": "history",
+        "T3": "professional public nuisance",
+        "V3": "10",
+        "C3": "At last, a decision with less dignity and more honesty."
+      }
+    },
+    "ru": {
+      "exampleLabel": "Пример",
+      "chrome": {
+        "intrusion": "обнаружены непрошеные мнения",
+        "public": "известная личность",
+        "anime": "аниме",
+        "history": "история"
+      },
+      "when": "редко, после особенно смелого, спорного, умного или катастрофического поступка {{user}}",
+      "dont": "обычный разговор, рутина или в этой сцене уже были критики",
+      "legend": "Создай 2–3 независимых случайных критика, не жюри: без среднего балла и общего вердикта.\nN1–N3 узнаваемая известная личность, герой аниме или историческая фигура; сочетание неожиданное.\nK1–K3 строго public, anime или history. T1–T3 пояснение на 2–5 слов.\nV1–V3 личная оценка 0–10. C1–C3 оригинальный комментарий на 5–14 слов о поступке {{user}} с узнаваемой позиции критика.\nОценивай поступок, не эмоции или личность {{user}}. Не выдавай текст за настоящую цитату.\nN, T и C пиши на языке ролевой, K оставляй как в списке. Третий набор необязателен.",
+      "example": {
+        "N1": "Гордон Рамзи",
+        "K1": "public",
+        "T1": "нетерпеливый шеф",
+        "V1": "3",
+        "C1": "План сырой, а дверь уже горит.",
+        "N2": "Лелуш",
+        "K2": "anime",
+        "T2": "принц и стратег",
+        "V2": "8",
+        "C2": "Грубо, но нужный исход уже выбран.",
+        "N3": "Диоген",
+        "K3": "history",
+        "T3": "философ-хулиган",
+        "V3": "10",
+        "C3": "Меньше достоинства, больше честности."
+      }
+    }
+  },
+  "preview": [
+    {
+      "N1": "Gordon Ramsay",
+      "K1": "public",
+      "T1": "chef with no patience left",
+      "V1": "3",
+      "C1": "That plan is raw, and somehow the door is on fire.",
+      "N2": "Lelouch Lamperouge",
+      "K2": "anime",
+      "T2": "exiled prince and strategist",
+      "V2": "8",
+      "C2": "Crude, but every witness chose the outcome you wanted.",
+      "N3": "Diogenes",
+      "K3": "history",
+      "T3": "professional public nuisance",
+      "V3": "10",
+      "C3": "At last, a decision with less dignity and more honesty."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+<vld:critic>
+FIRE: rarely, after {{user}} makes an especially bold, questionable, clever or catastrophic choice worth interrupting the scene for
+SKIP: ordinary dialogue, routine actions, or another critic interruption already happened in this scene
+
+[[VLD_CRITIC|N1=|K1=|T1=|V1=|C1=|N2=|K2=|T2=|V2=|C2=|N3=|K3=|T3=|V3=|C3=]]
+
+Create 2 or 3 independent critics. They are random visitors, never a jury: no consensus, winner, average or shared verdict.
+N1–N3 globally recognizable real public figures, anime characters or historical figures. Pick an unpredictable mix; relevance is optional.
+K1–K3 exact origin: public, anime or history. T1–T3 a short identifying title, 2–5 words.
+V1–V3 each critic's personal score from 0 to 10. C1–C3 an original 5–14 word comment on {{user}}'s specific action from that critic's recognizable perspective.
+Judge only the action, not {{user}}'s emotions or identity. Do not present invented text as a real quotation.
+Write N, T and C in the roleplay language. Keep K exactly as listed. Use the third set only when a third critic improves the interruption.
+
+Example: [[VLD_CRITIC|N1=Gordon Ramsay|K1=public|T1=chef with no patience left|V1=3|C1=That plan is raw, and somehow the door is on fire.|N2=Lelouch Lamperouge|K2=anime|T2=exiled prince and strategist|V2=8|C2=Crude, but every witness chose the outcome you wanted.|N3=Diogenes|K3=history|T3=professional public nuisance|V3=10|C3=At last, a decision with less dignity and more honesty.]]
+</vld:critic>
