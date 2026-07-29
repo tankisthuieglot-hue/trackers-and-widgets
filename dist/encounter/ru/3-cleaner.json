@@ -1,0 +1,17 @@
+{
+ "id": "685ac86a-a65f-5041-984e-92d2d2932b7b",
+ "scriptName": "📁 VLD ENCOUNTER DOSSIER · clean",
+ "findRegex": "/\\[\\[VLD_ENCOUNTER(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

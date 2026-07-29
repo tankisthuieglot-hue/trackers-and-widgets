@@ -27,8 +27,8 @@ const BROWSER = process.env.VLD_BROWSER
 
 const LANG = process.argv[2] ?? 'en';
 const NAME = process.argv[3] ?? 'hud';
-const FPS = 14;
-const SCALE = 1.5;
+const FPS = NAME === 'encounter' ? 12 : 14;
+const SCALE = NAME === 'encounter' ? 1.35 : 1.5;
 const WIDTH = 420;
 
 let tracker;
@@ -245,6 +245,31 @@ const REL_FILM_EN = {
   ],
 };
 
+/*
+ * Encounter is a widget inside a tracker: the closed folder is only the
+ * launcher. Its film therefore opens the file, visits the paper tabs, shows
+ * the boss cipher, and finishes with a separate self-contained reveal event.
+ */
+const ENCOUNTER_FILM_EN = {
+  states: [...(tracker.preview ?? [lang.example]).slice(0, 3)],
+  script: [
+    { hold: 1.2, label: 'new encounter arrives', act: 'show-0' },
+    { hold: 1.2, label: 'open newcomer file', act: 'encounter-open' },
+    { hold: .8, label: 'observed page', act: 'encounter-tab-observed' },
+    { hold: 1.0, label: 'intel page', act: 'encounter-tab-intel' },
+    { hold: .5, label: 'close newcomer file', act: 'encounter-close' },
+    { hold: 1.3, label: 'boss warning arrives', act: 'show-1' },
+    { hold: 1.1, label: 'open boss file', act: 'encounter-open' },
+    { hold: .8, label: 'unknown boss intel', act: 'encounter-tab-intel' },
+    { hold: 1.4, label: 'unfold weakness note', act: 'encounter-weakness', poster: true },
+    { hold: .5, label: 'close boss file', act: 'encounter-close' },
+    { hold: 1.8, label: 'identity decrypts', act: 'show-2' },
+    { hold: 1.0, label: 'open revealed file', act: 'encounter-open' },
+    { hold: 1.0, label: 'revealed intel', act: 'encounter-tab-intel' },
+    { hold: .5, label: 'close revealed file', act: 'encounter-close' },
+  ],
+};
+
 /**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
@@ -280,7 +305,9 @@ const film = NAME === 'hud'
               ? CLOCK_FILM_EN
               : (NAME === 'rel' && LANG === 'en'
                   ? REL_FILM_EN
-                  : autoFilm(tracker, lang)))));
+                  : (NAME === 'encounter' && LANG === 'en'
+                      ? ENCOUNTER_FILM_EN
+                      : autoFilm(tracker, lang))))));
 const { states: STATES, script } = film;
 
 function fill(values) {
@@ -361,6 +388,10 @@ function stage() {
   html, body { margin: 0; background: #101215; }
   body { padding: 14px 28px 22px; font: 14px system-ui, sans-serif; }
   #slot { min-height: 1px; }
+  .measuring *, .measuring *::before, .measuring *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 </style>
 <div id="slot"></div>
 <script>
@@ -368,6 +399,7 @@ function stage() {
   const slot = document.getElementById('slot');
   let clock = 0;
   let mountedAt = 0;
+  let animationAt = 0;
 
   function mount(html) {
     slot.innerHTML = html;
@@ -386,6 +418,7 @@ function stage() {
     const shown = /^show-(\\d+)$/.exec(what);
     if (shown) {
       mountedAt = clock;
+      animationAt = clock;
       mount(STATES[Number(shown[1])]);
     }
     const relationshipTab = /^rel-tab-(\\d+)$/.exec(what);
@@ -394,6 +427,15 @@ function stage() {
       if (button) {
         button.click();
         mountedAt = clock;
+        animationAt = clock;
+      }
+    }
+    const encounterAction = /^encounter-(open|close|weakness|fold-weakness|tab-(?:profile|observed|intel))$/.exec(what);
+    if (encounterAction) {
+      const widget = slot.querySelector('.vld-encounter');
+      if (widget && typeof widget.vldEncounterAct === 'function') {
+        widget.vldEncounterAct(encounterAction[1]);
+        animationAt = clock;
       }
     }
     // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
@@ -409,18 +451,24 @@ function stage() {
   // состояний — и раскрываем всё, что раскрывается.
   window.measure = () => {
     let tallest = 0;
+    document.documentElement.classList.add('measuring');
     for (const html of STATES) {
       mount(html);
       slot.querySelectorAll('details').forEach((d) => { d.open = true; });
+      slot.querySelectorAll('.vld-encounter').forEach((widget) => {
+        if (typeof widget.vldEncounterAct === 'function') widget.vldEncounterAct('open');
+      });
       tallest = Math.max(tallest, document.body.scrollHeight);
     }
     slot.innerHTML = '';
+    document.documentElement.classList.remove('measuring');
     return tallest;
   };
 
   window.seek = (ms) => {
     clock = ms;
     const local = Math.max(0, ms - mountedAt);
+    const motionLocal = Math.max(0, ms - animationAt);
     const dice = slot.querySelector('.vld-dice');
     if (dice && typeof dice.vldDiceSeek === 'function') {
       dice.vldDiceSeek(local);
@@ -432,7 +480,7 @@ function stage() {
     document.getAnimations().forEach((a) => {
       a.pause();
       const end = a.effect && a.effect.getComputedTiming().endTime;
-      a.currentTime = end && end !== Infinity ? Math.min(local, end) : local;
+      a.currentTime = end && end !== Infinity ? Math.min(motionLocal, end) : motionLocal;
     });
   };
 </script>`;

@@ -1,0 +1,13 @@
+<vld:encounter>
+FIRE: a new named person or creature meaningfully enters, or the current scene reveals a hidden boss identity, major ability or clear threat escalation
+SKIP: routine returns, background extras, or facts that are not newly established in the current scene
+
+[[VLD_ENCOUNTER|M=|T=|K=|N=|R=|O=|D=|G=|A=|W=|F=|V=|X=]]
+
+Each marker is a complete standalone event; never rely on an older marker.
+M intro for a first encounter, warning when boss-level danger becomes clear, reveal when a hidden identity or major fact is established. T fantasy, modern or scifi. K person, creature or boss.
+N current known name or alias. R species/classification. O role/title. D observable appearance. G visible gear. A only a demonstrated or established ability. W only an established weakness; omit if unknown. F known faction; omit if unknown. V threat 0–10 only when supported by the roleplay system or strong observation; otherwise omit. X obscured only while identity or intelligence is deliberately unreadable, otherwise clear.
+Never invent hidden stats. Write N, R, O, D, G, A, W and F in the roleplay language; keep M, T, K and X exactly as listed.
+
+Example: [[VLD_ENCOUNTER|M=intro|T=fantasy|K=creature|N=Ashfang|R=dire wolf|O=pack scout|D=charcoal fur, old spear wound, smoke on its breath|G=iron collar marked with three white cuts|A=tracks warm blood through stone walls|W=hesitates at open flame|F=the Black Pine pack|V=7|X=clear]]
+</vld:encounter>

@@ -1,0 +1,161 @@
+<div class="folder-object theme-$2 mode-$1 kind-$3 vision-$13"
+     data-mode="$1" data-theme="$2" data-kind="$3" data-vision="$13">
+  <div class="impact-dust" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <div class="folder-shell">
+    <span class="name-bookmark" aria-hidden="true">$4</span>
+
+    <button class="folder-trigger" type="button" aria-expanded="false">
+      <span class="folio-cover">
+        <span class="leather-grain" aria-hidden="true"></span>
+        <span class="stitched-edge" aria-hidden="true"></span>
+        <span class="brass-corner corner-tl" aria-hidden="true"></span>
+        <span class="brass-corner corner-tr" aria-hidden="true"></span>
+        <span class="brass-corner corner-bl" aria-hidden="true"></span>
+        <span class="brass-corner corner-br" aria-hidden="true"></span>
+
+        <span class="cover-copy">
+          <span class="event-label"></span>
+          <strong class="trigger-name">$4</strong>
+          <span class="trigger-meta"><b>$5</b><i></i><b>$6</b></span>
+        </span>
+
+        <span class="cover-mark" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <span class="open-cue">%open%</span>
+
+        <span class="clasp" aria-hidden="true">
+          <i class="clasp-hinge"></i>
+          <i class="clasp-tongue"></i>
+          <i class="clasp-rivet"></i>
+        </span>
+      </span>
+    </button>
+
+    <div class="folder-body">
+      <nav class="paper-tabs" role="tablist">
+        <button class="dossier-tab" type="button" data-target="profile"
+                role="tab" aria-selected="true">%profile%</button>
+        <button class="dossier-tab" type="button" data-target="observed"
+                role="tab" aria-selected="false">%observed%</button>
+        <button class="dossier-tab" type="button" data-target="intel"
+                role="tab" aria-selected="false">%intel%</button>
+      </nav>
+
+      <div class="sheet-fan">
+        <section class="folio-sheet dossier-page sheet-profile is-active"
+                 data-page="profile" aria-hidden="false">
+          <span class="sheet-number">I</span>
+          <header class="subject-header">
+            <div class="portrait-frame">
+              <div class="subject-portrait" aria-hidden="true">
+                <i class="head"></i><i class="shoulders"></i><i class="scan"></i>
+              </div>
+              <span class="portrait-pin" aria-hidden="true"></span>
+            </div>
+
+            <div class="identity">
+              <span class="identity-code"></span>
+              <h3 class="subject-name">$4</h3>
+              <p>$6</p>
+              <b class="classification field" data-field="classification">
+                <span>%classification%</span>
+                <i class="field-value">$5</i>
+              </b>
+            </div>
+
+            <div class="threat-seal threat lv-$12">
+              <span>%threat%</span>
+              <strong class="threat-value">$12</strong>
+              <small>/10</small>
+            </div>
+          </header>
+
+          <div class="appearance-notes field" data-field="appearance">
+            <span>%appearance%</span>
+            <b class="field-value">$7</b>
+            <i class="leader-line line-a" aria-hidden="true"></i>
+            <i class="leader-line line-b" aria-hidden="true"></i>
+          </div>
+
+          <div class="faction-stamp field" data-field="faction">
+            <span>%faction%</span>
+            <b class="field-value">$11</b>
+          </div>
+
+          <div class="role-slip field" data-field="role">
+            <span>%role%</span>
+            <b class="field-value">$6</b>
+          </div>
+        </section>
+
+        <section class="folio-sheet dossier-page sheet-observed"
+                 data-page="observed" aria-hidden="true">
+          <span class="sheet-number">II</span>
+          <div class="sheet-heading">
+            <span>%observed%</span>
+            <strong>$4</strong>
+          </div>
+
+          <div class="evidence-string" aria-hidden="true"><i></i><i></i></div>
+
+          <div class="weapon-tag field" data-field="gear">
+            <span class="tag-pin" aria-hidden="true"></span>
+            <small>%gear%</small>
+            <b class="field-value">$8</b>
+          </div>
+
+          <div class="observation-copy field" data-field="appearance">
+            <span>%appearance%</span>
+            <b class="field-value">$7</b>
+          </div>
+
+          <div class="classification-ticket field" data-field="classification">
+            <span>%classification%</span>
+            <b class="field-value">$5</b>
+          </div>
+        </section>
+
+        <section class="folio-sheet dossier-page sheet-intel"
+                 data-page="intel" aria-hidden="true">
+          <span class="sheet-number">III</span>
+          <div class="sheet-heading">
+            <span>%intel%</span>
+            <strong>$4</strong>
+          </div>
+
+          <div class="ability-card field" data-field="ability">
+            <span class="ability-rune" aria-hidden="true"><i></i></span>
+            <small>%ability%</small>
+            <b class="field-value">$9</b>
+          </div>
+
+          <button class="weakness-note field" type="button"
+                  data-field="weakness" aria-expanded="false">
+            <span class="note-fold" aria-hidden="true"></span>
+            <small>%weakness%</small>
+            <b class="field-value weakness-copy">$10</b>
+          </button>
+
+          <div class="intel-faction field" data-field="faction">
+            <span>%faction%</span>
+            <b class="field-value">$11</b>
+          </div>
+        </section>
+      </div>
+
+      <button class="dossier-close" type="button">%close%</button>
+      <div class="cipher-stream" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<div class="dictionary" hidden>
+  <span data-mode="intro">%intro%</span>
+  <span data-mode="warning">%warning%</span>
+  <span data-mode="reveal">%reveal%</span>
+  <span data-copy="noData">%noData%</span>
+</div>
