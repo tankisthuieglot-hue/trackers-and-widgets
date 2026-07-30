@@ -154,7 +154,7 @@ Every selector must contain `.vld-<folder-name>`:
 
 Use fixed colors that remain readable on both light and dark chat backgrounds.
 Animations are welcome, but `prefers-reduced-motion` must disable them.
-`00-perf.json` pauses off-screen Vladislav widgets.
+`00-perf.json` pauses off-screen Trackers & Widgets widgets.
 
 ## `widget.js`
 

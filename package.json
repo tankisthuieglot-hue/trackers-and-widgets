@@ -1,5 +1,5 @@
 {
-  "name": "vladislav",
+  "name": "trackers-and-widgets",
   "version": "0.6.0",
   "description": "Visual tracker pack for SillyTavern: compact markers rendered as display-only HTML widgets",
   "type": "module",

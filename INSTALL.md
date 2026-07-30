@@ -1,6 +1,6 @@
 # Installation
 
-This guide installs one Vladislav language bundle and any number of its widgets.
+This guide installs one Trackers & Widgets language bundle and any number of its widgets.
 
 ## Requirements
 
@@ -8,10 +8,10 @@ This guide installs one Vladislav language bundle and any number of its widgets.
 - The
   [SillyTavern-JS-support](https://github.com/MiNtorikaSoul/SillyTavern-JS-support)
   extension
-- One Vladislav bundle:
-  [English](https://github.com/tankisthuieglot-hue/vladislav/releases/latest/download/vladislav-en.zip)
+- One Trackers & Widgets bundle:
+  [English](https://github.com/tankisthuieglot-hue/trackers-and-widgets/releases/latest/download/trackers-and-widgets-en.zip)
   or
-  [Russian](https://github.com/tankisthuieglot-hue/vladislav/releases/latest/download/vladislav-ru.zip)
+  [Russian](https://github.com/tankisthuieglot-hue/trackers-and-widgets/releases/latest/download/trackers-and-widgets-ru.zip)
 
 The widgets can still render basic HTML and CSS without JS-support, but
 JavaScript interactions and one-shot animations will not work correctly.
@@ -27,7 +27,7 @@ bundle's `service/` folder in filename order.
 | `01-clean-comments.json` | Removes model-written HTML comments from outgoing context |
 | `02-clean-style.json` | Removes model-written style blocks from outgoing context |
 | `03-clean-script.json` | Removes model-written script blocks from outgoing context |
-| `99-fallback.json` | Hides malformed Vladislav markers from the visible chat |
+| `99-fallback.json` | Hides malformed Trackers & Widgets markers from the visible chat |
 
 Order matters: `99-fallback` must remain below every widget renderer. Otherwise,
 it can hide the marker before the widget regex gets a chance to render it.
