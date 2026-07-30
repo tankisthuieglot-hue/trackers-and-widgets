@@ -27,8 +27,9 @@ const BROWSER = process.env.VLD_BROWSER
 
 const LANG = process.argv[2] ?? 'en';
 const NAME = process.argv[3] ?? 'hud';
-const FPS = NAME === 'encounter' ? 12 : 14;
-const SCALE = NAME === 'encounter' ? 1.35 : 1.5;
+const cinematic = NAME === 'encounter' || NAME === 'system';
+const FPS = cinematic ? 12 : 14;
+const SCALE = cinematic ? 1.35 : 1.5;
 const WIDTH = 420;
 
 let tracker;
@@ -270,6 +271,30 @@ const ENCOUNTER_FILM_EN = {
   ],
 };
 
+/*
+ * System Core has two layers: the compact event plate and the full four-tab
+ * console. Its film touches every tab and then cycles the other event modes.
+ */
+const SYSTEM_FILM_EN = {
+  states: [...(tracker.preview ?? [lang.example]).slice(0, 6)],
+  script: [
+    { hold: 1.3, label: 'XP signal arrives', act: 'show-0' },
+    { hold: .8, label: 'open System Core', act: 'system-open' },
+    { hold: 1.0, label: 'XP core dial' },
+    { hold: .8, label: 'inventory drawer', act: 'system-tab-inventory' },
+    { hold: .9, label: 'inspect rare loot', act: 'system-inspect-item-0' },
+    { hold: .9, label: 'skill constellation', act: 'system-tab-skills' },
+    { hold: 1.2, label: 'inspect burning skill', act: 'system-inspect-skill-0', poster: true },
+    { hold: 1.0, label: 'status scanner', act: 'system-tab-status' },
+    { hold: .4, label: 'close System Core', act: 'system-close' },
+    { hold: 1.2, label: 'loot event', act: 'show-1' },
+    { hold: 1.2, label: 'skill event', act: 'show-2' },
+    { hold: 1.2, label: 'level event', act: 'show-3' },
+    { hold: 1.2, label: 'status event', act: 'show-4' },
+    { hold: 1.4, label: 'notice event', act: 'show-5' },
+  ],
+};
+
 /**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
@@ -307,7 +332,9 @@ const film = NAME === 'hud'
                   ? REL_FILM_EN
                   : (NAME === 'encounter' && LANG === 'en'
                       ? ENCOUNTER_FILM_EN
-                      : autoFilm(tracker, lang))))));
+                      : (NAME === 'system' && LANG === 'en'
+                          ? SYSTEM_FILM_EN
+                          : autoFilm(tracker, lang)))))));
 const { states: STATES, script } = film;
 
 function fill(values) {
@@ -357,7 +384,7 @@ async function open() {
   const browser = await puppeteer.launch({
     executablePath: BROWSER,
     headless: true,
-    args: ['--force-device-scale-factor=' + SCALE, '--hide-scrollbars'],
+    args: ['--force-device-scale-factor=' + SCALE, '--hide-scrollbars', '--disable-gpu'],
   });
 
   const tab = await browser.newPage();
@@ -438,6 +465,14 @@ function stage() {
         animationAt = clock;
       }
     }
+    const systemAction = /^system-(open|close|tab-(?:core|inventory|skills|status)|inspect-(?:item|skill)-\\d+)$/.exec(what);
+    if (systemAction) {
+      const widget = slot.querySelector('.vld-system');
+      if (widget && typeof widget.vldSystemAct === 'function') {
+        widget.vldSystemAct(systemAction[1]);
+        animationAt = clock;
+      }
+    }
     // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
     // разметке нет, поэтому обращения к ним и не случится.
     if (what === 'open-pack') slot.querySelector('details').open = true;
@@ -457,6 +492,9 @@ function stage() {
       slot.querySelectorAll('details').forEach((d) => { d.open = true; });
       slot.querySelectorAll('.vld-encounter').forEach((widget) => {
         if (typeof widget.vldEncounterAct === 'function') widget.vldEncounterAct('open');
+      });
+      slot.querySelectorAll('.vld-system').forEach((widget) => {
+        if (typeof widget.vldSystemAct === 'function') widget.vldSystemAct('open');
       });
       tallest = Math.max(tallest, document.body.scrollHeight);
     }
@@ -480,7 +518,15 @@ function stage() {
     document.getAnimations().forEach((a) => {
       a.pause();
       const end = a.effect && a.effect.getComputedTiming().endTime;
-      a.currentTime = end && end !== Infinity ? Math.min(motionLocal, end) : motionLocal;
+      // System tab actions reset transition time, but must not rewind the
+      // one-shot event ritual. In Tavern a tab click never re-adds is-armed.
+      const systemAnimation = slot.querySelector('.vld-system')
+        && typeof CSSAnimation !== 'undefined'
+        && a instanceof CSSAnimation;
+      const animationClock = systemAnimation ? local : motionLocal;
+      a.currentTime = end && end !== Infinity
+        ? Math.min(animationClock, end)
+        : animationClock;
     });
   };
 </script>`;

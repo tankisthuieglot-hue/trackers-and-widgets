@@ -1,0 +1,17 @@
+{
+ "id": "631a9e74-5e1b-53d9-b89d-4977b35ee418",
+ "scriptName": "◉ THE SYSTEM CORE · clean",
+ "findRegex": "/\\[\\[VLD_SYSTEM(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

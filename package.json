@@ -1,6 +1,6 @@
 {
   "name": "trackers-and-widgets",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Visual tracker pack for SillyTavern: compact markers rendered as display-only HTML widgets",
   "type": "module",
   "private": true,
@@ -10,7 +10,7 @@
     "check": "node tools/check.mjs",
     "preview": "node tools/serve.mjs",
     "shots": "node tools/shot.mjs && node tools/shot.mjs --sheet",
-    "test": "node tools/adversarial.mjs ru && node tools/adversarial.mjs en && node tools/dice-motion-test.mjs && node tools/ach-motion-test.mjs && node tools/clock-motion-test.mjs && node tools/rel-motion-test.mjs && node tools/critic-motion-test.mjs && node tools/encounter-motion-test.mjs",
+    "test": "node tools/adversarial.mjs ru && node tools/adversarial.mjs en && node tools/dice-motion-test.mjs && node tools/ach-motion-test.mjs && node tools/clock-motion-test.mjs && node tools/rel-motion-test.mjs && node tools/critic-motion-test.mjs && node tools/encounter-motion-test.mjs && node tools/system-motion-test.mjs",
     "all": "node tools/check.mjs && node tools/build.mjs && npm test"
   },
   "devDependencies": {

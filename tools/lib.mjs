@@ -36,8 +36,11 @@ const CAPTURE = {
   // of thing people write. Truncating at `<` loses the tail of a value, which
   // is a poor outcome — but a far better one than executing it.
   text: '([^|\\]<]*)',
+  plain: '([^|\\]<]*)',
   // Digits only, so the value can reach an attribute without ending it.
   num: '([0-9]{0,3})',
+  // XP totals, goals and rewards may exceed the compact UI counters.
+  counter: '([0-9]{0,7})',
   // A 0–10 step, and forgiving of a model that decided to count to 100:
   // the alternation takes 10 from "100" and 8 from "87", which lands close
   // enough to be right instead of silently blanking every gauge.
@@ -57,7 +60,10 @@ export const fieldLookahead = (field) => {
 
 /** Whether a field's capture is narrow enough to sit inside an attribute. */
 export const attributeSafe = (field) =>
-  Boolean(field.of) || field.type === 'num' || field.type === 'level';
+  Boolean(field.of)
+  || field.type === 'num'
+  || field.type === 'level'
+  || field.type === 'counter';
 
 /**
  * Full marker pattern for a tag, as a bare source string (no delimiters).

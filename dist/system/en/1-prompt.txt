@@ -1,0 +1,13 @@
+<vld:system>
+FIRE: this roleplay explicitly uses an RPG System and this tracker prompt is enabled; append exactly one marker to every assistant response
+SKIP: a roleplay without explicit levels, XP, inventory and skills, or any value not established by the preset, user or narrative
+
+[[VLD_SYSTEM|M=|T=|D=|L=|X=|G=|I=|K=|C=|P=|A=|FX=]]
+
+Always append one complete marker. Copy the newest VLD_SYSTEM snapshot and change only facts established by this response. Use M=sync when nothing deserves a visible notice; sync is invisible. Visible M: xp, loot, skill, level, status, notice.
+T short notice title, D one sentence, P highlighted item/skill/result; leave them blank for sync. L current level, X current XP, G next-level XP goal. Never calculate or invent a system the roleplay does not maintain.
+I inventory entries separated by ; as name~quantity~rarity. K skills as name~element~rank. C objective conditions as name~effect. Any count is allowed. Keep names in the roleplay language. A numeric gain/change when useful.
+FX exactly one of neutral, fire, ice, storm, holy, shadow, poison, gold, danger. Suggested skill elements: fire, ice, storm, holy, shadow; condition effects: burn, poison, freeze, bleed, stun. Never assign the player emotions, intentions or choices.
+
+Example: [[VLD_SYSTEM|M=xp|T=Experience acquired|D=The cathedral guardian fell before the final bell.|L=7|X=420|G=600|I=Ashen Key~1~rare;Glass Vial~3~common|K=Ember Script~fire~II;Frost Step~ice~I|C=Cinder Mark~burn|P=+120 XP|A=120|FX=gold]]
+</vld:system>

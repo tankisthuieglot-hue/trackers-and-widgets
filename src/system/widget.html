@@ -1,0 +1,159 @@
+<div class="system-core mode-$1 fx-$12" data-mode="$1" data-fx="$12">
+  <div class="system-materials" aria-hidden="true">
+    <span class="system-layer layer-chassis"></span>
+    <span class="system-layer layer-glass"></span>
+    <span class="system-layer layer-holo"></span>
+  </div>
+
+  <div class="system-sources" hidden>
+    <span data-source="level">$4</span>
+    <span data-source="xp">$5</span>
+    <span data-source="goal">$6</span>
+    <span data-source="inventory">$7</span>
+    <span data-source="skills">$8</span>
+    <span data-source="conditions">$9</span>
+    <span data-source="amount">$11</span>
+  </div>
+
+  <button class="system-trigger" type="button" aria-expanded="false" aria-label="%open%">
+    <span class="mechanism" aria-hidden="true">
+      <span class="system-ring ring-outer"><i></i><i></i><i></i><i></i></span>
+      <span class="system-ring ring-middle"><i></i><i></i><i></i></span>
+      <span class="system-ring ring-inner"><i></i><i></i></span>
+      <span class="core-aperture">
+        <span class="core-eye"></span>
+        <span class="core-level">$4</span>
+      </span>
+      <span class="orbit-shard shard-a"></span>
+      <span class="orbit-shard shard-b"></span>
+    </span>
+
+    <span class="event-shutter shutter-upper" aria-hidden="true"></span>
+    <span class="event-shutter shutter-lower" aria-hidden="true"></span>
+
+    <span class="event-ritual" data-active="$1" aria-hidden="true">
+      <span class="ritual-actor ritual-xp">
+        <i>1</i><i>2</i><i>0</i><i>+</i><b></b>
+      </span>
+      <span class="ritual-actor ritual-loot">
+        <i class="loot-capsule"><b></b></i><em></em>
+      </span>
+      <span class="ritual-actor ritual-skill">
+        <i>ϟ</i><i>△</i><i>◇</i><i>◐</i><b></b>
+      </span>
+      <span class="ritual-actor ritual-level">
+        <i></i><i></i><i></i><i></i><b>$4</b>
+      </span>
+      <span class="ritual-actor ritual-status">
+        <i></i><i></i><i></i><b></b>
+      </span>
+      <span class="ritual-actor ritual-notice">
+        <i></i><b></b>
+      </span>
+    </span>
+
+    <span class="event-rail">
+      <span class="system-kicker"><i></i>%system% / $1</span>
+      <span class="event-title">$2</span>
+      <span class="event-detail">$3</span>
+      <span class="event-payload">$10</span>
+      <span class="open-cue">%open% <i aria-hidden="true"></i></span>
+    </span>
+  </button>
+
+  <section class="system-panel" aria-hidden="true">
+    <header class="panel-head">
+      <span class="panel-ident"><i></i>%system%</span>
+      <span class="panel-signal"><i></i><i></i><i></i></span>
+      <button class="system-close" type="button" aria-label="%close%">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <nav class="system-tabs" aria-label="%system%">
+      <button type="button" data-system-tab="core" aria-selected="true">
+        <i class="tab-module tab-core-icon"><b></b><em></em></i><span>%core%</span>
+      </button>
+      <button type="button" data-system-tab="inventory" aria-selected="false">
+        <i class="tab-module tab-inventory-icon"><b></b><em></em></i><span>%inventory%</span>
+      </button>
+      <button type="button" data-system-tab="skills" aria-selected="false">
+        <i class="tab-module tab-skills-icon"><b></b><em></em></i><span>%skills%</span>
+      </button>
+      <button type="button" data-system-tab="status" aria-selected="false">
+        <i class="tab-module tab-status-icon"><b></b><em></em></i><span>%status%</span>
+      </button>
+    </nav>
+
+    <div class="system-viewport">
+      <section class="system-stage core-stage is-active" data-stage="core" aria-hidden="false">
+        <div class="xp-chamber">
+          <div class="xp-orbit" style="--xp-angle:0deg">
+            <span class="xp-track"></span>
+            <span class="xp-fluid"></span>
+            <span class="xp-spark"></span>
+            <span class="xp-readout">
+              <strong class="xp-current">$5</strong>
+              <small>/ <span class="xp-goal">$6</span> %xp%</small>
+            </span>
+          </div>
+          <div class="level-stack">
+            <small>%level%</small>
+            <strong>$4</strong>
+            <span class="level-teeth"></span>
+          </div>
+        </div>
+        <div class="latest-signal">
+          <small>%latest%</small>
+          <strong>$2</strong>
+          <p>$3</p>
+          <b>$10</b>
+        </div>
+      </section>
+
+      <section class="system-stage inventory-stage" data-stage="inventory" aria-hidden="true">
+        <div class="drawer-frame">
+          <div class="drawer-top">
+            <span>%inventory%</span>
+            <i></i><i></i><i></i>
+          </div>
+          <div class="inventory-grid"></div>
+        </div>
+      </section>
+
+      <section class="system-stage skills-stage" data-stage="skills" aria-hidden="true">
+        <div class="constellation">
+          <svg class="constellation-lines" viewBox="0 0 340 235" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M26 185 L98 74 L172 142 L248 48 L316 166"></path>
+            <path d="M43 38 L98 74 L262 211"></path>
+          </svg>
+          <div class="skills-grid"></div>
+        </div>
+      </section>
+
+      <section class="system-stage status-stage" data-stage="status" aria-hidden="true">
+        <div class="status-bay">
+          <div class="status-figure" aria-hidden="true">
+            <span class="figure-head"></span>
+            <span class="figure-body"></span>
+            <span class="figure-arm arm-left"></span>
+            <span class="figure-arm arm-right"></span>
+            <span class="figure-leg leg-left"></span>
+            <span class="figure-leg leg-right"></span>
+            <span class="status-scanner"></span>
+          </div>
+          <div class="conditions-list"></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <div class="system-copy" hidden>
+    <span data-copy="quantity">%quantity%</span>
+    <span data-copy="rank">%rank%</span>
+    <span data-copy="condition">%condition%</span>
+    <span data-copy="emptyInventory">%emptyInventory%</span>
+    <span data-copy="emptySkills">%emptySkills%</span>
+    <span data-copy="stable">%stable%</span>
+  </div>
+</div>

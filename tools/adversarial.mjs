@@ -43,9 +43,11 @@ console.log(`— ${LANG}${SKIN ? ` · ${SKIN}` : ''} —\n`);
 for (const t of trackers) {
   const lang = t.lang[LANG] ?? Object.values(t.lang)[0];
   const example = lang.example ?? {};
-  const numeric = t.fields.filter((f) => f.type === 'num' || f.type === 'level');
+  const numeric = t.fields.filter((f) =>
+    f.type === 'num' || f.type === 'level' || f.type === 'counter');
   const listed = t.fields.filter((f) => f.of);
-  const text = t.fields.filter((f) => !f.of && !f.type);
+  const text = t.fields.filter((f) =>
+    !f.of && (!f.type || f.type === 'text' || f.type === 'plain'));
 
   const mark = (values, fields = t.fields) =>
     renderMarker(t.tag, fields, values, { trim: true });
