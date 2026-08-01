@@ -1,0 +1,59 @@
+{
+  "tag": "VLD_TIME",
+  "title": "VLD MOMENT",
+  "order": 26,
+  "previewLang": "en",
+  "fields": [
+    { "key": "H", "type": "num", "desc": "in-world hour, 0 to 23" },
+    { "key": "M", "type": "num", "desc": "minute, 0 to 59" },
+    { "key": "D", "type": "plain", "optional": true, "desc": "date or named day" },
+    { "key": "E", "type": "plain", "optional": true, "desc": "short time transition" },
+    { "key": "N", "type": "plain", "optional": true, "desc": "one external detail marking the moment" }
+  ],
+  "lang": {
+    "en": {
+      "exampleLabel": "Example",
+      "chrome": {
+        "open": "open the moment",
+        "close": "close the moment",
+        "recorded": "recorded moment",
+        "elapsed": "passage"
+      },
+      "when": "the narrative explicitly establishes a new exact in-world time or makes a meaningful time jump; use at most once in that response",
+      "dont": "the exact time is unknown, the same moment continues, a real-world clock is requested, or this would be a countdown or threat clock",
+      "legend": "Every marker is one self-contained moment. H is the established in-world hour from 0 to 23; M is the minute from 0 to 59. Never invent either merely to show the widget. D is an optional date, named day or calendar notation. E is an optional short transition such as Two hours later or At dawn. N is one brief observable detail that makes the moment distinct; never assign the player an emotion, intention or action. Leave optional fields out when the story does not establish them. Write D, E and N in the language of the roleplay.",
+      "example": {
+        "H": "23",
+        "M": "47",
+        "D": "15 October",
+        "E": "Two hours later",
+        "N": "The city has gone quiet."
+      }
+    },
+    "ru": {
+      "exampleLabel": "Пример",
+      "chrome": {
+        "open": "открыть момент",
+        "close": "закрыть момент",
+        "recorded": "зафиксированный момент",
+        "elapsed": "переход"
+      },
+      "when": "повествование явно устанавливает новое точное внутриигровое время или совершает значимый скачок времени; не больше одного маркера в таком ответе",
+      "dont": "точное время неизвестно, продолжается тот же момент, нужны реальные часы либо это обратный отсчёт или часы угрозы",
+      "legend": "Каждый маркер — самостоятельный момент. H — установленный сюжетом час от 0 до 23; M — минута от 0 до 59. Не выдумывай их только ради виджета. D — необязательная дата, название дня или календарная запись. E — необязательный короткий переход вроде Два часа спустя или На рассвете. N — одна краткая наблюдаемая деталь, отличающая этот момент; не назначай игроку эмоции, намерения или действия. Неустановленные необязательные поля пропускай. D, E и N пиши на языке ролевой.",
+      "example": {
+        "H": "23",
+        "M": "47",
+        "D": "15 октября",
+        "E": "Два часа спустя",
+        "N": "Город наконец затих."
+      }
+    }
+  },
+  "preview": [
+    { "H": "6", "M": "12", "D": "14 October", "E": "At dawn", "N": "The station is waking up." },
+    { "H": "14", "M": "30", "D": "14 October", "E": "Six hours later", "N": "The long meeting finally ends." },
+    { "H": "19", "M": "5", "D": "14 October", "E": "At dusk", "N": "The last tram leaves the square." },
+    { "H": "23", "M": "47", "D": "15 October", "E": "Two hours later", "N": "The city has gone quiet." }
+  ]
+}

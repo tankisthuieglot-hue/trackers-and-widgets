@@ -1,0 +1,17 @@
+{
+ "id": "5c0e24a6-e241-5e58-96bf-3d1f3b5f04f4",
+ "scriptName": "VLD MOMENT · clean",
+ "findRegex": "/\\[\\[VLD_TIME(?![A-Z0-9_])[^\\]\\n]*\\]{0,2}/g",
+ "replaceString": "",
+ "trimStrings": [],
+ "placement": [
+  2
+ ],
+ "disabled": false,
+ "markdownOnly": false,
+ "promptOnly": true,
+ "runOnEdit": false,
+ "substituteRegex": 0,
+ "minDepth": 3,
+ "maxDepth": null
+}

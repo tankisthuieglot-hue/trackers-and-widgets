@@ -295,6 +295,19 @@ const SYSTEM_FILM_EN = {
   ],
 };
 
+const TIME_FILM_EN = {
+  states: [...(tracker.preview ?? [lang.example]).slice(0, 4)],
+  script: [
+    { hold: 2.2, label: '06:12 / dawn', act: 'show-0' },
+    { hold: 2.2, label: '14:30 / day', act: 'show-1' },
+    { hold: 2.2, label: '19:05 / dusk', act: 'show-2' },
+    { hold: 1.9, label: '23:47 / night', act: 'show-3' },
+    { hold: 1.4, label: 'open the recorded moment', act: 'time-open' },
+    { hold: .6, label: 'inspect the recorded moment', poster: true },
+    { hold: .8, label: 'close the watch', act: 'time-close' },
+  ],
+};
+
 /**
  * Every other tracker cycles through the states it already declares for the
  * preview. That is enough for a loop worth watching: each cut replays the
@@ -334,7 +347,9 @@ const film = NAME === 'hud'
                       ? ENCOUNTER_FILM_EN
                       : (NAME === 'system' && LANG === 'en'
                           ? SYSTEM_FILM_EN
-                          : autoFilm(tracker, lang)))))));
+                          : (NAME === 'time' && LANG === 'en'
+                              ? TIME_FILM_EN
+                              : autoFilm(tracker, lang))))))));
 const { states: STATES, script } = film;
 
 function fill(values) {
@@ -473,6 +488,14 @@ function stage() {
         animationAt = clock;
       }
     }
+    const timeAction = /^time-(open|close)$/.exec(what);
+    if (timeAction) {
+      const widget = slot.querySelector('.vld-time');
+      if (widget && typeof widget.vldTimeAct === 'function') {
+        widget.vldTimeAct(timeAction[1]);
+        animationAt = clock;
+      }
+    }
     // Остальные действия есть только у HUD; у прочих трекеров этих узлов в
     // разметке нет, поэтому обращения к ним и не случится.
     if (what === 'open-pack') slot.querySelector('details').open = true;
@@ -495,6 +518,9 @@ function stage() {
       });
       slot.querySelectorAll('.vld-system').forEach((widget) => {
         if (typeof widget.vldSystemAct === 'function') widget.vldSystemAct('open');
+      });
+      slot.querySelectorAll('.vld-time').forEach((widget) => {
+        if (typeof widget.vldTimeAct === 'function') widget.vldTimeAct('open');
       });
       tallest = Math.max(tallest, document.body.scrollHeight);
     }
